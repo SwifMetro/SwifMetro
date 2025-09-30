@@ -1,9 +1,9 @@
 // 
-// SwiftMetro.swift
+// SwifMetro.swift
 // The first hot reload framework for native iOS development
 //
 // Created by 72hConcept Team
-// Copyright © 2025 SwiftMetro. All rights reserved.
+// Copyright © 2025 SwifMetro. All rights reserved.
 //
 
 import Foundation
@@ -11,16 +11,16 @@ import Network
 import UIKit
 import os.log
 
-/// SwiftMetro - Hot reload for native iOS development
-public class SwiftMetro {
+/// SwifMetro - Hot reload for native iOS development
+public class SwifMetro {
     
     // MARK: - Singleton
-    public static let shared = SwiftMetro()
+    public static let shared = SwifMetro()
     
     // MARK: - Properties
     private var connection: NWConnection?
-    private let queue = DispatchQueue(label: "com.swiftmetro.client", qos: .userInitiated)
-    private let logger = Logger(subsystem: "com.swiftmetro", category: "client")
+    private let queue = DispatchQueue(label: "com.swifmetro.client", qos: .userInitiated)
+    private let logger = Logger(subsystem: "com.swifmetro", category: "client")
     
     // Configuration
     private var host: String = "localhost"
@@ -47,15 +47,15 @@ public class SwiftMetro {
     
     // MARK: - Public API
     
-    /// Start SwiftMetro with default configuration
+    /// Start SwifMetro with default configuration
     public func start() {
         #if DEBUG
-        logger.info("🚀 SwiftMetro starting...")
+        logger.info("🚀 SwifMetro starting...")
         
         // Try to get host from environment or Info.plist
         if let envHost = ProcessInfo.processInfo.environment["SWIFT_METRO_HOST"] {
             self.host = envHost
-        } else if let plistHost = Bundle.main.object(forInfoDictionaryKey: "SwiftMetroHost") as? String {
+        } else if let plistHost = Bundle.main.object(forInfoDictionaryKey: "SwifMetroHost") as? String {
             self.host = plistHost
         }
         
@@ -67,11 +67,11 @@ public class SwiftMetro {
         
         connect()
         #else
-        logger.debug("SwiftMetro disabled in release builds")
+        logger.debug("SwifMetro disabled in release builds")
         #endif
     }
     
-    /// Start SwiftMetro with custom configuration
+    /// Start SwifMetro with custom configuration
     public func start(host: String, port: UInt16 = 8081) {
         #if DEBUG
         self.host = host
@@ -80,7 +80,7 @@ public class SwiftMetro {
         #endif
     }
     
-    /// Stop SwiftMetro and disconnect
+    /// Stop SwifMetro and disconnect
     public func stop() {
         disconnect()
         reconnectTimer?.invalidate()
@@ -139,7 +139,7 @@ public class SwiftMetro {
         switch state {
         case .ready:
             isConnected = true
-            logger.info("✅ SwiftMetro connected to bundler")
+            logger.info("✅ SwifMetro connected to bundler")
             sendDeviceInfo()
             startReceiving()
             
@@ -429,7 +429,7 @@ public class SwiftMetro {
 
 // MARK: - Supporting Types
 
-public extension SwiftMetro {
+public extension SwifMetro {
     enum LogLevel: String {
         case verbose = "verbose"
         case debug = "debug"
@@ -442,7 +442,7 @@ public extension SwiftMetro {
 // MARK: - Extensions
 
 extension Notification.Name {
-    static let swiftMetroReload = Notification.Name("SwiftMetroReload")
+    static let swiftMetroReload = Notification.Name("SwifMetroReload")
 }
 
 extension String {
@@ -466,13 +466,13 @@ extension String {
 import SwiftUI
 
 @available(iOS 13.0, *)
-public struct SwiftMetroModifier: ViewModifier {
+public struct SwifMetroModifier: ViewModifier {
     @State private var reloadCount = 0
     
     public func body(content: Content) -> some View {
         content
             .onAppear {
-                SwiftMetro.shared.start()
+                SwifMetro.shared.start()
             }
             .onReceive(NotificationCenter.default.publisher(for: .swiftMetroReload)) { _ in
                 reloadCount += 1
@@ -485,7 +485,7 @@ public struct SwiftMetroModifier: ViewModifier {
 public extension View {
     /// Enable hot reload for this view
     func enableHotReload() -> some View {
-        self.modifier(SwiftMetroModifier())
+        self.modifier(SwifMetroModifier())
     }
 }
 #endif

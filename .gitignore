@@ -1,46 +1,71 @@
-# Node
+# SwifMetro GitIgnore
+
+# CRITICAL - Never upload confidential docs
+CONFIDENTIAL/
+CONFIDENTIAL/*
+**/CONFIDENTIAL/**
+
+# Secret files
+SECRET_*
+*secret*
+*SECRET*
+*obfuscated*
+*-Obfuscated.*
+
+# Private keys and certificates
+*.key
+*.crt
+*.pem
+*.p12
+certs/
+certificates/
+
+# License files
+licenses/
+*.license
+license.json
+
+# Build outputs
+dist/
+build/
+*.min.js
+
+# Node modules
 node_modules/
 npm-debug.log
-*.log
+package-lock.json
 
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Xcode
+# iOS
 *.xcuserstate
 *.xcworkspace/xcuserdata/
 DerivedData/
 *.moved-aside
 *.pbxuser
-*.mode1v3
-*.mode2v3
 *.perspectivev3
-!default.pbxuser
-!default.mode1v3
-!default.mode2v3
-!default.perspectivev3
 
-# Swift
-*.hmap
-*.ipa
-*.dSYM.zip
-*.dSYM
-.build/
-
-# Test coverage
-*.lcov
+# Logs
+logs/
+*.log
 
 # Environment
 .env
 .env.local
+.env.production
 
-# Temporary files
-*.tmp
-*.bak
+# IDE
+.idea/
+.vscode/
 *.swp
-*~.nib
+*.swo
+.DS_Store
 
-# IP Configuration (users should set their own)
-SimpleMetroClient.swift.configured
+# Temporary
+tmp/
+temp/
+cache/
+
+# IMPORTANT - Protection files
+SwifMetroClient-Obfuscated.swift
+swifmetro-server.min.js
+*-protected.*
+*-encrypted.*

@@ -137,7 +137,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, 
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        // Connect to SwiftMetro on app launch
+        // Connect to SwifMetro on app launch
         #if DEBUG
         SimpleMetroClient.shared.connect()
         

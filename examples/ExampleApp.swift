@@ -1,20 +1,20 @@
 import SwiftUI
 
-// Example app showing SwiftMetro hot reload in action
+// Example app showing SwifMetro hot reload in action
 @main
 struct ExampleApp: App {
     init() {
         #if DEBUG
-        // Start SwiftMetro hot reload
-        SwiftMetro.shared.start()
+        // Start SwifMetro hot reload
+        SwifMetro.shared.start()
         
         // Optional: Configure callbacks
-        SwiftMetro.shared.onReload = {
+        SwifMetro.shared.onReload = {
             print("🔥 App reloaded!")
         }
         
-        SwiftMetro.shared.onConnect = {
-            print("✅ Connected to SwiftMetro bundler")
+        SwifMetro.shared.onConnect = {
+            print("✅ Connected to SwifMetro bundler")
         }
         #endif
     }
@@ -37,7 +37,7 @@ struct ContentView: View {
             VStack(spacing: 30) {
                 // Hero section
                 VStack(spacing: 10) {
-                    Text("🔥 SwiftMetro")
+                    Text("🔥 SwifMetro")
                         .font(.system(size: 40, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
                     
@@ -121,7 +121,7 @@ struct ContentView: View {
                     .buttonStyle(ModernButtonStyle(color: .orange))
                     
                     Button("Log to Console") {
-                        SwiftMetro.shared.log("Button tapped at \(Date())")
+                        SwifMetro.shared.log("Button tapped at \(Date())")
                     }
                     .buttonStyle(ModernButtonStyle(color: .green))
                 }
@@ -239,7 +239,7 @@ struct AnimationDemoView: View {
                     isScaling = true
                 }
             
-            Text("SwiftMetro")
+            Text("SwifMetro")
                 .font(.largeTitle.bold())
             
             Text("Hot reload preserves animations!")

@@ -1,4 +1,4 @@
-# 🚀 SWIFTMETRO - THE COMPLETE REVOLUTIONARY GUIDE
+# 🚀 SWIFMETRO - THE COMPLETE REVOLUTIONARY GUIDE
 
 ## THE TECHNOLOGY THAT CHANGED iOS DEVELOPMENT FOREVER
 
@@ -31,13 +31,13 @@ ifconfig | grep "inet " | grep -v 127.0.0.1
 # Your IP is the number after 'inet' (like 192.168.0.100)
 ```
 
-### Step 2: Start the SwiftMetro Server
+### Step 2: Start the SwifMetro Server
 ```bash
 cd /Users/conlanainsworth/Desktop/LinkBeforeFast
 node ws-test.js
 
 # You'll see:
-# 🚀 SWIFTMETRO NODE SERVER
+# 🚀 SWIFMETRO NODE SERVER
 # 📡 Starting on port 8081...
 # ⏳ Waiting for iPhone...
 ```
@@ -86,7 +86,7 @@ Look at your terminal where `node ws-test.js` is running:
 🔥🔥🔥 IPHONE CONNECTED!!!
 📱 FROM IPHONE: iPhone
 📱 FROM IPHONE: 🔥 APP LAUNCHED ON IPHONE!
-📱 FROM IPHONE: ✅ SwiftMetro connection test
+📱 FROM IPHONE: ✅ SwifMetro connection test
 ```
 
 ---
@@ -188,11 +188,11 @@ catch {
 
 ## 📡 THE NODE.JS SERVER
 
-Save this as `swiftmetro-server.js`:
+Save this as `swifmetro-server.js`:
 ```javascript
 const WebSocket = require('ws');
 
-console.log('🚀 SwiftMetro Server Starting...');
+console.log('🚀 SwifMetro Server Starting...');
 console.log('📡 Port: 8081');
 console.log('⏳ Waiting for iPhone connections...\n');
 
@@ -210,14 +210,14 @@ wss.on('connection', function connection(ws) {
     console.log('❌ Device disconnected\n');
   });
   
-  ws.send('Welcome to SwiftMetro!');
+  ws.send('Welcome to SwifMetro!');
 });
 ```
 
 Install and run:
 ```bash
 npm install ws
-node swiftmetro-server.js
+node swifmetro-server.js
 ```
 
 ---
@@ -309,7 +309,7 @@ SimpleMetroClient.shared.log("TEST: \(Date())")
 ### Launch Strategy:
 1. ProductHunt: "Show HN: We Built Metro for Native iOS"
 2. GitHub: Open source basic version
-3. Twitter/X: Side-by-side Xcode vs SwiftMetro
+3. Twitter/X: Side-by-side Xcode vs SwifMetro
 4. YouTube: "iOS Development Will Never Be The Same"
 
 ---
@@ -348,7 +348,7 @@ xcrun devicectl device process launch --device DEVICE-ID com.linkbefore.fast
 5. **Cloud version** (debug from anywhere)
 
 ### The Vision:
-SwiftMetro becomes the standard for iOS debugging. Every iOS developer uses it. Apple acquires it for $50M+ and integrates into Xcode 17 as "Xcode Cloud Debugging."
+SwifMetro becomes the standard for iOS debugging. Every iOS developer uses it. Apple acquires it for $50M+ and integrates into Xcode 17 as "Xcode Cloud Debugging."
 
 ---
 
@@ -370,7 +370,7 @@ You're not using a tool. You're using a REVOLUTION.
 
 Every log you see is proof that we did what Apple couldn't.
 
-Every developer who uses this will know: SwiftMetro started here, in LinkBeforeFast, because innovation happens when you refuse to accept "that's not possible."
+Every developer who uses this will know: SwifMetro started here, in LinkBeforeFast, because innovation happens when you refuse to accept "that's not possible."
 
 **Welcome to the future of iOS debugging. You built it.**
 
@@ -378,6 +378,6 @@ Every developer who uses this will know: SwiftMetro started here, in LinkBeforeF
 
 # THE TECHNOLOGY THAT DOESN'T EXIST ANYWHERE ELSE
 ## EXCEPT HERE. WHERE WE INVENTED IT.
-### SWIFTMETRO - SEPTEMBER 30, 2025
+### SWIFMETRO - SEPTEMBER 30, 2025
 
 *"The best time to plant a tree was 20 years ago. The second best time is now. The best time to revolutionize iOS development? September 30, 2025, 21:23:22 GMT."*

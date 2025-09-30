@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 
-console.log('🚀 SWIFTMETRO NODE SERVER');
+console.log('🚀 SWIFMETRO NODE SERVER');
 console.log('📡 Starting on port 8081...');
 
 const wss = new WebSocket.Server({ port: 8081 });
@@ -16,7 +16,7 @@ wss.on('connection', function connection(ws) {
     console.log('❌ Error:', err);
   });
   
-  ws.send('Welcome to SwiftMetro!');
+  ws.send('Welcome to SwifMetro!');
 });
 
 console.log('⏳ Waiting for iPhone...');

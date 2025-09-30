@@ -1,4 +1,4 @@
-# ✅ SwiftMetro Setup Checklist
+# ✅ SwifMetro Setup Checklist
 
 ## Before You Start
 - [ ] Mac and iPhone on same WiFi network
@@ -8,8 +8,8 @@
 ## Setup Steps
 
 ### 1. Server Setup (Mac)
-- [ ] Clone/download SwiftMetro folder
-- [ ] Open Terminal in SwiftMetro folder
+- [ ] Clone/download SwifMetro folder
+- [ ] Open Terminal in SwifMetro folder
 - [ ] Run `npm install ws` (installs WebSocket package)
 - [ ] Run `ifconfig | grep "inet " | grep -v 127.0.0.1` to find your Mac's IP
 - [ ] Note your IP address: ___.___.___.___ 
@@ -41,10 +41,10 @@ SimpleMetroClient.shared.connect()
 ```
 
 ### 5. Start Server
-- [ ] In Terminal (SwiftMetro folder): `node swiftmetro-server.js`
+- [ ] In Terminal (SwifMetro folder): `node swifmetro-server.js`
 - [ ] You should see:
 ```
-🚀 SWIFTMETRO SERVER
+🚀 SWIFMETRO SERVER
 📱 Your iPhone should connect to: [YOUR IP]
 ⏳ Waiting for iPhone connections...
 ```

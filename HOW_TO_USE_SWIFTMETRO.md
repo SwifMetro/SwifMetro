@@ -1,4 +1,4 @@
-# 🚀 SWIFTMETRO - COMPLETE USAGE GUIDE
+# 🚀 SWIFMETRO - COMPLETE USAGE GUIDE
 
 ## START TO FINISH - MAKE IT WORK IN ANY APP
 
@@ -19,14 +19,14 @@ inet 192.168.0.100 netmask 0xffffff00 broadcast 192.168.0.255
 
 ### 2️⃣ Install Node.js Server
 ```bash
-# Create a new folder for SwiftMetro
-mkdir ~/SwiftMetro
-cd ~/SwiftMetro
+# Create a new folder for SwifMetro
+mkdir ~/SwifMetro
+cd ~/SwifMetro
 
 # Create package.json
 cat > package.json << 'EOF'
 {
-  "name": "swiftmetro-server",
+  "name": "swifmetro-server",
   "version": "1.0.0",
   "dependencies": {
     "ws": "^8.14.2"
@@ -41,7 +41,7 @@ npm install
 cat > server.js << 'EOF'
 const WebSocket = require('ws');
 
-console.log('🚀 SwiftMetro Server Starting...');
+console.log('🚀 SwifMetro Server Starting...');
 console.log('📡 Port: 8081');
 console.log('⏳ Waiting for iPhone connections...\n');
 
@@ -59,7 +59,7 @@ wss.on('connection', function connection(ws) {
     console.log('❌ Device disconnected\n');
   });
   
-  ws.send('Welcome to SwiftMetro!');
+  ws.send('Welcome to SwifMetro!');
 });
 EOF
 
@@ -84,14 +84,14 @@ class SimpleMetroClient {
         let urlString = "ws://192.168.0.100:8081"
         
         guard let url = URL(string: urlString) else {
-            print("❌ SwiftMetro: Invalid URL")
+            print("❌ SwifMetro: Invalid URL")
             return
         }
         
         webSocketTask = session.webSocketTask(with: url)
         webSocketTask?.resume()
         
-        print("🚀 SwiftMetro: Connecting...")
+        print("🚀 SwifMetro: Connecting...")
         
         // Send device info
         let deviceName = UIDevice.current.name
@@ -99,9 +99,9 @@ class SimpleMetroClient {
         
         webSocketTask?.send(message) { error in
             if let error = error {
-                print("❌ SwiftMetro: \(error)")
+                print("❌ SwifMetro: \(error)")
             } else {
-                print("✅ SwiftMetro: Connected!")
+                print("✅ SwifMetro: Connected!")
             }
         }
         
@@ -141,7 +141,7 @@ class SimpleMetroClient {
 func application(_ application: UIApplication, 
                  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     
-    // Connect to SwiftMetro
+    // Connect to SwifMetro
     #if DEBUG
     SimpleMetroClient.shared.connect()
     
@@ -314,7 +314,7 @@ xcrun devicectl device process launch \
 When everything is working, you'll see:
 
 ```bash
-🚀 SwiftMetro Server Starting...
+🚀 SwifMetro Server Starting...
 📡 Port: 8081
 ⏳ Waiting for iPhone connections...
 
@@ -435,7 +435,7 @@ NSSetUncaughtExceptionHandler { exception in
 ### Every Day Commands:
 ```bash
 # Start server
-cd ~/SwiftMetro && node server.js
+cd ~/SwifMetro && node server.js
 
 # Find device
 xcrun devicectl list devices | grep iPhone
@@ -465,7 +465,7 @@ xcrun devicectl device process launch --device [ID] [BUNDLE_ID]
 - [ ] Built and installed on device
 - [ ] See "🔥🔥🔥 iPHONE CONNECTED!" in terminal
 
-If all checked, YOU HAVE SWIFTMETRO WORKING! 🎉
+If all checked, YOU HAVE SWIFMETRO WORKING! 🎉
 
 ---
 

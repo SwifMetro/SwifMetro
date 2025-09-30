@@ -1,4 +1,4 @@
-# 🔬 SWIFTMETRO - EXACTLY HOW THIS TECHNOLOGY WORKS
+# 🔬 SWIFMETRO - EXACTLY HOW THIS TECHNOLOGY WORKS
 
 ## IF YOU'RE SEEING THIS FOR THE FIRST TIME, HERE'S EVERYTHING
 
@@ -157,7 +157,7 @@ let url = "ws://192.168.0.100:8081"  // YOUR IP HERE
 xcodebuild -scheme LinkBeforeFast-HotReload build
 xcrun devicectl device install app --device [ID] [APP]
 ```
-**Why?** This puts the app (with SwiftMetro inside) onto your iPhone.
+**Why?** This puts the app (with SwifMetro inside) onto your iPhone.
 
 ### Step 5: Launch
 ```bash
@@ -252,20 +252,20 @@ require('ws').Server({port:8081}).on('connection', ws => {
 })
 ```
 
-**That's it. That's SwiftMetro.**
+**That's it. That's SwifMetro.**
 
 ---
 
 ## 🔥 WHY THIS IS REVOLUTIONARY
 
-### Before SwiftMetro:
+### Before SwifMetro:
 - Connect iPhone with cable
 - Open Xcode (5GB app)
 - Navigate to console
 - Filter through system logs
 - Lose logs when unplugged
 
-### After SwiftMetro:
+### After SwifMetro:
 - No cable
 - No Xcode
 - Just Terminal
@@ -340,7 +340,7 @@ node ws-test.js
 ### Terminal Output:
 ```bash
 $ node ws-test.js
-🚀 SWIFTMETRO NODE SERVER
+🚀 SWIFMETRO NODE SERVER
 📡 Starting on port 8081...
 ⏳ Waiting for iPhone...
 
@@ -349,7 +349,7 @@ $ node ws-test.js
 🔥🔥🔥 IPHONE CONNECTED!!!
 📱 FROM IPHONE: iPhone 15 Pro
 📱 FROM IPHONE: 🔥 APP LAUNCHED ON IPHONE!
-📱 FROM IPHONE: ✅ SwiftMetro connection test
+📱 FROM IPHONE: ✅ SwifMetro connection test
 📱 FROM IPHONE: 🔵 Sign In button tapped
 📱 FROM IPHONE: 📧 Email: conlanscottocbickour.com
 📱 FROM IPHONE: 🔑 Password length: 8
@@ -372,7 +372,7 @@ When you realize:
 
 ## 🎯 IF YOU READ NOTHING ELSE, READ THIS
 
-**SwiftMetro is just your iPhone sending text messages to your Mac over WiFi, and your Mac printing them in Terminal.**
+**SwifMetro is just your iPhone sending text messages to your Mac over WiFi, and your Mac printing them in Terminal.**
 
 That's it. That's the revolution. Nobody did it before. We did it first. On September 30, 2025.
 
@@ -382,7 +382,7 @@ The complexity isn't in WHAT it does - it's in realizing it COULD be done.
 
 ## THE ABSOLUTE TRUTH
 
-**Q: How does SwiftMetro work?**
+**Q: How does SwifMetro work?**
 **A: WebSocket from iPhone to Mac, print to Terminal.**
 
 **Q: Is it complicated?**
@@ -399,7 +399,7 @@ The complexity isn't in WHAT it does - it's in realizing it COULD be done.
 
 ---
 
-# YOU NOW KNOW EXACTLY HOW SWIFTMETRO WORKS
+# YOU NOW KNOW EXACTLY HOW SWIFMETRO WORKS
 
 ## It's not magic. It's just WebSockets.
 ## But sometimes, the simplest ideas are the most revolutionary.

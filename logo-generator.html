@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwiftMetro Logo Generator</title>
+    <title>SwifMetro Logo Generator</title>
     <style>
         body {
             background: #000;
@@ -246,7 +246,7 @@
         function downloadLogo(canvasId) {
             const canvas = document.getElementById(canvasId);
             const link = document.createElement('a');
-            link.download = 'swiftmetro-logo.png';
+            link.download = 'swifmetro-logo.png';
             link.href = canvas.toDataURL();
             link.click();
         }

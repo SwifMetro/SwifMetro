@@ -1,4 +1,4 @@
-# SwiftMetro
+# SwifMetro
 
 **The technology that shouldn't exist. But does.**
 
@@ -10,7 +10,7 @@ Every iOS developer loses 2+ hours daily waiting for builds.
 
 We fixed that.
 
-**SwiftMetro**: See your code changes instantly. On real devices. Without rebuilding.
+**SwifMetro**: See your code changes instantly. On real devices. Without rebuilding.
 
 ---
 
@@ -58,7 +58,7 @@ Text("Hello World")
 // Without USB cable
 ```
 
-**[Watch 30-Second Demo Video →](https://swiftmetro.dev/demo)**
+**[Watch 30-Second Demo Video →](https://swifmetro.dev/demo)**
 
 ---
 
@@ -85,11 +85,11 @@ We use WebSockets to stream code changes directly to your running app. The same 
 ### 30-Second Setup
 
 ```bash
-# 1. Clone SwiftMetro
-git clone https://github.com/swiftmetro/swiftmetro.git
+# 1. Clone SwifMetro
+git clone https://github.com/swifmetro/swifmetro.git
 
 # 2. Start the server
-cd swiftmetro && node server.js
+cd swifmetro && node server.js
 
 # 3. Add one file to your iOS project
 # (SimpleMetroClient.swift - it's 45 lines)
@@ -119,7 +119,7 @@ That's it. No complex setup. No configuration. It just works.
 
 ## The Numbers Don't Lie
 
-| Before SwiftMetro | After SwiftMetro |
+| Before SwifMetro | After SwifMetro |
 |-------------------|------------------|
 | 45-second rebuilds | 1-second updates |
 | USB cable required | Wireless |
@@ -131,11 +131,11 @@ That's it. No complex setup. No configuration. It just works.
 
 ---
 
-## Three Ways to Get SwiftMetro
+## Three Ways to Get SwifMetro
 
 ### 1. Free (Open Source)
 ```bash
-git clone https://github.com/swiftmetro/swiftmetro.git
+git clone https://github.com/swifmetro/swifmetro.git
 ```
 Use it. Love it. Star it on GitHub.
 
@@ -151,7 +151,7 @@ Use it. Love it. Star it on GitHub.
 - SLA guarantee
 - Source code license
 
-**[Get SwiftMetro Pro →](https://swiftmetro.dev/pricing)**
+**[Get SwifMetro Pro →](https://swifmetro.dev/pricing)**
 
 ---
 
@@ -193,7 +193,7 @@ iOS had nothing.
 
 **Until now.**
 
-SwiftMetro isn't just a tool. It's a statement:
+SwifMetro isn't just a tool. It's a statement:
 
 *iOS developers deserve better than waiting for builds.*
 
@@ -202,13 +202,13 @@ SwiftMetro isn't just a tool. It's a statement:
 ## Join the Revolution
 
 ### GitHub (Star us)
-[github.com/swiftmetro/swiftmetro](https://github.com/swiftmetro/swiftmetro)
+[github.com/swifmetro/swifmetro](https://github.com/swifmetro/swifmetro)
 
 ### Discord (Join 500+ developers)
-[discord.gg/swiftmetro](https://discord.gg/swiftmetro)
+[discord.gg/swifmetro](https://discord.gg/swifmetro)
 
 ### Twitter (Follow for updates)
-[@swiftmetro](https://twitter.com/swiftmetro)
+[@swifmetro](https://twitter.com/swifmetro)
 
 ---
 
@@ -235,7 +235,7 @@ A: We don't know. But we did.
 
 Every second you wait for Xcode to build is a second you're not shipping.
 
-SwiftMetro gives you those seconds back.
+SwifMetro gives you those seconds back.
 
 **Start building iOS apps at the speed of thought.**
 
@@ -243,9 +243,9 @@ SwiftMetro gives you those seconds back.
 
 <div align="center">
 
-### Get SwiftMetro Now
+### Get SwifMetro Now
 
-# [Download](https://github.com/swiftmetro/swiftmetro) | [Documentation](https://swiftmetro.dev/docs) | [Pricing](https://swiftmetro.dev/pricing)
+# [Download](https://github.com/swifmetro/swifmetro) | [Documentation](https://swifmetro.dev/docs) | [Pricing](https://swifmetro.dev/pricing)
 
 **From the creators of the 72-hour development methodology**
 
@@ -255,4 +255,4 @@ SwiftMetro gives you those seconds back.
 
 ---
 
-**SwiftMetro** - Because rebuilding is for computers, not humans.
+**SwifMetro** - Because rebuilding is for computers, not humans.

@@ -1,5 +1,5 @@
 /**
- * SwiftMetro Server
+ * SwifMetro Server
  * Created: September 30, 2025
  * The first Metro-style terminal logging for native iOS
  */
@@ -12,7 +12,7 @@ const PORT = 8081;
 const HOST = '0.0.0.0'; // Listen on all interfaces
 
 console.log('');
-console.log('🚀 SWIFTMETRO SERVER');
+console.log('🚀 SWIFMETRO SERVER');
 console.log('='.repeat(50));
 console.log(`📡 Starting on port ${PORT}...`);
 console.log('');
@@ -68,7 +68,7 @@ wss.on('connection', function connection(ws, req) {
     console.log('');
     
     // Send welcome message
-    ws.send('🎉 Welcome to SwiftMetro! You are now connected.');
+    ws.send('🎉 Welcome to SwifMetro! You are now connected.');
     
     // Handle incoming messages
     ws.on('message', function incoming(message) {
@@ -124,7 +124,7 @@ wss.on('error', function(error) {
 
 // Graceful shutdown
 process.on('SIGINT', function() {
-    console.log('\n👋 Shutting down SwiftMetro server...');
+    console.log('\n👋 Shutting down SwifMetro server...');
     wss.close(() => {
         process.exit(0);
     });

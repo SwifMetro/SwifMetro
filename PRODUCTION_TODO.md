@@ -1,4 +1,4 @@
-# 🚀 SwiftMetro Production Readiness Checklist
+# 🚀 SwifMetro Production Readiness Checklist
 
 ## Critical Fixes Needed Before Launch
 
@@ -10,9 +10,9 @@
 // Add to SimpleMetroClient.swift
 class SimpleMetroClient {
     func discoverServer() {
-        // Use NetServiceBrowser to find SwiftMetro servers
+        // Use NetServiceBrowser to find SwifMetro servers
         let browser = NetServiceBrowser()
-        browser.searchForServices(ofType: "_swiftmetro._tcp", inDomain: "local.")
+        browser.searchForServices(ofType: "_swifmetro._tcp", inDomain: "local.")
     }
 }
 ```
@@ -21,8 +21,8 @@ class SimpleMetroClient {
 // Add to server.js
 const bonjour = require('bonjour')()
 bonjour.publish({ 
-    name: 'SwiftMetro', 
-    type: 'swiftmetro',
+    name: 'SwifMetro', 
+    type: 'swifmetro',
     port: 8081 
 })
 ```
@@ -50,12 +50,12 @@ bonjour.publish({
 **Options**:
 1. **Swift Package Manager**
 ```swift
-.package(url: "https://github.com/swiftmetro/SwiftMetro.git", from: "1.0.0")
+.package(url: "https://github.com/swifmetro/SwifMetro.git", from: "1.0.0")
 ```
 
 2. **CocoaPods**
 ```ruby
-pod 'SwiftMetro'
+pod 'SwifMetro'
 ```
 
 3. **Mac App with Menu Bar**
@@ -93,7 +93,7 @@ func connect(token: String) {
 **Current**: Only works in DEBUG
 **Better**:
 ```swift
-enum SwiftMetroMode {
+enum SwifMetroMode {
     case disabled
     case debugOnly
     case always
@@ -161,7 +161,7 @@ enum SwiftMetroMode {
 
 ## Minimum Viable Product (MVP)
 
-To launch SwiftMetro as a real product, AT MINIMUM fix:
+To launch SwifMetro as a real product, AT MINIMUM fix:
 
 1. ✅ Auto-discovery (no manual IP)
 2. ✅ Swift Package Manager support

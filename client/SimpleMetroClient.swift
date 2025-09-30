@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-/// Simplified SwiftMetro Client using URLSession WebSocket
+/// Simplified SwifMetro Client using URLSession WebSocket
 class SimpleMetroClient {
     static let shared = SimpleMetroClient()
     private var webSocketTask: URLSessionWebSocketTask?

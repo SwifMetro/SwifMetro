@@ -1,9 +1,9 @@
 #!/bin/bash
 
 echo ""
-echo "🚀 SWIFTMETRO SETUP WIZARD"
+echo "🚀 SWIFMETRO SETUP WIZARD"
 echo "=================================="
-echo "Setting up SwiftMetro for iOS terminal logging"
+echo "Setting up SwifMetro for iOS terminal logging"
 echo ""
 
 # Colors for output
@@ -37,9 +37,9 @@ else
     echo "Creating package.json..."
     cat > package.json << 'EOF'
 {
-  "name": "swiftmetro-server",
+  "name": "swifmetro-server",
   "version": "1.0.0",
-  "description": "SwiftMetro Server - Terminal logging for iOS",
+  "description": "SwifMetro Server - Terminal logging for iOS",
   "dependencies": {
     "ws": "^8.14.2"
   }
@@ -113,7 +113,7 @@ fi
 # Step 6: Test server startup
 echo ""
 echo "🧪 Testing server startup..."
-timeout 2 node swiftmetro-server.js > /dev/null 2>&1 &
+timeout 2 node swifmetro-server.js > /dev/null 2>&1 &
 SERVER_PID=$!
 sleep 1
 
@@ -122,19 +122,19 @@ if ps -p $SERVER_PID > /dev/null; then
     kill $SERVER_PID 2>/dev/null
 else
     echo -e "${RED}❌ Server failed to start${NC}"
-    echo "   Check swiftmetro-server.js exists"
+    echo "   Check swifmetro-server.js exists"
 fi
 
 # Step 7: Create start script
 echo ""
 echo "📝 Creating start script..."
-cat > start-swiftmetro.sh << 'EOF'
+cat > start-swifmetro.sh << 'EOF'
 #!/bin/bash
-echo "🚀 Starting SwiftMetro Server..."
-node swiftmetro-server.js
+echo "🚀 Starting SwifMetro Server..."
+node swifmetro-server.js
 EOF
-chmod +x start-swiftmetro.sh
-echo -e "${GREEN}✅ Created start-swiftmetro.sh${NC}"
+chmod +x start-swifmetro.sh
+echo -e "${GREEN}✅ Created start-swifmetro.sh${NC}"
 
 # Step 8: Instructions
 echo ""
@@ -152,7 +152,7 @@ echo "3. In AppDelegate.swift, add:"
 echo "   SimpleMetroClient.shared.connect()"
 echo ""
 echo "4. Start the server:"
-echo -e "${GREEN}   ./start-swiftmetro.sh${NC}"
+echo -e "${GREEN}   ./start-swifmetro.sh${NC}"
 echo ""
 echo "5. Build and run your iOS app"
 echo ""

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 /**
- * SwiftMetro Bundler
+ * SwifMetro Bundler
  * Hot reload server for native iOS development
  * 
  * Created by 72hConcept Team
- * Copyright © 2025 SwiftMetro. All rights reserved.
+ * Copyright © 2025 SwifMetro. All rights reserved.
  */
 
 const net = require('net');
@@ -62,7 +62,7 @@ function showBanner() {
   console.log(`
 ${colors.cyan}╔═══════════════════════════════════════════════════╗
 ║                                                   ║
-║   ${colors.bright}🔥 SwiftMetro Bundler v1.0.0${colors.cyan}                   ║
+║   ${colors.bright}🔥 SwifMetro Bundler v1.0.0${colors.cyan}                   ║
 ║   ${colors.reset}Hot Reload for Native iOS Development${colors.cyan}          ║
 ║                                                   ║
 ╚═══════════════════════════════════════════════════╝${colors.reset}
@@ -70,7 +70,7 @@ ${colors.cyan}╔═════════════════════
 }
 
 // Server class
-class SwiftMetroBundler {
+class SwifMetroBundler {
   constructor() {
     this.server = null;
     this.watcher = null;
@@ -104,7 +104,7 @@ class SwiftMetroBundler {
     // Handle process termination
     this.setupCleanup();
     
-    log.success(`SwiftMetro bundler running on port ${colors.bright}${config.port}${colors.reset}`);
+    log.success(`SwifMetro bundler running on port ${colors.bright}${config.port}${colors.reset}`);
     log.info('Waiting for iOS app connections...');
   }
 
@@ -114,7 +114,7 @@ class SwiftMetroBundler {
       exec('which swiftc', (error, stdout) => {
         if (error) {
           log.warning('Swift compiler not found in PATH');
-          log.info('SwiftMetro will monitor files but cannot compile');
+          log.info('SwifMetro will monitor files but cannot compile');
         } else {
           log.success(`Swift compiler found at ${stdout.trim()}`);
         }
@@ -135,7 +135,7 @@ class SwiftMetroBundler {
       // Send welcome message
       this.sendMessage(socket, {
         type: 'connected',
-        message: 'SwiftMetro bundler connected',
+        message: 'SwifMetro bundler connected',
         version: '1.0.0'
       });
       
@@ -402,7 +402,7 @@ ${colors.cyan}📊 Statistics:${colors.reset}
   setupCleanup() {
     process.on('SIGINT', () => {
       console.log('\n');
-      log.info('Shutting down SwiftMetro bundler...');
+      log.info('Shutting down SwifMetro bundler...');
       
       // Close connections
       this.connections.forEach(conn => {
@@ -434,12 +434,12 @@ ${colors.cyan}📊 Statistics:${colors.reset}
 // CLI Commands
 const commands = {
   serve: () => {
-    const bundler = new SwiftMetroBundler();
+    const bundler = new SwifMetroBundler();
     bundler.start();
   },
   
   init: () => {
-    log.info('Initializing SwiftMetro in current project...');
+    log.info('Initializing SwifMetro in current project...');
     
     // Create config file
     const configContent = {
@@ -456,31 +456,31 @@ const commands = {
       }
     };
     
-    fs.writeFileSync('swiftmetro.json', JSON.stringify(configContent, null, 2));
-    log.success('Created swiftmetro.json configuration file');
+    fs.writeFileSync('swifmetro.json', JSON.stringify(configContent, null, 2));
+    log.success('Created swifmetro.json configuration file');
     
     // Add to .gitignore
     if (fs.existsSync('.gitignore')) {
       const gitignore = fs.readFileSync('.gitignore', 'utf8');
-      if (!gitignore.includes('swiftmetro')) {
-        fs.appendFileSync('.gitignore', '\n# SwiftMetro\nswiftmetro.cache/\n');
+      if (!gitignore.includes('swifmetro')) {
+        fs.appendFileSync('.gitignore', '\n# SwifMetro\nswifmetro.cache/\n');
         log.success('Updated .gitignore');
       }
     }
     
-    log.info('SwiftMetro initialized! Run "swift-metro serve" to start bundler');
+    log.info('SwifMetro initialized! Run "swift-metro serve" to start bundler');
   },
   
   help: () => {
     console.log(`
-${colors.bright}SwiftMetro - Hot Reload for Native iOS${colors.reset}
+${colors.bright}SwifMetro - Hot Reload for Native iOS${colors.reset}
 
 ${colors.cyan}Usage:${colors.reset}
   swift-metro <command> [options]
 
 ${colors.cyan}Commands:${colors.reset}
   ${colors.bright}serve${colors.reset}     Start the hot reload bundler
-  ${colors.bright}init${colors.reset}      Initialize SwiftMetro in current project
+  ${colors.bright}init${colors.reset}      Initialize SwifMetro in current project
   ${colors.bright}help${colors.reset}      Show this help message
 
 ${colors.cyan}Environment Variables:${colors.reset}
@@ -513,4 +513,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = SwiftMetroBundler;
+module.exports = SwifMetroBundler;

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# SwiftMetro Installation Script
-# Copyright © 2025 SwiftMetro. All rights reserved.
+# SwifMetro Installation Script
+# Copyright © 2025 SwifMetro. All rights reserved.
 
 set -e
 
@@ -19,7 +19,7 @@ show_banner() {
     echo -e "${CYAN}"
     echo "╔═══════════════════════════════════════════════════╗"
     echo "║                                                   ║"
-    echo "║   🔥 ${BOLD}SwiftMetro Installation${NC}${CYAN}                     ║"
+    echo "║   🔥 ${BOLD}SwifMetro Installation${NC}${CYAN}                     ║"
     echo "║   Hot Reload for Native iOS Development          ║"
     echo "║                                                   ║"
     echo "╚═══════════════════════════════════════════════════╝"
@@ -51,7 +51,7 @@ check_requirements() {
     
     # Check Xcode
     if ! command -v xcodebuild &> /dev/null; then
-        echo -e "${YELLOW}⚠ Xcode not found - SwiftMetro works best with Xcode installed${NC}"
+        echo -e "${YELLOW}⚠ Xcode not found - SwifMetro works best with Xcode installed${NC}"
     else
         XCODE_VERSION=$(xcodebuild -version | head -1)
         echo -e "${GREEN}✓ ${XCODE_VERSION} found${NC}"
@@ -66,9 +66,9 @@ check_requirements() {
     fi
 }
 
-# Install SwiftMetro bundler globally
+# Install SwifMetro bundler globally
 install_bundler() {
-    echo -e "\n${BLUE}Installing SwiftMetro bundler...${NC}"
+    echo -e "\n${BLUE}Installing SwifMetro bundler...${NC}"
     
     # Create temp directory
     TEMP_DIR=$(mktemp -d)
@@ -98,20 +98,20 @@ EOF
     cd - > /dev/null
     rm -rf "$TEMP_DIR"
     
-    echo -e "${GREEN}✓ SwiftMetro bundler installed globally${NC}"
+    echo -e "${GREEN}✓ SwifMetro bundler installed globally${NC}"
 }
 
 # Install iOS client
 install_ios_client() {
     echo -e "\n${BLUE}Setting up iOS client...${NC}"
     
-    # Create SwiftMetro directory in user's home
-    SWIFTMETRO_HOME="$HOME/.swiftmetro"
-    mkdir -p "$SWIFTMETRO_HOME"
+    # Create SwifMetro directory in user's home
+    SWIFMETRO_HOME="$HOME/.swifmetro"
+    mkdir -p "$SWIFMETRO_HOME"
     
-    # Save SwiftMetro.swift for easy access
-    echo -e "${GREEN}✓ iOS client saved to ${SWIFTMETRO_HOME}${NC}"
-    echo -e "${CYAN}To add to your project, copy: ${BOLD}${SWIFTMETRO_HOME}/SwiftMetro.swift${NC}"
+    # Save SwifMetro.swift for easy access
+    echo -e "${GREEN}✓ iOS client saved to ${SWIFMETRO_HOME}${NC}"
+    echo -e "${CYAN}To add to your project, copy: ${BOLD}${SWIFMETRO_HOME}/SwifMetro.swift${NC}"
 }
 
 # Create example project
@@ -122,16 +122,16 @@ create_example() {
     if [[ "$response" =~ ^[Yy]$ ]]; then
         echo -e "${BLUE}Creating example project...${NC}"
         
-        mkdir -p SwiftMetroExample
-        cd SwiftMetroExample
+        mkdir -p SwifMetroExample
+        cd SwifMetroExample
         
         # Create minimal example
         cat > ContentView.swift << 'EOF'
 import SwiftUI
-import SwiftMetro
+import SwifMetro
 
 struct ContentView: View {
-    @State private var message = "Hello, SwiftMetro!"
+    @State private var message = "Hello, SwifMetro!"
     @State private var color = Color.blue
     
     var body: some View {
@@ -154,7 +154,7 @@ struct ContentView: View {
 }
 EOF
         
-        echo -e "${GREEN}✓ Example project created in ./SwiftMetroExample${NC}"
+        echo -e "${GREEN}✓ Example project created in ./SwifMetroExample${NC}"
     fi
 }
 
@@ -185,7 +185,7 @@ main() {
     clear
     show_banner
     
-    echo "Welcome to SwiftMetro installation!"
+    echo "Welcome to SwifMetro installation!"
     echo "This will install the hot reload system for iOS development."
     echo ""
     
@@ -195,16 +195,16 @@ main() {
     setup_completion
     create_example
     
-    echo -e "\n${GREEN}${BOLD}✨ SwiftMetro installation complete!${NC}"
+    echo -e "\n${GREEN}${BOLD}✨ SwifMetro installation complete!${NC}"
     echo ""
     echo "To get started:"
-    echo "  1. Add SwiftMetro.swift to your iOS project"
-    echo "  2. Call SwiftMetro.shared.start() in your app"
+    echo "  1. Add SwifMetro.swift to your iOS project"
+    echo "  2. Call SwifMetro.shared.start() in your app"
     echo "  3. Run: swift-metro serve"
     echo "  4. Build and run your app"
     echo ""
-    echo "Documentation: https://swiftmetro.dev"
-    echo "GitHub: https://github.com/swiftmetro/swiftmetro"
+    echo "Documentation: https://swifmetro.dev"
+    echo "GitHub: https://github.com/swifmetro/swifmetro"
     echo ""
     echo -e "${CYAN}Happy hot reloading! 🔥${NC}"
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo ""
-echo "🧪 SWIFTMETRO VERIFICATION TEST"
+echo "🧪 SWIFMETRO VERIFICATION TEST"
 echo "=================================="
 echo ""
 
@@ -38,11 +38,11 @@ fi
 # Test 3: Server file exists
 echo ""
 echo "Test 3: Server File"
-if [ -f "swiftmetro-server.js" ]; then
-    echo -e "${GREEN}✅ PASS${NC} - swiftmetro-server.js exists"
+if [ -f "swifmetro-server.js" ]; then
+    echo -e "${GREEN}✅ PASS${NC} - swifmetro-server.js exists"
     ((TESTS_PASSED++))
 else
-    echo -e "${RED}❌ FAIL${NC} - swiftmetro-server.js not found"
+    echo -e "${RED}❌ FAIL${NC} - swifmetro-server.js not found"
     ((TESTS_FAILED++))
 fi
 
@@ -94,7 +94,7 @@ fi
 # Test 7: Server can start
 echo ""
 echo "Test 7: Server Startup Test"
-timeout 2 node swiftmetro-server.js > /tmp/swiftmetro-test.log 2>&1 &
+timeout 2 node swifmetro-server.js > /tmp/swifmetro-test.log 2>&1 &
 TEST_PID=$!
 sleep 1
 
@@ -104,7 +104,7 @@ if ps -p $TEST_PID > /dev/null 2>&1; then
     ((TESTS_PASSED++))
 else
     echo -e "${RED}❌ FAIL${NC} - Server failed to start"
-    echo "         Check: cat /tmp/swiftmetro-test.log"
+    echo "         Check: cat /tmp/swifmetro-test.log"
     ((TESTS_FAILED++))
 fi
 
@@ -119,10 +119,10 @@ echo ""
 
 if [ $TESTS_FAILED -eq 0 ]; then
     echo -e "${GREEN}🎉 ALL TESTS PASSED!${NC}"
-    echo "SwiftMetro is ready to use!"
+    echo "SwifMetro is ready to use!"
     echo ""
     echo "Next steps:"
-    echo "1. Start server: ./start-swiftmetro.sh"
+    echo "1. Start server: ./start-swifmetro.sh"
     echo "2. Add SimpleMetroClient.swift to your iOS app"
     echo "3. Call SimpleMetroClient.shared.connect() in AppDelegate"
 else

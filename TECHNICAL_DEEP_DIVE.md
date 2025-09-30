@@ -1,4 +1,4 @@
-# 🔬 SwiftMetro Technical Deep Dive
+# 🔬 SwifMetro Technical Deep Dive
 
 ## How The Technology Actually Works
 
@@ -210,7 +210,7 @@ webSocketTask.send(.data(encrypted))
 
 ### Error States:
 ```swift
-enum SwiftMetroError {
+enum SwifMetroError {
     case connectionFailed
     case serverUnreachable  
     case invalidIP
@@ -224,7 +224,7 @@ enum SwiftMetroError {
 ## 🔄 COMPARISON WITH ALTERNATIVES
 
 ### vs Xcode Console:
-| Feature | Xcode | SwiftMetro |
+| Feature | Xcode | SwifMetro |
 |---------|-------|------------|
 | Cable needed | Yes | No |
 | Remote access | No | Yes |
@@ -233,7 +233,7 @@ enum SwiftMetroError {
 | Custom formatting | No | Yes |
 
 ### vs React Native Metro:
-| Feature | RN Metro | SwiftMetro |
+| Feature | RN Metro | SwifMetro |
 |---------|----------|------------|
 | Native iOS | No | Yes |
 | Hot reload | Yes | Not yet |
@@ -309,12 +309,12 @@ enum SwiftMetroError {
 
 ---
 
-**The Technical Truth**: SwiftMetro works because we ignored what everyone said was "the right way" and instead asked "what's the simplest way that could possibly work?"
+**The Technical Truth**: SwifMetro works because we ignored what everyone said was "the right way" and instead asked "what's the simplest way that could possibly work?"
 
 **Answer**: WebSockets. 45 lines of Swift. 10 lines of JavaScript. Revolutionary impact.
 
 ---
 
-*Technical breakthroughs often look obvious in retrospect. SwiftMetro is one of those.*
+*Technical breakthroughs often look obvious in retrospect. SwifMetro is one of those.*
 
 **Built with**: Swift, Node.js, WebSockets, and refusal to accept status quo
