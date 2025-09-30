@@ -4,6 +4,30 @@
 
 ---
 
+## 🚀 Quick Start (2 minutes)
+
+### Step 1: Start Server
+```bash
+git clone https://github.com/csainsworth123/swifmetro.git
+cd swifmetro
+npm install
+npm start
+```
+
+### Step 2: Add to Your iOS App
+1. **Drag** `SwifMetroClient.swift` into your Xcode project
+2. **Check** "Copy items if needed" ✅
+3. **Add** one line to your app:
+```swift
+// In AppDelegate or @main App struct
+SwifMetroClient.shared.start()
+```
+
+### Step 3: See Magic
+Run your app. Every `print()` now appears in Terminal instantly. Wirelessly.
+
+---
+
 ## We Made iOS Development 30x Faster
 
 Every iOS developer loses 2+ hours daily waiting for builds.

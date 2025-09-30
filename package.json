@@ -2,11 +2,14 @@
   "name": "swiftmetro",
   "version": "1.0.0",
   "description": "Terminal logging for native iOS - The technology that shouldn't exist",
-  "main": "swiftmetro-server.js",
+  "main": "swifmetro-server.js",
   "scripts": {
-    "start": "node swiftmetro-server.js",
+    "start": "node swifmetro-server.js",
+    "advanced": "node swifmetro-advanced-server.js",
+    "secure": "node swifmetro-secure-server.js",
+    "hot-reload": "node swifmetro-hot-reload.js",
     "setup": "./setup.sh",
-    "test": "./test-swiftmetro.sh"
+    "test": "./test-swifmetro.sh"
   },
   "keywords": [
     "ios",
