@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftMetro Logo Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #f5f5f5;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+        }
+        
+        .logo-container {
+            background: white;
+            padding: 60px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+        }
+        
+        /* Logo Version 1: Terminal Style */
+        .logo-v1 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .terminal-icon {
+            width: 50px;
+            height: 50px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .terminal-icon::before {
+            content: '>';
+            color: #4CAF50;
+            font-size: 24px;
+            font-weight: bold;
+            animation: blink 1s ease-in-out infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Logo Version 2: Speed Lines */
+        .logo-v2 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .speed-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        .speed-line {
+            height: 3px;
+            background: linear-gradient(90deg, #FF6B6B 0%, #4ECDC4 100%);
+            border-radius: 2px;
+            animation: speed 2s ease-in-out infinite;
+        }
+        
+        .speed-line:nth-child(1) { width: 50px; animation-delay: 0s; }
+        .speed-line:nth-child(2) { width: 35px; animation-delay: 0.1s; }
+        .speed-line:nth-child(3) { width: 42px; animation-delay: 0.2s; }
+        
+        @keyframes speed {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+        
+        /* Logo Version 3: Lightning Bolt */
+        .logo-v3 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .lightning-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .lightning-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+            animation: flash 2s ease-in-out infinite;
+        }
+        
+        @keyframes flash {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        
+        /* Logo Version 4: Metro Style */
+        .logo-v4 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .metro-icon {
+            width: 50px;
+            height: 50px;
+            background: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .metro-icon::before {
+            content: 'M';
+            color: #4CAF50;
+            font-size: 26px;
+            font-weight: 900;
+        }
+        
+        .metro-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid #4CAF50;
+            border-radius: 50%;
+            animation: pulse-ring 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+        
+        /* Logo Text */
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .logo-text .swift {
+            color: #FF6B6B;
+        }
+        
+        .logo-text .metro {
+            color: #4ECDC4;
+        }
+        
+        /* Logo Version 5: Minimal */
+        .logo-v5 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .minimal-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .dot {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .dot:nth-child(1) { 
+            left: 5px; 
+            background: #FF6B6B;
+            animation: orbit 2s ease-in-out infinite;
+        }
+        .dot:nth-child(2) { 
+            right: 5px; 
+            background: #4ECDC4;
+            animation: orbit 2s ease-in-out infinite reverse;
+        }
+        .dot:nth-child(3) { 
+            bottom: 5px; 
+            background: #667eea;
+            animation: orbit 2s ease-in-out infinite 0.5s;
+        }
+        
+        @keyframes orbit {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.2) translateY(-5px); }
+        }
+        
+        /* Usage Examples */
+        .usage {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid #eee;
+        }
+        
+        .usage h3 {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        
+        .usage-example {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 20px;
+        }
+        
+        .dark-bg {
+            background: #000;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .dark-bg .logo-text {
+            color: white;
+        }
+        
+        .small-version {
+            transform: scale(0.7);
+        }
+        
+        .medium-version {
+            transform: scale(1);
+        }
+        
+        .large-version {
+            transform: scale(1.3);
+        }
+    </style>
+</head>
+<body>
+    <h1>SwiftMetro Logo Designs</h1>
+    
+    <!-- Version 1: Terminal -->
+    <div class="logo-container">
+        <h2>Version 1: Terminal Style</h2>
+        <div class="logo-v1">
+            <div class="terminal-icon"></div>
+            <div class="logo-text">
+                <span class="swift">Swift</span><span class="metro">Metro</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Version 2: Speed Lines -->
+    <div class="logo-container">
+        <h2>Version 2: Speed Lines (72h Style)</h2>
+        <div class="logo-v2">
+            <div class="speed-icon">
+                <div class="speed-line"></div>
+                <div class="speed-line"></div>
+                <div class="speed-line"></div>
+            </div>
+            <div class="logo-text">
+                <span class="swift">Swift</span><span class="metro">Metro</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Version 3: Lightning -->
+    <div class="logo-container">
+        <h2>Version 3: Lightning Bolt</h2>
+        <div class="logo-v3">
+            <div class="lightning-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <span class="swift">Swift</span><span class="metro">Metro</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Version 4: Metro Circle -->
+    <div class="logo-container">
+        <h2>Version 4: Metro Style</h2>
+        <div class="logo-v4">
+            <div class="metro-icon"></div>
+            <div class="logo-text">
+                <span class="swift">Swift</span><span class="metro">Metro</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Version 5: Minimal Dots -->
+    <div class="logo-container">
+        <h2>Version 5: Minimal Dots</h2>
+        <div class="logo-v5">
+            <div class="minimal-icon">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <div class="logo-text">
+                <span class="swift">Swift</span><span class="metro">Metro</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Size Examples -->
+    <div class="logo-container">
+        <h2>Size Variations</h2>
+        <div class="usage">
+            <div class="usage-example">
+                <div class="small-version">
+                    <div class="logo-v2">
+                        <div class="speed-icon">
+                            <div class="speed-line"></div>
+                            <div class="speed-line"></div>
+                            <div class="speed-line"></div>
+                        </div>
+                        <div class="logo-text">SwiftMetro</div>
+                    </div>
+                </div>
+                <div class="medium-version">
+                    <div class="logo-v2">
+                        <div class="speed-icon">
+                            <div class="speed-line"></div>
+                            <div class="speed-line"></div>
+                            <div class="speed-line"></div>
+                        </div>
+                        <div class="logo-text">SwiftMetro</div>
+                    </div>
+                </div>
+                <div class="large-version">
+                    <div class="logo-v2">
+                        <div class="speed-icon">
+                            <div class="speed-line"></div>
+                            <div class="speed-line"></div>
+                            <div class="speed-line"></div>
+                        </div>
+                        <div class="logo-text">SwiftMetro</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dark Background Test -->
+    <div class="logo-container dark-bg">
+        <h2 style="color: white;">On Dark Background</h2>
+        <div class="logo-v2">
+            <div class="speed-icon">
+                <div class="speed-line"></div>
+                <div class="speed-line"></div>
+                <div class="speed-line"></div>
+            </div>
+            <div class="logo-text">
+                <span class="swift">Swift</span><span class="metro">Metro</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

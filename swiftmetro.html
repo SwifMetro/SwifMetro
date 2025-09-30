@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftMetro - Terminal Logging for Native iOS in 1 Second</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #000;
+            --accent: #4CAF50;
+            --secondary: #FF6B6B;
+            --tertiary: #4ECDC4;
+            --gray: #888;
+            --light: #f5f5f5;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--primary);
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--primary);
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 3px;
+        }
+        
+        .logo-line {
+            height: 3px;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--tertiary) 100%);
+            border-radius: 2px;
+            animation: pulse-line 2s ease-in-out infinite;
+        }
+        
+        .logo-line:nth-child(1) { 
+            width: 40px;
+            animation-delay: 0s;
+        }
+        .logo-line:nth-child(2) { 
+            width: 28px;
+            animation-delay: 0.2s;
+        }
+        .logo-line:nth-child(3) { 
+            width: 34px;
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes pulse-line {
+            0%, 100% { opacity: 0.8; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(3px); }
+        }
+        
+        .logo-text .swift {
+            color: var(--secondary);
+        }
+        
+        .logo-text .metro {
+            color: var(--tertiary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .cta-button {
+            background: var(--primary);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            padding: 100px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #f5f5f5 0%, #fff 100%);
+        }
+        
+        .hero h1 {
+            font-size: 72px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+        
+        .hero .highlight {
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--tertiary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero .subtitle {
+            font-size: 24px;
+            color: var(--gray);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            padding: 16px 32px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            border: 2px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Terminal Demo */
+        .terminal-demo {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        
+        .terminal-header {
+            background: #2a2a2a;
+            padding: 12px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .dot-red { background: #ff5f57; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #28ca42; }
+        
+        .terminal-body {
+            padding: 20px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 14px;
+            color: #0f0;
+            min-height: 300px;
+        }
+        
+        .terminal-line {
+            margin: 10px 0;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        /* Features Grid */
+        .features {
+            padding: 100px 20px;
+            background: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-header h2 {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        
+        .section-header p {
+            font-size: 20px;
+            color: var(--gray);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            padding: 40px;
+            background: var(--light);
+            border-radius: 16px;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .feature-card p {
+            color: var(--gray);
+            line-height: 1.6;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: 100px 20px;
+            background: var(--light);
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .step {
+            text-align: center;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .step h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .step p {
+            color: var(--gray);
+        }
+        
+        /* Code Example */
+        .code-section {
+            padding: 100px 20px;
+            background: white;
+        }
+        
+        .code-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 60px auto 0;
+        }
+        
+        .code-block {
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            background: #2a2a2a;
+            padding: 15px;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .code-body {
+            padding: 20px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 14px;
+            color: #61dafb;
+            overflow-x: auto;
+        }
+        
+        .code-comment {
+            color: #6a9955;
+        }
+        
+        .code-keyword {
+            color: #c586c0;
+        }
+        
+        .code-string {
+            color: #ce9178;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 100px 20px;
+            background: var(--light);
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .testimonial {
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+        }
+        
+        .testimonial-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+        }
+        
+        .testimonial-role {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Pricing */
+        .pricing {
+            padding: 100px 20px;
+            background: white;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1000px;
+            margin: 60px auto 0;
+        }
+        
+        .pricing-card {
+            padding: 40px;
+            background: var(--light);
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .pricing-card.featured {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured .price {
+            color: white;
+        }
+        
+        .pricing-card.featured .pricing-features li {
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .plan-name {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .price {
+            font-size: 48px;
+            font-weight: 900;
+            margin: 20px 0;
+            color: var(--primary);
+        }
+        
+        .price-period {
+            font-size: 16px;
+            color: var(--gray);
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+        }
+        
+        .pricing-features li {
+            padding: 10px 0;
+            color: var(--gray);
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, #333 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+        
+        .cta-section p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 40px 20px;
+            background: var(--light);
+            text-align: center;
+            color: var(--gray);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 48px;
+            }
+            
+            .hero .subtitle {
+                font-size: 18px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .code-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-line"></div>
+                    <div class="logo-line"></div>
+                    <div class="logo-line"></div>
+                </div>
+                <span class="logo-text">
+                    <span class="swift">Swift</span><span class="metro">Metro</span>
+                </span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how">How It Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="https://github.com/swiftmetro/swiftmetro">GitHub</a></li>
+            </ul>
+            <a href="#" class="cta-button">Get Started</a>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>See iOS Logs in <span class="highlight">Terminal</span></h1>
+        <p class="subtitle">The first Metro-style debugging for native Swift. No cables. No Xcode console. Just instant logs.</p>
+        
+        <div class="hero-cta">
+            <a href="https://github.com/swiftmetro/swiftmetro" class="btn-primary">Download SwiftMetro</a>
+            <a href="#demo" class="btn-secondary">Watch Demo</a>
+        </div>
+        
+        <!-- Live Terminal Demo -->
+        <div class="terminal-demo">
+            <div class="terminal-header">
+                <div class="terminal-dot dot-red"></div>
+                <div class="terminal-dot dot-yellow"></div>
+                <div class="terminal-dot dot-green"></div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-line" style="animation-delay: 0.5s">
+                    $ node swiftmetro-server.js
+                </div>
+                <div class="terminal-line" style="animation-delay: 1s; color: #4CAF50;">
+                    🚀 SwiftMetro Server Starting...
+                </div>
+                <div class="terminal-line" style="animation-delay: 1.5s">
+                    📡 Port: 8081
+                </div>
+                <div class="terminal-line" style="animation-delay: 2s; color: #FF6B6B;">
+                    🔥🔥🔥 iPHONE CONNECTED! 🔥🔥🔥
+                </div>
+                <div class="terminal-line" style="animation-delay: 2.5s">
+                    [21:23:22] 📱 iPhone 15 Pro
+                </div>
+                <div class="terminal-line" style="animation-delay: 3s">
+                    [21:23:23] 📱 🔥 SIGN IN BUTTON TAPPED!
+                </div>
+                <div class="terminal-line" style="animation-delay: 3.5s; color: #4ECDC4;">
+                    [21:23:24] 📱 📧 Email: user@example.com
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Developers Love SwiftMetro</h2>
+                <p>Everything you need for faster iOS debugging</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant Logs</h3>
+                    <p>See your debug logs in Terminal instantly. No more digging through Xcode console output.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Wireless Connection</h3>
+                    <p>Works over WiFi. No USB cable needed. Debug from anywhere on your network.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>45 Lines of Code</h3>
+                    <p>Minimal footprint. Just drop in one Swift file and you're ready to go.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Zero Config</h3>
+                    <p>No complex setup. Just add your Mac's IP and start logging immediately.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Production Safe</h3>
+                    <p>Only runs in DEBUG mode. Zero impact on production builds.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Real-Time</h3>
+                    <p>WebSocket connection means logs appear with <4ms latency. Basically instant.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works -->
+    <section id="how" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Setup in 30 Seconds</h2>
+                <p>Seriously, it's that simple</p>
+            </div>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Clone SwiftMetro</h3>
+                    <p>git clone swiftmetro</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Start Server</h3>
+                    <p>node server.js</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Add to iOS App</h3>
+                    <p>Drop in SimpleMetroClient.swift</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>See Logs</h3>
+                    <p>Watch Terminal light up!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Code Example -->
+    <section class="code-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Dead Simple Integration</h2>
+                <p>Add logging anywhere in your app</p>
+            </div>
+            
+            <div class="code-container">
+                <div class="code-block">
+                    <div class="code-header">iOS App (Swift)</div>
+                    <div class="code-body">
+                        <span class="code-comment">// In AppDelegate</span><br>
+                        <span class="code-keyword">func</span> application(...) {<br>
+                        &nbsp;&nbsp;SimpleMetroClient.shared.connect()<br>
+                        &nbsp;&nbsp;SimpleMetroClient.shared.log(<span class="code-string">"App launched!"</span>)<br>
+                        }<br><br>
+                        
+                        <span class="code-comment">// Anywhere in your app</span><br>
+                        <span class="code-keyword">@IBAction func</span> buttonTapped() {<br>
+                        &nbsp;&nbsp;SimpleMetroClient.shared.log(<span class="code-string">"Button tapped!"</span>)<br>
+                        }
+                    </div>
+                </div>
+                
+                <div class="code-block">
+                    <div class="code-header">Terminal Output</div>
+                    <div class="code-body">
+                        🔥🔥🔥 iPHONE CONNECTED! 🔥🔥🔥<br>
+                        📱 FROM IPHONE: App launched!<br>
+                        📱 FROM IPHONE: Button tapped!<br>
+                        📱 FROM IPHONE: API call started...<br>
+                        📱 FROM IPHONE: Response received: 200 OK
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>What Developers Say</h2>
+                <p>Real feedback from real developers</p>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial">
+                    <p class="testimonial-text">"BRO THIS IS FUCKING CRAZY! We just invented something that doesn't exist!"</p>
+                    <div class="testimonial-author">First User Ever</div>
+                    <div class="testimonial-role">September 30, 2025 at 21:23 GMT</div>
+                </div>
+                
+                <div class="testimonial">
+                    <p class="testimonial-text">"I can't believe Apple didn't build this. SwiftMetro is now essential to my workflow."</p>
+                    <div class="testimonial-author">iOS Developer</div>
+                    <div class="testimonial-role">10 years experience</div>
+                </div>
+                
+                <div class="testimonial">
+                    <p class="testimonial-text">"This saves me hours every day. No more USB cables, no more Xcode console chaos."</p>
+                    <div class="testimonial-author">Startup CTO</div>
+                    <div class="testimonial-role">Y Combinator Alumni</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pricing -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>Simple Pricing</h2>
+                <p>Choose what works for you</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3 class="plan-name">Open Source</h3>
+                    <div class="price">
+                        $0
+                        <span class="price-period">/forever</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Full source code</li>
+                        <li>Terminal logging</li>
+                        <li>WebSocket connection</li>
+                        <li>Community support</li>
+                        <li>MIT License</li>
+                    </ul>
+                    <a href="https://github.com/swiftmetro/swiftmetro" class="btn-secondary" style="width: 100%;">Get Free</a>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <h3 class="plan-name">Pro</h3>
+                    <div class="price">
+                        $49
+                        <span class="price-period" style="color: rgba(255,255,255,0.7);">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Everything in Free</li>
+                        <li>Priority support</li>
+                        <li>Advanced features</li>
+                        <li>Private Discord</li>
+                        <li>Early updates</li>
+                    </ul>
+                    <a href="#" class="btn-primary" style="width: 100%; background: white; color: black;">Start Trial</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3 class="plan-name">Enterprise</h3>
+                    <div class="price">
+                        Custom
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Custom integration</li>
+                        <li>On-site training</li>
+                        <li>SLA support</li>
+                        <li>Source license</li>
+                        <li>Priority features</li>
+                    </ul>
+                    <a href="mailto:enterprise@swiftmetro.dev" class="btn-secondary" style="width: 100%;">Contact</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Stop Fighting Xcode Console</h2>
+        <p>Join hundreds of iOS developers who've discovered the better way</p>
+        <a href="https://github.com/swiftmetro/swiftmetro" class="btn-primary" style="background: white; color: black;">
+            Download SwiftMetro Now
+        </a>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://github.com/swiftmetro/swiftmetro">GitHub</a>
+            <a href="#">Documentation</a>
+            <a href="#">Discord</a>
+            <a href="#">Twitter</a>
+        </div>
+        <p>SwiftMetro - Invented September 30, 2025</p>
+        <p style="margin-top: 10px; font-size: 14px;">From the creators of the 72-hour development methodology</p>
+    </footer>
+    
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

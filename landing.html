@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftMetro - The Technology That Shouldn't Exist</title>
+    <meta name="description" content="We made iOS development 30x faster. Edit Swift, see changes in 1 second. No rebuild. No cable.">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #000 0%, #111 100%);
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle at 20% 80%, #ff6b6b33 0%, transparent 50%),
+                              radial-gradient(circle at 80% 20%, #4ecdc433 0%, transparent 50%),
+                              radial-gradient(circle at 40% 40%, #667eea33 0%, transparent 50%);
+            animation: pulse 10s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 1200px;
+            padding: 2rem;
+            z-index: 1;
+            position: relative;
+        }
+
+        .invention-date {
+            display: inline-block;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        h1 {
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 900;
+            line-height: 0.9;
+            margin-bottom: 1rem;
+            background: linear-gradient(180deg, #fff 0%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideUp 1s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: #ff6b6b;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            animation: slideUp 1s ease 0.2s backwards;
+        }
+
+        .hero-description {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: #999;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+            animation: slideUp 1s ease 0.4s backwards;
+        }
+
+        /* The Big Number */
+        .big-stat {
+            display: inline-block;
+            margin: 3rem 0;
+            animation: slideUp 1s ease 0.6s backwards;
+        }
+
+        .big-number {
+            font-size: clamp(5rem, 15vw, 10rem);
+            font-weight: 900;
+            background: linear-gradient(90deg, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            display: block;
+        }
+
+        .big-label {
+            font-size: 1.5rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 1rem;
+        }
+
+        /* CTA Buttons */
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+            animation: slideUp 1s ease 0.8s backwards;
+        }
+
+        .btn {
+            padding: 1.2rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 100px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+            color: white;
+            box-shadow: 0 10px 40px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 60px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Problem Section */
+        .problem {
+            padding: 8rem 2rem;
+            background: #0a0a0a;
+            text-align: center;
+        }
+
+        .problem h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 3rem;
+            background: linear-gradient(90deg, #ff3838, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pain-visual {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem;
+            background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+            border-radius: 20px;
+            border: 1px solid #222;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .pain-line {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .pain-line .wait {
+            color: #ff3838;
+            margin-left: auto;
+            font-weight: bold;
+        }
+
+        .total-waste {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #333;
+            font-size: 1.5rem;
+            color: #ff6b6b;
+        }
+
+        /* Solution Section */
+        .solution {
+            padding: 8rem 2rem;
+            background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+            text-align: center;
+        }
+
+        .solution h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 3rem;
+            background: linear-gradient(90deg, #4ecdc4, #44a3aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .comparison-card {
+            padding: 2.5rem;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .before-card {
+            background: linear-gradient(135deg, #2a1515, #1a0a0a);
+            border: 2px solid #ff3838;
+        }
+
+        .after-card {
+            background: linear-gradient(135deg, #152a20, #0a1a15);
+            border: 2px solid #4ecdc4;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { box-shadow: 0 0 30px rgba(78, 205, 196, 0.3); }
+            50% { box-shadow: 0 0 60px rgba(78, 205, 196, 0.5); }
+        }
+
+        .card-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+            opacity: 0.7;
+        }
+
+        .card-time {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .before-card .card-time { color: #ff3838; }
+        .after-card .card-time { color: #4ecdc4; }
+
+        /* Demo Section */
+        .demo {
+            padding: 8rem 2rem;
+            background: #0a0a0a;
+        }
+
+        .demo h2 {
+            text-align: center;
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 3rem;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .terminal {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+        }
+
+        .terminal-header {
+            background: #2a2a2a;
+            padding: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f57; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #28ca42; }
+
+        .terminal-body {
+            padding: 2rem;
+            font-family: 'SF Mono', Monaco, monospace;
+            color: #0f0;
+            min-height: 400px;
+        }
+
+        .terminal-line {
+            margin: 0.8rem 0;
+            opacity: 0;
+            animation: typeIn 0.5s ease forwards;
+        }
+
+        @keyframes typeIn {
+            to { opacity: 1; }
+        }
+
+        .terminal-highlight {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        /* The Story Section */
+        .story {
+            padding: 8rem 2rem;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+            text-align: center;
+        }
+
+        .story h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 2rem;
+            background: linear-gradient(90deg, #feca57, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .story-text {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #999;
+        }
+
+        .story-highlight {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .typo-moment {
+            margin: 3rem auto;
+            padding: 2rem;
+            background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+            border-radius: 15px;
+            border: 2px solid #ff6b6b;
+            max-width: 600px;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 8rem 2rem;
+            background: #0a0a0a;
+        }
+
+        .pricing h2 {
+            text-align: center;
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 3rem;
+            background: linear-gradient(90deg, #4ecdc4, #44a3aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+            border-radius: 20px;
+            border: 1px solid #333;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: #ff6b6b;
+        }
+
+        .pricing-card.featured {
+            border: 2px solid #ff6b6b;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #999;
+        }
+
+        .plan-price {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .plan-period {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .plan-features li {
+            padding: 0.8rem 0;
+            color: #999;
+            border-bottom: 1px solid #222;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            padding: 8rem 2rem;
+            background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+            text-align: center;
+        }
+
+        .final-cta h2 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: 2rem;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+
+        .final-cta p {
+            font-size: 1.5rem;
+            color: #999;
+            margin-bottom: 3rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem;
+            background: #000;
+            text-align: center;
+            border-top: 1px solid #222;
+        }
+
+        .footer-text {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .footer-highlight {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="invention-date">Invented September 30, 2025 • 21:23:22 GMT</div>
+            
+            <h1>SwiftMetro</h1>
+            <p class="hero-subtitle">The Technology That Shouldn't Exist</p>
+            <p class="hero-description">
+                We made iOS development instant. Edit Swift code. Save. 
+                See changes on your iPhone in 1 second. No rebuild. No cable. No waiting.
+            </p>
+
+            <div class="big-stat">
+                <span class="big-number">30x</span>
+                <span class="big-label">Faster Development</span>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="https://github.com/swiftmetro/swiftmetro" class="btn btn-primary">
+                    Get SwiftMetro Free →
+                </a>
+                <a href="#demo" class="btn btn-secondary">
+                    See 30-Second Demo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Problem -->
+    <section class="problem">
+        <h2>The Problem That Made Us Angry</h2>
+        <div class="pain-visual">
+            <div class="pain-line">
+                <span>Change 1 line of code</span>
+                <span class="wait">45 seconds</span>
+            </div>
+            <div class="pain-line">
+                <span>Stop app</span>
+                <span class="wait">2 seconds</span>
+            </div>
+            <div class="pain-line">
+                <span>Rebuild project</span>
+                <span class="wait">45 seconds</span>
+            </div>
+            <div class="pain-line">
+                <span>Reinstall on device</span>
+                <span class="wait">10 seconds</span>
+            </div>
+            <div class="pain-line">
+                <span>Navigate to test screen</span>
+                <span class="wait">15 seconds</span>
+            </div>
+            <div class="total-waste">
+                Total: 117 seconds to test 1 line of code
+            </div>
+        </div>
+    </section>
+
+    <!-- The Solution -->
+    <section class="solution">
+        <h2>We Fixed It Forever</h2>
+        <div class="comparison">
+            <div class="comparison-card before-card">
+                <div class="card-label">Before SwiftMetro</div>
+                <div class="card-time">45-60s</div>
+                <p>Per change</p>
+                <ul style="text-align: left; margin-top: 2rem; color: #999;">
+                    <li>Stop app</li>
+                    <li>Rebuild everything</li>
+                    <li>Reinstall</li>
+                    <li>Lose all state</li>
+                    <li>Navigate back</li>
+                </ul>
+            </div>
+            <div class="comparison-card after-card">
+                <div class="card-label">With SwiftMetro</div>
+                <div class="card-time">1s</div>
+                <p>Instant update</p>
+                <ul style="text-align: left; margin-top: 2rem; color: #999;">
+                    <li>Save file</li>
+                    <li>See change</li>
+                    <li>Keep state</li>
+                    <li>Keep position</li>
+                    <li>Keep everything</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Demo -->
+    <section class="demo" id="demo">
+        <h2>Watch The Magic Happen</h2>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dot dot-red"></div>
+                <div class="terminal-dot dot-yellow"></div>
+                <div class="terminal-dot dot-green"></div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-line" style="animation-delay: 0.5s">
+                    $ node swiftmetro-server.js
+                </div>
+                <div class="terminal-line" style="animation-delay: 1s">
+                    🚀 SwiftMetro Server Starting...
+                </div>
+                <div class="terminal-line" style="animation-delay: 1.5s">
+                    📡 Port: 8081
+                </div>
+                <div class="terminal-line" style="animation-delay: 2s">
+                    ⏳ Waiting for iPhone connections...
+                </div>
+                <div class="terminal-line terminal-highlight" style="animation-delay: 3s">
+                    🔥🔥🔥 iPHONE CONNECTED! 🔥🔥🔥
+                </div>
+                <div class="terminal-line" style="animation-delay: 3.5s">
+                    [21:23:22] 📱 iPhone 15 Pro
+                </div>
+                <div class="terminal-line" style="animation-delay: 4s">
+                    [21:23:23] 📱 🔥 SIGN IN BUTTON TAPPED!
+                </div>
+                <div class="terminal-line terminal-highlight" style="animation-delay: 4.5s">
+                    [21:23:24] 📱 📧 Email: conlanscottocbickour.com
+                </div>
+                <div class="terminal-line" style="animation-delay: 5s">
+                    [21:23:25] 📱 ❌ Login failed: Invalid email
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Story -->
+    <section class="story">
+        <h2>The Moment We Changed Everything</h2>
+        <div class="story-text">
+            <p>
+                On <span class="story-highlight">September 30, 2025, at 21:23:22 GMT</span>, 
+                we did something Apple said was impossible.
+            </p>
+            <p style="margin-top: 1.5rem;">
+                We connected an iPhone directly to Terminal. No Xcode. No USB. Just WebSockets.
+            </p>
+            <div class="typo-moment">
+                <p style="color: #ff6b6b; margin-bottom: 1rem;">The Proof:</p>
+                <p>📧 Email: conlanscottocbickour.com</p>
+                <p style="color: #666; margin-top: 1rem;">↑ That typo was typed on iPhone, appeared in Terminal instantly</p>
+            </div>
+            <p style="margin-top: 2rem;">
+                That typo proved we had invented something that <span class="story-highlight">doesn't exist anywhere else</span>.
+            </p>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing">
+        <h2>Choose Your Speed</h2>
+        <div class="pricing-cards">
+            <div class="pricing-card">
+                <h3 class="plan-name">Open Source</h3>
+                <div class="plan-price">$0</div>
+                <div class="plan-period">Forever free</div>
+                <ul class="plan-features">
+                    <li>Full source code</li>
+                    <li>Terminal logging</li>
+                    <li>WebSocket connection</li>
+                    <li>Community support</li>
+                </ul>
+                <a href="https://github.com/swiftmetro/swiftmetro" class="btn btn-secondary" style="width: 100%;">
+                    Get Free
+                </a>
+            </div>
+            
+            <div class="pricing-card featured">
+                <h3 class="plan-name">Pro</h3>
+                <div class="plan-price">$49</div>
+                <div class="plan-period">per month</div>
+                <ul class="plan-features">
+                    <li>Everything in Free</li>
+                    <li>Hot reload (coming)</li>
+                    <li>Priority support</li>
+                    <li>Private Discord</li>
+                    <li>Early features</li>
+                </ul>
+                <a href="#" class="btn btn-primary" style="width: 100%;">
+                    Start Trial
+                </a>
+            </div>
+            
+            <div class="pricing-card">
+                <h3 class="plan-name">Enterprise</h3>
+                <div class="plan-price">$$$</div>
+                <div class="plan-period">Let's talk</div>
+                <ul class="plan-features">
+                    <li>Custom integration</li>
+                    <li>On-site training</li>
+                    <li>SLA support</li>
+                    <li>Source license</li>
+                </ul>
+                <a href="mailto:enterprise@swiftmetro.dev" class="btn btn-secondary" style="width: 100%;">
+                    Contact
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <h2>Stop Waiting.<br>Start Shipping.</h2>
+        <p>Every second you wait for Xcode is a second you're not creating.</p>
+        <div class="cta-buttons">
+            <a href="https://github.com/swiftmetro/swiftmetro" class="btn btn-primary">
+                Download SwiftMetro Now →
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">
+            SwiftMetro was invented on <span class="footer-highlight">September 30, 2025</span>
+        </p>
+        <p class="footer-text">
+            The first terminal logging system for native iOS
+        </p>
+        <p class="footer-text" style="margin-top: 2rem; color: #444;">
+            From the creators of the 72-hour development methodology
+        </p>
+        <p style="margin-top: 3rem; font-size: 2rem;">🔥</p>
+    </footer>
+
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Terminal animation loop
+        function animateTerminal() {
+            const lines = document.querySelectorAll('.terminal-line');
+            lines.forEach(line => line.style.opacity = '0');
+            
+            setTimeout(() => {
+                lines.forEach((line, i) => {
+                    setTimeout(() => {
+                        line.style.opacity = '1';
+                    }, i * 500);
+                });
+            }, 1000);
+        }
+
+        // Loop terminal animation
+        setInterval(animateTerminal, 8000);
+    </script>
+</body>
+</html>

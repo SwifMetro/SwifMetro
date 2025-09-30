@@ -1,0 +1,38 @@
+{
+  "name": "swiftmetro",
+  "version": "1.0.0",
+  "description": "Terminal logging for native iOS - The technology that shouldn't exist",
+  "main": "swiftmetro-server.js",
+  "scripts": {
+    "start": "node swiftmetro-server.js",
+    "setup": "./setup.sh",
+    "test": "./test-swiftmetro.sh"
+  },
+  "keywords": [
+    "ios",
+    "swift",
+    "logging",
+    "debugging",
+    "terminal",
+    "websocket",
+    "metro",
+    "native",
+    "xcode"
+  ],
+  "author": "72hConcept Team",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.14.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swiftmetro/swiftmetro.git"
+  },
+  "homepage": "https://swiftmetro.dev",
+  "bugs": {
+    "url": "https://github.com/swiftmetro/swiftmetro/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

@@ -1,0 +1,46 @@
+# Node
+node_modules/
+npm-debug.log
+*.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+DerivedData/
+*.moved-aside
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+!default.pbxuser
+!default.mode1v3
+!default.mode2v3
+!default.perspectivev3
+
+# Swift
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+.build/
+
+# Test coverage
+*.lcov
+
+# Environment
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# IP Configuration (users should set their own)
+SimpleMetroClient.swift.configured
