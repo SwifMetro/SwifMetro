@@ -15,7 +15,7 @@ class SwifMetroClient {
     // Bonjour Service Discovery
     private var browser: NWBrowser?
     private var connection: NWConnection?
-    private let serviceTy
+    private let serviceType = "_swifmetro._tcp"
     
     // Configuration
     private var serverIP: String?
@@ -29,6 +29,10 @@ class SwifMetroClient {
     // Performance Monitoring
     private var startTime: Date?
     private var logCount = 0
+    
+    private init() {
+        // Private initializer for singleton
+    }
     
     /// Start SwifMetro with auto-discovery
     func start() {
