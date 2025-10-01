@@ -34,13 +34,69 @@ public class SwifMetroClient {
         // Private initializer for singleton
     }
     
-    /// Start SwifMetro with optional manual IP
-    /// - Parameter serverIP: Optional server IP address (e.g., "192.168.0.100")
-    ///   If provided, skips auto-discovery and connects directly
-    ///   If nil, uses Bonjour auto-discovery
-    public func start(serverIP: String? = nil) {
+    // MARK: - License Validation
+    
+    private func isValidLicenseKey(_ key: String) -> Bool {
+        // Format: SWIF-XXXX-XXXX-XXXX
+        let pattern = "^SWIF-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$"
+        guard key.range(of: pattern, options: .regularExpression) != nil else {
+            return false
+        }
+        
+        // TODO: Server-side validation in future
+        // For now, simple checksum validation
+        let parts = key.split(separator: "-")
+        guard parts.count == 4 else { return false }
+        
+        // Valid license keys (you'll generate these for customers)
+        let validKeys = [
+            "SWIF-DEMO-DEMO-DEMO",  // Demo key for testing
+        ]
+        
+        return validKeys.contains(key)
+    }
+    
+    private func isTrialValid() -> Bool {
+        let trialKey = "swifmetro_trial_start"
+        let defaults = UserDefaults.standard
+        
+        if let trialStart = defaults.object(forKey: trialKey) as? Date {
+            let daysSinceStart = Calendar.current.dateComponents([.day], from: trialStart, to: Date()).day ?? 0
+            return daysSinceStart < 7
+        } else {
+            // First launch - start trial
+            defaults.set(Date(), forKey: trialKey)
+            return true
+        }
+    }
+    
+    /// Start SwifMetro with optional manual IP and license key
+    /// - Parameters:
+    ///   - serverIP: Optional server IP address (e.g., "192.168.0.100")
+    ///   - licenseKey: Your SwifMetro Pro license key (get one at swifmetro.dev)
+    /// - Note: A valid license key is required. Get yours at https://swifmetro.dev
+    public func start(serverIP: String? = nil, licenseKey: String? = nil) {
         #if DEBUG
         startTime = Date()
+        
+        // Validate license key
+        if let key = licenseKey {
+            if !isValidLicenseKey(key) {
+                print("❌ SwifMetro: Invalid license key!")
+                print("📝 Get your license at: https://swifmetro.dev")
+                return
+            }
+        } else {
+            print("⚠️ SwifMetro: No license key provided!")
+            print("📝 Get your license at: https://swifmetro.dev")
+            print("💡 Usage: SwifMetroClient.shared.start(serverIP: \"IP\", licenseKey: \"YOUR-KEY\")")
+            // Allow 7 days trial
+            if !isTrialValid() {
+                print("❌ Trial expired. Purchase at: https://swifmetro.dev")
+                return
+            }
+            print("✅ Trial mode active (7 days remaining)")
+        }
         
         if let ip = serverIP {
             print("🚀 SwifMetro: Connecting to manual IP: \(ip)...")
@@ -277,7 +333,7 @@ public class SwifMetroClient {
     // MARK: - Public Logging API
     
     /// Log a message
-    func log(_ message: String) {
+    public func log(_ message: String) {
         logCount += 1
         
         let timestamp = ISO8601DateFormatter().string(from: Date())
