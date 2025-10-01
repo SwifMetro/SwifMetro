@@ -5,8 +5,8 @@ import Network
 /// SwifMetro Client - Advanced Version with Auto-Discovery
 /// Created: September 30, 2025
 /// The technology that revolutionized iOS debugging
-class SwifMetroClient {
-    static let shared = SwifMetroClient()
+public class SwifMetroClient {
+    public static let shared = SwifMetroClient()
     
     // WebSocket
     private var webSocketTask: URLSessionWebSocketTask?
@@ -35,7 +35,7 @@ class SwifMetroClient {
     }
     
     /// Start SwifMetro with auto-discovery
-    func start() {
+    public func start() {
         #if DEBUG
         print("🚀 SwifMetro: Starting auto-discovery...")
         discoverServer()
