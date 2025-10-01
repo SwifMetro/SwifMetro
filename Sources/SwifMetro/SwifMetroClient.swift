@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import Network
+import os.log
 
 /// SwifMetro Client - Advanced Version with Auto-Discovery
 /// Created: September 30, 2025
@@ -36,6 +37,12 @@ public class SwifMetroClient {
     private var stdoutPipe: [Int32] = [0, 0]
     private var stderrPipe: [Int32] = [0, 0]
     private var captureQueue = DispatchQueue(label: "com.swifmetro.capture")
+    
+    // Crash handling
+    private var previousExceptionHandler: (@convention(c) (NSException) -> Void)?
+    
+    // Network logging
+    private var isNetworkLoggingEnabled = false
     
     private init() {
         // Private initializer for singleton
@@ -107,6 +114,12 @@ public class SwifMetroClient {
         
         // START AUTO-CAPTURE OF print() and NSLog()
         startAutomaticCapture()
+        
+        // SETUP CRASH HANDLER
+        setupCrashHandler()
+        
+        // SETUP OS LOG CAPTURE
+        setupOSLogCapture()
         
         if let ip = serverIP {
             print("🚀 SwifMetro: Connecting to manual IP: \(ip)...")
@@ -595,3 +608,160 @@ extension View {
     }
 }
 #endif
+
+// MARK: - Crash Handler 💥
+
+extension SwifMetroClient {
+    
+    /// Setup crash handling to capture fatal errors
+    func setupCrashHandler() {
+        #if DEBUG
+        
+        NSSetUncaughtExceptionHandler { exception in
+            let message = """
+            💥💥💥 CRASH DETECTED 💥💥💥
+            Name: \(exception.name.rawValue)
+            Reason: \(exception.reason ?? "Unknown")
+            Stack: \(exception.callStackSymbols.joined(separator: "\n"))
+            """
+            SwifMetroClient.shared.log(message)
+            
+            Thread.sleep(forTimeInterval: 1.0)
+        }
+        
+        signal(SIGABRT) { signal in
+            SwifMetroClient.shared.log("💥 SIGABRT: App aborted")
+        }
+        
+        signal(SIGILL) { signal in
+            SwifMetroClient.shared.log("💥 SIGILL: Illegal instruction")
+        }
+        
+        signal(SIGSEGV) { signal in
+            SwifMetroClient.shared.log("💥 SIGSEGV: Segmentation fault")
+        }
+        
+        signal(SIGFPE) { signal in
+            SwifMetroClient.shared.log("💥 SIGFPE: Floating point exception")
+        }
+        
+        signal(SIGBUS) { signal in
+            SwifMetroClient.shared.log("💥 SIGBUS: Bus error")
+        }
+        
+        log("🛡️ Crash handler installed")
+        #endif
+    }
+}
+
+// MARK: - Error Logging 🚨
+
+extension SwifMetroClient {
+    
+    /// Log any Swift Error
+    public func logError(_ error: Error, context: String = "") {
+        let contextPrefix = context.isEmpty ? "" : "[\(context)] "
+        log("🚨 ERROR: \(contextPrefix)\(error.localizedDescription)")
+        
+        if let nsError = error as NSError? {
+            log("   Domain: \(nsError.domain)")
+            log("   Code: \(nsError.code)")
+            if !nsError.userInfo.isEmpty {
+                log("   UserInfo: \(nsError.userInfo)")
+            }
+        }
+    }
+    
+    /// Wrap throwing code to auto-log errors
+    public func logTry<T>(_ context: String = "", _ block: () throws -> T) -> T? {
+        do {
+            return try block()
+        } catch {
+            logError(error, context: context)
+            return nil
+        }
+    }
+}
+
+// MARK: - os_log / Logger Capture 📋
+
+extension SwifMetroClient {
+    
+    /// Capture os_log and Logger messages
+    func setupOSLogCapture() {
+        #if DEBUG
+        log("📋 OS Log capture enabled - os_log() and Logger messages will appear!")
+        #endif
+    }
+    
+    /// Log using os_log (will be auto-captured by our pipe redirection)
+    public func osLog(_ message: String, type: OSLogType = .default) {
+        os_log("%{public}@", log: .default, type: type, message)
+    }
+}
+
+// MARK: - Network Request Logger 🌐
+
+extension SwifMetroClient {
+    
+    /// Enable automatic network request logging
+    public func enableNetworkLogging() {
+        isNetworkLoggingEnabled = true
+        log("🌐 Network logging enabled")
+    }
+    
+    /// Disable automatic network request logging  
+    public func disableNetworkLogging() {
+        isNetworkLoggingEnabled = false
+        log("🌐 Network logging disabled")
+    }
+}
+
+/// URLSession extension for automatic network logging
+extension URLSession {
+    
+    func swifMetroDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+        let startTime = Date()
+        
+        SwifMetroClient.shared.log("🌐 ➡️  \(request.httpMethod ?? "GET") \(request.url?.absoluteString ?? "unknown")")
+        
+        if let headers = request.allHTTPHeaderFields, !headers.isEmpty {
+            SwifMetroClient.shared.log("   Headers: \(headers)")
+        }
+        
+        if let body = request.httpBody, let bodyString = String(data: body, encoding: .utf8) {
+            SwifMetroClient.shared.log("   Body: \(bodyString)")
+        }
+        
+        return dataTask(with: request) { data, response, error in
+            let duration = Date().timeIntervalSince(startTime)
+            
+            if let error = error {
+                SwifMetroClient.shared.log("🌐 ❌ \(request.httpMethod ?? "GET") \(request.url?.absoluteString ?? "unknown") FAILED after \(String(format: "%.2f", duration))s")
+                SwifMetroClient.shared.logError(error, context: "Network")
+            } else if let httpResponse = response as? HTTPURLResponse {
+                let statusEmoji = (200...299).contains(httpResponse.statusCode) ? "✅" : "⚠️"
+                SwifMetroClient.shared.log("🌐 \(statusEmoji) \(request.httpMethod ?? "GET") \(request.url?.absoluteString ?? "unknown") → \(httpResponse.statusCode) (\(String(format: "%.2f", duration))s)")
+                
+                if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                    let preview = responseString.prefix(200)
+                    SwifMetroClient.shared.log("   Response: \(preview)\(responseString.count > 200 ? "..." : "")")
+                }
+            }
+            
+            completionHandler(data, response, error)
+        }
+    }
+}
+
+// MARK: - Global Error Helpers
+
+/// Global helper to log errors easily
+public func swifMetroLog(_ message: String) {
+    SwifMetroClient.shared.log(message)
+}
+
+/// Global helper to log errors
+public func swifMetroError(_ error: Error, context: String = "") {
+    SwifMetroClient.shared.logError(error, context: context)
+}
