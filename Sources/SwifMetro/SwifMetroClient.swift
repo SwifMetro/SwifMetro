@@ -34,21 +34,31 @@ public class SwifMetroClient {
         // Private initializer for singleton
     }
     
-    /// Start SwifMetro with auto-discovery
-    public func start() {
+    /// Start SwifMetro with optional manual IP
+    /// - Parameter serverIP: Optional server IP address (e.g., "192.168.0.100")
+    ///   If provided, skips auto-discovery and connects directly
+    ///   If nil, uses Bonjour auto-discovery
+    public func start(serverIP: String? = nil) {
         #if DEBUG
-        print("🚀 SwifMetro: Starting auto-discovery...")
-        discoverServer()
         startTime = Date()
         
-        // Fallback: Try localhost if on simulator
-        #if targetEnvironment(simulator)
-        connectToServer("127.0.0.1")
-        #endif
+        if let ip = serverIP {
+            print("🚀 SwifMetro: Connecting to manual IP: \(ip)...")
+            connectToServer(ip)
+        } else {
+            print("🚀 SwifMetro: Starting auto-discovery...")
+            discoverServer()
+            
+            // Fallback: Try localhost if on simulator
+            #if targetEnvironment(simulator)
+            connectToServer("127.0.0.1")
+            #endif
+        }
         #endif
     }
     
     /// Discover SwifMetro server using Bonjour
+    /// Note: Requires Local Network permission on iOS 14+
     private func discoverServer() {
         let parameters = NWParameters()
         parameters.includePeerToPeer = true

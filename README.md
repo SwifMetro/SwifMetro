@@ -1,12 +1,12 @@
-e?# SwifMetro
+e?do i have to# SwifMetro
 
 **The technology that shouldn't exist. But does.**
 
 ---
 
-## 🚀 Quick Start (2 minutes)
+## 🚀 Quick Start (5 minutes)
 
-### Step 1: Start Server
+### Step 1: Start Server on Your Mac
 ```bash
 git clone https://github.com/csainsworth123/swifmetro.git
 cd swifmetro
@@ -14,17 +14,57 @@ npm install
 npm start
 ```
 
-### Step 2: Add to Your iOS App
-1. **Drag** `SwifMetroClient.swift` into your Xcode project
-2. **Check** "Copy items if needed" ✅
-3. **Add** one line to your app:
-```swift
-// In AppDelegate or @main App struct
-SwifMetroClient.shared.start()
+**Note your Mac's IP address** from the server output (e.g., `192.168.0.100`)
+
+### Step 2: Add SwifMetro to Your iOS App
+
+#### A. Add Package in Xcode
+1. **Open Xcode** → File → Add Package Dependencies
+2. **Enter URL**: `https://github.com/csainsworth123/swifmetro.git`
+3. **Sign in to GitHub** if prompted (use personal access token)
+4. **Add package** to your target
+
+#### B. Add Required Permissions to Info.plist
+Right-click `Info.plist` → Open As → Source Code, then add:
+```xml
+<key>NSLocalNetworkUsageDescription</key>
+<string>SwifMetro needs local network access to stream logs from your device to your Mac for debugging.</string>
+<key>NSBonjourServices</key>
+<array>
+    <string>_swifmetro._tcp</string>
+</array>
 ```
 
-### Step 3: See Magic
-Run your app. Every `print()` now appears in Terminal instantly. Wirelessly.
+#### C. Start SwifMetro in Your App
+```swift
+import SwiftUI
+import SwifMetro  // ← Add this import
+
+@main
+struct YourApp: App {
+    init() {
+        // Option 1: Manual IP (RECOMMENDED - Always works)
+        SwifMetroClient.shared.start(serverIP: "192.168.0.100")
+        
+        // Option 2: Auto-discovery (May fail on some networks)
+        // SwifMetroClient.shared.start()
+    }
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+```
+
+**⚠️ IMPORTANT:** Replace `192.168.0.100` with YOUR Mac's IP from Step 1!
+
+### Step 3: Run Your App
+1. **Build to iPhone** (not simulator)
+2. **Logs appear in Terminal** instantly - wirelessly!
+
+**Troubleshooting:** If no logs appear, see [Troubleshooting](#troubleshooting) below.
 
 ---
 
@@ -276,6 +316,92 @@ SwifMetro gives you those seconds back.
 *Built in 3 hours. Changes iOS development forever.*
 
 </div>
+
+---
+
+## 🔧 Troubleshooting
+
+### Issue: No logs appearing in Terminal
+
+#### Solution 1: Verify Same WiFi Network
+- **Mac and iPhone MUST be on the same WiFi**
+- Check Mac: Click WiFi icon in menu bar
+- Check iPhone: Settings → WiFi
+- They must show the SAME network name
+
+#### Solution 2: Use Manual IP (Recommended)
+```swift
+// Get your Mac's IP from the server output
+SwifMetroClient.shared.start(serverIP: "192.168.0.100")  // Replace with YOUR IP
+```
+
+#### Solution 3: Check Firewall
+- Mac: System Settings → Network → Firewall
+- If enabled, add exception for port 8081
+- Or disable temporarily for testing
+
+#### Solution 4: Verify Permissions in Info.plist
+Make sure you added BOTH:
+```xml
+<key>NSLocalNetworkUsageDescription</key>
+<string>SwifMetro needs local network access to stream logs from your device to your Mac for debugging.</string>
+<key>NSBonjourServices</key>
+<array>
+    <string>_swifmetro._tcp</string>
+</array>
+```
+
+#### Solution 5: Check iPhone Permissions
+- First launch should ask "Allow Local Network Access"
+- If you denied it: Settings → YourApp → Local Network → Enable
+
+### Issue: "Cannot find 'SwifMetroClient' in scope"
+
+#### Solution: Missing import statement
+```swift
+import SwifMetro  // Add this at the top of the file
+```
+
+### Issue: Xcode shows old version after updating package
+
+#### Solution: Clear Xcode cache
+```bash
+rm -rf ~/Library/Developer/Xcode/DerivedData/*
+```
+Then in Xcode: File → Packages → Update to Latest Package Versions
+
+### Issue: Auto-discovery fails with "NoAuth" error
+
+This is normal on many networks! **Use manual IP instead:**
+```swift
+SwifMetroClient.shared.start(serverIP: "YOUR_MAC_IP")
+```
+
+### Issue: How do I find my Mac's IP?
+
+The server shows it when you run `npm start`:
+```
+📱 Your iPhone should connect to one of these IPs:
+--------------------------------------------------
+   192.168.0.100 (en0)
+```
+
+Or run: `ifconfig | grep "inet " | grep -v 127.0.0.1`
+
+---
+
+## 📚 Complete Setup Checklist
+
+Before asking for help, verify:
+- [ ] Server running on Mac (`npm start`)
+- [ ] Mac IP address noted (from server output)
+- [ ] SwifMetro package added in Xcode
+- [ ] `import SwifMetro` at top of file
+- [ ] `SwifMetroClient.shared.start(serverIP: "YOUR_IP")` in app init
+- [ ] Permissions added to Info.plist
+- [ ] Mac and iPhone on SAME WiFi
+- [ ] Building to real iPhone (not simulator)
+- [ ] Local Network permission granted on iPhone
 
 ---
 
