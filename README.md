@@ -7,14 +7,30 @@ e?do i have to# SwifMetro
 ## 🚀 Quick Start (5 minutes)
 
 ### Step 1: Start Server on Your Mac
+
+**Open Terminal and run:**
 ```bash
 git clone https://github.com/csainsworth123/swifmetro.git
 cd swifmetro
 npm install
-npm start
+node swifmetro-server.js
 ```
 
-**Note your Mac's IP address** from the server output (e.g., `192.168.0.100`)
+**You'll see:**
+```
+🚀 SWIFMETRO SERVER
+📡 Starting on port 8081...
+
+📱 Your iPhone should connect to one of these IPs:
+   192.168.0.100 (en0)
+
+⏳ Waiting for iPhone connections...
+```
+
+**✅ IMPORTANT:** 
+- **Keep this Terminal window open!** Logs will appear here.
+- **Note your Mac's IP address** (e.g., `192.168.0.100`)
+- To restart server: Press `Ctrl+C`, then run `node swifmetro-server.js` again
 
 ### Step 2: Add SwifMetro to Your iOS App
 
@@ -43,11 +59,14 @@ import SwifMetro  // ← Add this import
 @main
 struct YourApp: App {
     init() {
-        // Option 1: Manual IP (RECOMMENDED - Always works)
+        // Free version (7-day trial)
         SwifMetroClient.shared.start(serverIP: "192.168.0.100")
         
-        // Option 2: Auto-discovery (May fail on some networks)
-        // SwifMetroClient.shared.start()
+        // Pro version (with license key)
+        // SwifMetroClient.shared.start(
+        //     serverIP: "192.168.0.100",
+        //     licenseKey: "SWIF-XXXX-XXXX-XXXX"  // ← Your license key from email
+        // )
     }
     
     var body: some Scene {
@@ -58,11 +77,31 @@ struct YourApp: App {
 }
 ```
 
-**⚠️ IMPORTANT:** Replace `192.168.0.100` with YOUR Mac's IP from Step 1!
+**⚠️ IMPORTANT:** 
+- Replace `192.168.0.100` with YOUR Mac's IP from Step 1!
+- If you have a Pro license, uncomment the Pro version and add your license key
 
-### Step 3: Run Your App
+**🎁 Free Trial:** 7 days free, no license key needed!  
+**💳 Pro:** Get your license key at https://swifmetro.dev
+
+### Step 3: Run Your App & See Logs!
 1. **Build to iPhone** (not simulator)
-2. **Logs appear in Terminal** instantly - wirelessly!
+2. **Watch the Terminal window** where you ran `node swifmetro-server.js`
+3. **Logs appear in that Terminal** instantly - wirelessly!
+
+**You'll see:**
+```
+🔥🔥🔥 iPHONE CONNECTED at 02:41:50!
+📱 🚀 App launched: SwifMetro wireless logging ACTIVE!
+📱 🔄 User tapped button
+📱 ✅ API call successful
+```
+
+**Every log you add appears here in real-time!**
+
+**To restart server:**
+- Press `Ctrl+C` in Terminal
+- Run `node swifmetro-server.js` again
 
 **Troubleshooting:** If no logs appear, see [Troubleshooting](#troubleshooting) below.
 

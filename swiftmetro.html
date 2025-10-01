@@ -584,7 +584,7 @@
                 <li><a href="#pricing">Pricing</a></li>
                 <li><a href="https://github.com/swifmetro/swifmetro">GitHub</a></li>
             </ul>
-            <a href="mailto:support@swifmetro.dev?subject=Start%20Free%20Trial" class="cta-button">Start Free Trial</a>
+            <a href="checkout-page.html" class="cta-button">Start Free Trial</a>
         </div>
     </nav>
     
@@ -594,7 +594,7 @@
         <p class="subtitle">The first Metro-style debugging for native Swift. No cables. No Xcode console. Just instant logs.</p>
         
         <div class="hero-cta">
-            <a href="mailto:support@swifmetro.dev?subject=Start%20Free%20Trial" class="btn-primary">Start Free Trial - $29.99/mo</a>
+            <a href="checkout-page.html" class="btn-primary">Start Free Trial - $29.99/mo</a>
             <a href="#pricing" class="btn-secondary">See Pricing</a>
         </div>
         
@@ -679,6 +679,42 @@
         </div>
     </section>
     
+    <!-- Security -->
+    <section class="how-it-works" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
+        <div class="container">
+            <div class="section-header">
+                <h2>🔒 Built With Security First</h2>
+                <p>Your logs never leave your WiFi network</p>
+            </div>
+            
+            <div class="features-grid" style="max-width: 900px; margin: 0 auto;">
+                <div class="feature-card">
+                    <div class="feature-icon">🏠</div>
+                    <h3>Local Network Only</h3>
+                    <p>SwifMetro runs entirely on your local WiFi. No cloud servers, no external APIs, no data collection.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Private by Design</h3>
+                    <p>Logs stay on your Mac. Nothing is stored, tracked, or transmitted outside your network.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Direct Connection</h3>
+                    <p>Your iPhone connects directly to your Mac via WebSocket. <4ms latency, enterprise-grade security.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>DEBUG Mode Only</h3>
+                    <p>Automatically disabled in production builds. Zero security risk in App Store releases.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
     <!-- How It Works -->
     <section id="how" class="how-it-works">
         <div class="container">
@@ -690,26 +726,38 @@
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3>Clone SwifMetro</h3>
-                    <p>git clone swifmetro</p>
+                    <h3>Start Server on Mac</h3>
+                    <p style="font-family: 'Courier New', monospace; font-size: 14px; color: #4CAF50;">
+                        git clone https://github.com/...<br>
+                        npm install<br>
+                        node swifmetro-server.js
+                    </p>
+                    <small style="color: #888;">Server shows your Mac's IP address</small>
                 </div>
                 
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3>Start Server</h3>
-                    <p>node server.js</p>
+                    <h3>Add to iOS App</h3>
+                    <p style="font-family: 'Courier New', monospace; font-size: 14px;">
+                        SwifMetroClient.shared.start(<br>
+                        &nbsp;&nbsp;serverIP: "YOUR_MAC_IP"<br>
+                        )
+                    </p>
+                    <small style="color: #888;">In your app's @main file</small>
                 </div>
                 
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3>Add to iOS App</h3>
-                    <p>Drop in SimpleMetroClient.swift</p>
+                    <h3>Run Your iOS App</h3>
+                    <p>Build to your iPhone<br>(not simulator)</p>
+                    <small style="color: #888;">Make sure iPhone and Mac are on same WiFi</small>
                 </div>
                 
                 <div class="step">
                     <div class="step-number">4</div>
-                    <h3>See Logs</h3>
-                    <p>Watch Terminal light up!</p>
+                    <h3>See Logs in Terminal!</h3>
+                    <p style="color: #4ECDC4;">Logs appear instantly<br>in your Mac Terminal</p>
+                    <small style="color: #888;">Every tap, every action, real-time!</small>
                 </div>
             </div>
         </div>
@@ -822,7 +870,7 @@
                         <li>Advanced features</li>
                         <li>7-day free trial</li>
                     </ul>
-                    <a href="mailto:support@swifmetro.dev?subject=Start%20Free%20Trial" class="btn-primary" style="width: 100%; background: white; color: black;">Start Free Trial</a>
+                    <a href="checkout-page.html" class="btn-primary" style="width: 100%; background: white; color: black;">Start Free Trial</a>
                 </div>
                 
                 <div class="pricing-card">
@@ -843,13 +891,132 @@
         </div>
     </section>
     
+    <!-- FAQ -->
+    <section class="pricing" style="background: white;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Everything you need to know</p>
+            </div>
+            
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div style="margin-bottom: 30px; padding: 30px; background: #f5f5f5; border-radius: 15px;">
+                    <h3 style="margin-bottom: 15px; font-size: 20px;">How do I use my license key?</h3>
+                    <p style="color: #666; margin-bottom: 15px;">After purchasing, you'll receive your license key. Open your iOS project in Xcode and find your <strong>main app file</strong> (the one with <code>@main</code>). It's usually called <code>YourAppNameApp.swift</code> or <code>AppDelegate.swift</code>.</p>
+                    <p style="color: #666; margin-bottom: 15px;"><strong>Step 1:</strong> Add the import at the top:</p>
+                    <div style="background: #000; color: #0f0; padding: 15px; border-radius: 10px; font-family: 'Courier New', monospace; font-size: 13px; margin-bottom: 15px;">
+import SwifMetro
+                    </div>
+                    <p style="color: #666; margin-bottom: 15px;"><strong>Step 2:</strong> Add this code in the <code>init()</code> section:</p>
+                    <div style="background: #000; color: #0f0; padding: 20px; border-radius: 10px; font-family: 'Courier New', monospace; font-size: 13px; overflow-x: auto;">
+@main<br>
+struct YourApp: App {<br>
+&nbsp;&nbsp;<span style="color: #FFD700;">init() {</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;SwifMetroClient.shared.start(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;serverIP: "192.168.0.100",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;licenseKey: "SWIF-XXXX-XXXX-XXXX"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;<span style="color: #FFD700;">}</span><br>
+}
+                    </div>
+                    <p style="color: #666; margin-top: 15px;"><small>Replace <code>192.168.0.100</code> with your Mac's IP (shown when you run the server) and paste your license key.</small></p>
+                </div>
+                
+                <div style="margin-bottom: 30px; padding: 30px; background: #f5f5f5; border-radius: 15px;">
+                    <h3 style="margin-bottom: 15px; font-size: 20px;">What happens after the 7-day trial?</h3>
+                    <p style="color: #666;">Your card will be charged $29.99/month. You can cancel anytime before the trial ends with no charge. Cancel in your Stripe customer portal (link in your welcome email).</p>
+                </div>
+                
+                <div style="margin-bottom: 30px; padding: 30px; background: #f5f5f5; border-radius: 15px;">
+                    <h3 style="margin-bottom: 15px; font-size: 20px;">Do I need to give you access to my code?</h3>
+                    <p style="color: #666;">No! SwifMetro runs 100% locally on your WiFi network. Your code and logs never leave your Mac. We don't see, store, or transmit any of your data.</p>
+                </div>
+                
+                <div style="margin-bottom: 30px; padding: 30px; background: #f5f5f5; border-radius: 15px;">
+                    <h3 style="margin-bottom: 15px; font-size: 20px;">Can I use SwifMetro on multiple projects?</h3>
+                    <p style="color: #666;">Yes! One license key works across all your iOS projects. Use it on as many apps as you want.</p>
+                </div>
+                
+                <div style="margin-bottom: 30px; padding: 30px; background: #f5f5f5; border-radius: 15px;">
+                    <h3 style="margin-bottom: 15px; font-size: 20px;">What if SwifMetro doesn't work for me?</h3>
+                    <p style="color: #666;">Cancel anytime during the 7-day trial for a full refund. We also offer email support to help you get set up. Most setup issues are resolved in under 5 minutes.</p>
+                </div>
+                
+                <div style="padding: 30px; background: #f5f5f5; border-radius: 15px;">
+                    <h3 style="margin-bottom: 15px; font-size: 20px;">Is this safe for production apps?</h3>
+                    <p style="color: #666;">Yes! SwifMetro only runs in DEBUG mode and is automatically disabled in production builds. It will never appear in your App Store releases.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
     <!-- CTA -->
     <section class="cta-section">
         <h2>Stop Fighting Xcode Console</h2>
         <p>Join hundreds of iOS developers who've discovered the better way</p>
-        <a href="mailto:support@swifmetro.dev?subject=Start%20Free%20Trial" class="btn-primary" style="background: white; color: black;">
+        <a href="checkout-page.html" class="btn-primary" style="background: white; color: black;">
             Start Your Free Trial
         </a>
+    </section>
+    
+    <!-- Checkout Section -->
+    <section id="checkout" class="pricing" style="background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); padding: 100px 20px;">
+        <div class="container">
+            <div class="section-header">
+                <h2 style="color: white;">Start Your Free Trial</h2>
+                <p style="color: rgba(255,255,255,0.7);">7 days free, then $29.99/month. Cancel anytime.</p>
+            </div>
+            
+            <div style="max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.05); border-radius: 20px; padding: 50px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
+                
+                <div style="background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 30px;">
+                    <div style="font-size: 48px; font-weight: bold; margin-bottom: 10px; color: white;">$29.99<span style="font-size: 24px; opacity: 0.8;">/mo</span></div>
+                    <div style="font-size: 18px; opacity: 0.9; color: white;">Billed monthly</div>
+                    <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 8px 16px; border-radius: 20px; margin-top: 15px; font-size: 14px; color: white;">🎁 7-Day Free Trial</div>
+                </div>
+                
+                <div style="margin: 30px 0; color: white;">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px; font-size: 16px;">
+                        <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; text-align: center; line-height: 24px; margin-right: 12px; flex-shrink: 0;">✓</div>
+                        Wireless real-time logging
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 15px; font-size: 16px;">
+                        <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; text-align: center; line-height: 24px; margin-right: 12px; flex-shrink: 0;">✓</div>
+                        Private GitHub repo access
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 15px; font-size: 16px;">
+                        <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; text-align: center; line-height: 24px; margin-right: 12px; flex-shrink: 0;">✓</div>
+                        License key included
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 15px; font-size: 16px;">
+                        <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; text-align: center; line-height: 24px; margin-right: 12px; flex-shrink: 0;">✓</div>
+                        Priority email support
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 15px; font-size: 16px;">
+                        <div style="width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; text-align: center; line-height: 24px; margin-right: 12px; flex-shrink: 0;">✓</div>
+                        Cancel anytime
+                    </div>
+                </div>
+                
+                <div id="checkout-error" style="display: none; background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px; color: #ff6b6b;"></div>
+                
+                <form id="checkout-form">
+                    <div style="margin-bottom: 20px;">
+                        <label for="checkout-email" style="display: block; margin-bottom: 8px; font-size: 14px; color: rgba(255, 255, 255, 0.8);">Email Address</label>
+                        <input type="email" id="checkout-email" name="email" placeholder="your@email.com" required style="width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.05); color: white; font-size: 16px;">
+                    </div>
+                    
+                    <button type="submit" id="checkout-submit-btn" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; transition: transform 0.2s;">
+                        Start 7-Day Free Trial →
+                    </button>
+                </form>
+                
+                <div style="text-align: center; margin-top: 20px; font-size: 14px; color: rgba(255, 255, 255, 0.6);">
+                    🔒 Secure checkout powered by Stripe<br>
+                    Cancel anytime during trial - no charge
+                </div>
+            </div>
+        </div>
     </section>
     
     <!-- Footer -->
@@ -876,6 +1043,42 @@
                     target.scrollIntoView({ behavior: 'smooth' });
                 }
             });
+        });
+        
+        // Checkout form
+        const checkoutForm = document.getElementById('checkout-form');
+        const checkoutBtn = document.getElementById('checkout-submit-btn');
+        const errorDiv = document.getElementById('checkout-error');
+        
+        checkoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('checkout-email').value;
+            
+            checkoutBtn.disabled = true;
+            checkoutBtn.textContent = 'Processing...';
+            errorDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('http://localhost:3000/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error('No checkout URL received');
+                }
+            } catch (error) {
+                errorDiv.textContent = '❌ Error: ' + error.message;
+                errorDiv.style.display = 'block';
+                checkoutBtn.disabled = false;
+                checkoutBtn.textContent = 'Start 7-Day Free Trial →';
+            }
         });
     </script>
 </body>

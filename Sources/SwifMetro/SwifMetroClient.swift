@@ -30,6 +30,13 @@ public class SwifMetroClient {
     private var startTime: Date?
     private var logCount = 0
     
+    // Auto-capture
+    private var originalStdout: Int32 = 0
+    private var originalStderr: Int32 = 0
+    private var stdoutPipe: [Int32] = [0, 0]
+    private var stderrPipe: [Int32] = [0, 0]
+    private var captureQueue = DispatchQueue(label: "com.swifmetro.capture")
+    
     private init() {
         // Private initializer for singleton
     }
@@ -97,6 +104,9 @@ public class SwifMetroClient {
             }
             print("✅ Trial mode active (7 days remaining)")
         }
+        
+        // START AUTO-CAPTURE OF print() and NSLog()
+        startAutomaticCapture()
         
         if let ip = serverIP {
             print("🚀 SwifMetro: Connecting to manual IP: \(ip)...")
@@ -456,6 +466,81 @@ public class SwifMetroClient {
             serverIP: serverIP,
             queuedMessages: messageQueue.count
         )
+    }
+    
+    // MARK: - AUTOMATIC CAPTURE (The Magic!) 🔥
+    
+    /// Start automatic capture of print() and NSLog()
+    private func startAutomaticCapture() {
+        #if DEBUG
+        // Save original file descriptors
+        originalStdout = dup(STDOUT_FILENO)
+        originalStderr = dup(STDERR_FILENO)
+        
+        // Create pipes for stdout and stderr
+        pipe(&stdoutPipe)
+        pipe(&stderrPipe)
+        
+        // Redirect stdout and stderr to our pipes
+        dup2(stdoutPipe[1], STDOUT_FILENO)
+        dup2(stderrPipe[1], STDERR_FILENO)
+        
+        // Start reading from pipes in background
+        captureQueue.async { [weak self] in
+            self?.readFromPipe(fileDescriptor: self?.stdoutPipe[0] ?? 0, type: "print")
+        }
+        
+        captureQueue.async { [weak self] in
+            self?.readFromPipe(fileDescriptor: self?.stderrPipe[0] ?? 0, type: "NSLog")
+        }
+        
+        log("✅ Automatic capture enabled - ALL print() and NSLog() will appear!")
+        #endif
+    }
+    
+    /// Read from pipe and send to SwifMetro
+    private func readFromPipe(fileDescriptor: Int32, type: String) {
+        let bufferSize = 4096
+        var buffer = [UInt8](repeating: 0, count: bufferSize)
+        
+        while true {
+            let bytesRead = read(fileDescriptor, &buffer, bufferSize)
+            
+            if bytesRead > 0 {
+                if let output = String(bytes: buffer[..<bytesRead], encoding: .utf8) {
+                    // Write to original stdout/stderr so Xcode still sees it
+                    let original = (type == "print") ? originalStdout : originalStderr
+                    write(original, output, output.utf8.count)
+                    
+                    // Send to SwifMetro
+                    let lines = output.split(separator: "\n", omittingEmptySubsequences: true)
+                    for line in lines {
+                        let emoji = (type == "print") ? "🖨️" : "📝"
+                        log("\(emoji) [\(type)] \(line)")
+                    }
+                }
+            } else if bytesRead == 0 {
+                // Pipe closed
+                break
+            }
+        }
+    }
+    
+    /// Stop automatic capture
+    public func stopAutomaticCapture() {
+        #if DEBUG
+        // Restore original file descriptors
+        dup2(originalStdout, STDOUT_FILENO)
+        dup2(originalStderr, STDERR_FILENO)
+        
+        // Close pipes
+        close(stdoutPipe[0])
+        close(stdoutPipe[1])
+        close(stderrPipe[0])
+        close(stderrPipe[1])
+        
+        log("🛑 Automatic capture stopped")
+        #endif
     }
 }
 

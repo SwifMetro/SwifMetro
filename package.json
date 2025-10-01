@@ -25,12 +25,14 @@
   "author": "72hConcept Team",
   "license": "MIT",
   "dependencies": {
-    "ws": "^8.14.2",
-    "bonjour": "^3.5.0"
+    "bonjour": "^3.5.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "ws": "^8.14.2"
   },
   "optionalDependencies": {
     "firebase-admin": "^11.0.0",
-    "stripe": "^13.0.0"
+    "stripe": "^13.11.0"
   },
   "repository": {
     "type": "git",
