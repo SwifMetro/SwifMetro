@@ -433,6 +433,36 @@
             background: rgba(0, 0, 0, 0.3);
         }
 
+        .log-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-right: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .log-badge.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ff6b6b;
+        }
+
+        .log-badge.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #ffa94d;
+        }
+
+        .log-badge.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #51cf66;
+        }
+
+        .log-badge.info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #4dabf7;
+        }
+
         .copy-btn {
             opacity: 0;
             width: 24px;
@@ -515,7 +545,12 @@
             <span>Filtered:</span>
             <span class="stat-value" id="filteredCount">0</span>
         </div>
-        <button class="pill" id="copyAllBtn" style="margin-left: auto; background: rgba(102, 126, 234, 0.08); border-color: rgba(102, 126, 234, 0.3); font-weight: 500; color: #8b9cff;">📋 Copy All Logs</button>
+        <div style="display: flex; gap: 8px; margin-left: auto;">
+            <button class="pill" id="exportBtn" style="background: rgba(102, 126, 234, 0.08); border-color: rgba(102, 126, 234, 0.3); font-weight: 500; color: #8b9cff;">💾 Export</button>
+            <button class="pill" id="clearBtn" style="background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.3); font-weight: 500; color: #ff6b6b;">🗑️ Clear</button>
+            <button class="pill" id="copyAllBtn" style="background: rgba(102, 126, 234, 0.08); border-color: rgba(102, 126, 234, 0.3); font-weight: 500; color: #8b9cff;">📋 Copy All</button>
+            <button class="pill" id="autoScrollBtn" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.3); font-weight: 500; color: #51cf66;">⬇️ Auto-scroll</button>
+        </div>
     </div>
 
     <div class="logs-container" id="logsContainer">
@@ -539,6 +574,8 @@
         let currentFilter = 'all';
         let searchQuery = '';
         let connectedDevices = new Set();
+        let autoScroll = true;
+        let deviceInfo = null;
 
         ws.onopen = () => {
             statusText.textContent = 'Connected';
@@ -556,6 +593,18 @@
             // Skip server messages
             if (message.includes('Welcome to SwifMetro') || message.includes('💓 Heartbeat')) {
                 return;
+            }
+            
+            // Parse device info JSON
+            try {
+                const parsed = JSON.parse(message);
+                if (parsed.device && parsed.model && parsed.os) {
+                    deviceInfo = parsed;
+                    statusText.textContent = `${parsed.device} (${parsed.os})`;
+                    return;
+                }
+            } catch (e) {
+                // Not JSON, continue
             }
             
             // Count devices
@@ -585,6 +634,11 @@
 
             updateLogCount();
             renderLogs();
+            
+            // Auto-scroll to bottom if enabled
+            if (autoScroll) {
+                logsContainer.scrollTop = logsContainer.scrollHeight;
+            }
         };
 
         function categorizeLog(message) {
@@ -639,6 +693,7 @@
 
             logsContainer.innerHTML = filteredLogs.map(log => {
                 const icon = getLogIcon(log.type);
+                const badge = getLogBadge(log.type);
                 // Remove server-added timestamp and device emoji, keep only the actual log message
                 let cleanMessage = log.message
                     .replace(/^\[\d+:\d+:\d+\]\s*📱\s*/, '') // Remove [HH:MM:SS] 📱
@@ -648,7 +703,7 @@
                     <div class="log-entry ${log.type}">
                         <span class="log-time">${log.timestamp}</span>
                         <span class="log-icon">${icon}</span>
-                        <span class="log-message">${escapeHtml(cleanMessage)}</span>
+                        <span class="log-message">${badge}${escapeHtml(cleanMessage)}</span>
                         <button class="copy-btn" onclick="copyLog('${escapeForAttribute(cleanMessage)}', this)">📋</button>
                     </div>
                 `;
@@ -662,6 +717,16 @@
                 case 'success': return '✅';
                 case 'info': return 'ℹ️';
                 default: return '📱';
+            }
+        }
+
+        function getLogBadge(type) {
+            switch(type) {
+                case 'error': return '<span class="log-badge error">ERROR</span>';
+                case 'warning': return '<span class="log-badge warning">WARN</span>';
+                case 'success': return '<span class="log-badge success">SUCCESS</span>';
+                case 'info': return '<span class="log-badge info">INFO</span>';
+                default: return '';
             }
         }
 
@@ -801,6 +866,90 @@
         if (copyBtn) {
             copyBtn.addEventListener('click', function(e) {
                 copyAllLogs(e);
+            });
+        }
+
+        // Export logs to file
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+                const filteredLogs = allLogs.filter(log => {
+                    const matchesFilter = currentFilter === 'all' || log.type === currentFilter;
+                    const matchesSearch = searchQuery === '' || log.message.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesFilter && matchesSearch;
+                });
+
+                const allText = filteredLogs.map(log => {
+                    let cleanMessage = log.message
+                        .replace(/^\[\d+:\d+:\d+\]\s*📱\s*/, '')
+                        .replace(/^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\]\s*/, '');
+                    return `[${log.timestamp}] ${cleanMessage}`;
+                }).join('\n');
+
+                const blob = new Blob([allText], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `swifmetro-logs-${new Date().toISOString().slice(0,10)}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                const originalText = exportBtn.textContent;
+                exportBtn.textContent = '✓ Exported!';
+                exportBtn.style.background = 'rgba(16, 185, 129, 0.3)';
+                exportBtn.style.borderColor = '#10b981';
+                
+                setTimeout(() => {
+                    exportBtn.textContent = originalText;
+                    exportBtn.style.background = 'rgba(102, 126, 234, 0.08)';
+                    exportBtn.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+                }, 1500);
+            });
+        }
+
+        // Clear logs
+        const clearBtn = document.getElementById('clearBtn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all logs?')) {
+                    allLogs = [];
+                    updateLogCount();
+                    renderLogs();
+                    
+                    const originalText = clearBtn.textContent;
+                    clearBtn.textContent = '✓ Cleared!';
+                    clearBtn.style.background = 'rgba(16, 185, 129, 0.3)';
+                    clearBtn.style.borderColor = '#10b981';
+                    clearBtn.style.color = '#51cf66';
+                    
+                    setTimeout(() => {
+                        clearBtn.textContent = originalText;
+                        clearBtn.style.background = 'rgba(239, 68, 68, 0.08)';
+                        clearBtn.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                        clearBtn.style.color = '#ff6b6b';
+                    }, 1500);
+                }
+            });
+        }
+
+        // Auto-scroll toggle
+        const autoScrollBtn = document.getElementById('autoScrollBtn');
+        if (autoScrollBtn) {
+            autoScrollBtn.addEventListener('click', function() {
+                autoScroll = !autoScroll;
+                
+                if (autoScroll) {
+                    autoScrollBtn.textContent = '⬇️ Auto-scroll';
+                    autoScrollBtn.style.background = 'rgba(16, 185, 129, 0.08)';
+                    autoScrollBtn.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                    autoScrollBtn.style.color = '#51cf66';
+                    logsContainer.scrollTop = logsContainer.scrollHeight;
+                } else {
+                    autoScrollBtn.textContent = '⏸️ Paused';
+                    autoScrollBtn.style.background = 'rgba(245, 158, 11, 0.08)';
+                    autoScrollBtn.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+                    autoScrollBtn.style.color = '#ffa94d';
+                }
             });
         }
     </script>
