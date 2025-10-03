@@ -1,6 +1,6 @@
 {
   "name": "swiftmetro",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "Professional wireless logging dashboard for native iOS - Real-time debugging on steroids",
   "main": "electron-main.js",
   "bin": {

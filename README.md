@@ -2,14 +2,14 @@
 
 **Professional wireless logging dashboard for native iOS** - Real-time debugging without cables, simulators, or compromises.
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/SwifMetro/SwifMetro)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/SwifMetro/SwifMetro)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 > The logging solution that shouldn't exist... but does. 🚀
 
 ---
 
-## ✨ What's New in v2.0
+## ✨ Features
 
 - 🎨 **Professional Electron Dashboard** - Beautiful macOS-native UI
 - 🌙 **Light/Dark Theme** - Soft gray light mode + pure black dark
