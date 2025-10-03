@@ -12,7 +12,12 @@ function createWindow() {
         title: 'SwifMetro - iOS Logging',
         webPreferences: {
             nodeIntegration: false,
-            contextIsolation: true
+            contextIsolation: true,
+            enableRemoteModule: false,
+            sandbox: true,
+            webSecurity: true,
+            allowRunningInsecureContent: false,
+            experimentalFeatures: false
         },
         titleBarStyle: 'hiddenInset',
         backgroundColor: '#0a0a0a'
@@ -20,6 +25,18 @@ function createWindow() {
 
     // Load the dashboard
     mainWindow.loadFile('swifmetro-dashboard.html');
+
+    // Prevent navigation to external URLs
+    mainWindow.webContents.on('will-navigate', (event, url) => {
+        if (!url.startsWith('file://')) {
+            event.preventDefault();
+        }
+    });
+
+    // Prevent opening new windows
+    mainWindow.webContents.setWindowOpenHandler(() => {
+        return { action: 'deny' };
+    });
 
     mainWindow.on('closed', () => {
         mainWindow = null;
