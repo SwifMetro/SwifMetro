@@ -1,7 +1,7 @@
 {
   "name": "swiftmetro",
-  "version": "1.0.0",
-  "description": "Terminal logging for native iOS - The technology that shouldn't exist",
+  "version": "2.0.0",
+  "description": "Professional wireless logging dashboard for native iOS - Real-time debugging on steroids",
   "main": "electron-main.js",
   "bin": {
     "swifmetro": "./bin/swifmetro.js"

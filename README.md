@@ -1,19 +1,50 @@
-e?do i have to# SwifMetro
+# 📱 SwifMetro
 
-**The technology that shouldn't exist. But does.**
+**Professional wireless logging dashboard for native iOS** - Real-time debugging without cables, simulators, or compromises.
+
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/SwifMetro/SwifMetro)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+> The logging solution that shouldn't exist... but does. 🚀
 
 ---
 
-## 🚀 Quick Start (5 minutes)
+## ✨ What's New in v2.0
 
-### Step 1: Start Server on Your Mac
+- 🎨 **Professional Electron Dashboard** - Beautiful macOS-native UI
+- 🌙 **Light/Dark Theme** - Soft gray light mode + pure black dark
+- 💾 **Export Logs** - Save to .txt files
+- 🗑️ **Clear Logs** - One-click clearing
+- ⬇️ **Auto-scroll Toggle** - Pause to inspect logs
+- 📋 **Copy Individual/All Logs** - Instant clipboard
+- 🔍 **Search & Filter** - Find logs by type or text
+- 🏷️ **Log Badges** - Visual ERROR/WARN/SUCCESS labels
+- ⌨️ **Keyboard Shortcuts** - Power-user friendly
+- 🔌 **Auto-reconnect** - Handles disconnects gracefully
+- 🔒 **Production Security** - CSP, sandboxing, locked down
 
-**Open Terminal and run:**
+---
+
+## 🚀 Quick Start
+
+### Installation
+
 ```bash
-git clone https://github.com/csainsworth123/swifmetro.git
-cd swifmetro
-npm install
-node swifmetro-server.js
+npm install -g swifmetro
+```
+
+### Usage
+
+**Dashboard Mode (Recommended):**
+```bash
+swifmetro dashboard
+```
+
+**Terminal Mode:**
+```bash
+swifmetro
+# or
+swifmetro terminal
 ```
 
 **You'll see:**
@@ -27,93 +58,43 @@ node swifmetro-server.js
 ⏳ Waiting for iPhone connections...
 ```
 
-**✅ IMPORTANT:** 
-- **Keep this Terminal window open!** Logs will appear here.
-- **Note your Mac's IP address** (e.g., `192.168.0.100`)
-- To restart server: Press `Ctrl+C`, then run `node swifmetro-server.js` again
+### Add to iOS App
 
-### Step 2: Add SwifMetro to Your iOS App
+**1. Add Package in Xcode:**
+- File → Add Package Dependencies
+- URL: `https://github.com/SwifMetro/SwifMetro.git`
 
-#### A. Add Package in Xcode
-1. **Open Xcode** → File → Add Package Dependencies
-2. **Enter URL**: `https://github.com/csainsworth123/swifmetro.git`
-3. **Sign in to GitHub** if prompted (use personal access token)
-4. **Add package** to your target
-
-#### B. Add Required Permissions to Info.plist
-Right-click `Info.plist` → Open As → Source Code, then add:
-```xml
-<key>NSLocalNetworkUsageDescription</key>
-<string>SwifMetro needs local network access to stream logs from your device to your Mac for debugging.</string>
-<key>NSBonjourServices</key>
-<array>
-    <string>_swifmetro._tcp</string>
-</array>
-```
-
-#### C. Start SwifMetro in Your App
+**2. In AppDelegate.swift:**
 ```swift
-import SwiftUI
-import SwifMetro  // ← Add this import
+import SwifMetro
 
-@main
-struct YourApp: App {
-    init() {
-        // Free version (7-day trial)
-        SwifMetroClient.shared.start(serverIP: "192.168.0.100")
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        // Pro version (with license key)
-        // SwifMetroClient.shared.start(
-        //     serverIP: "192.168.0.100",
-        //     licenseKey: "SWIF-XXXX-XXXX-XXXX"  // ← Your license key from email
-        // )
-    }
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
+        #if DEBUG
+        SwifMetroClient.shared.start(serverIP: "192.168.0.100") // Your Mac's IP
+        print("🚀 App launched!") // Logs appear in dashboard!
+        #endif
+        
+        return true
     }
 }
 ```
 
-**⚠️ IMPORTANT:** 
-- Replace `192.168.0.100` with YOUR Mac's IP from Step 1!
-- If you have a Pro license, uncomment the Pro version and add your license key
-
-**🎁 Free Trial:** 7 days free, no license key needed!  
-**💳 Pro:** Get your license key at https://swifmetro.dev
-
-### Step 3: Run Your App & See Logs!
-1. **Build to iPhone** (not simulator)
-2. **Watch the Terminal window** where you ran `node swifmetro-server.js`
-3. **Logs appear in that Terminal** instantly - wirelessly!
-
-**You'll see:**
-```
-🔥🔥🔥 iPHONE CONNECTED at 02:41:50!
-📱 🚀 App launched: SwifMetro wireless logging ACTIVE!
-📱 🔄 User tapped button
-📱 ✅ API call successful
-```
-
-**Every log you add appears here in real-time!**
-
-**To restart server:**
-- Press `Ctrl+C` in Terminal
-- Run `node swifmetro-server.js` again
-
-**Troubleshooting:** If no logs appear, see [Troubleshooting](#troubleshooting) below.
+**3. Run the dashboard & launch your app** - logs appear instantly! 🎉
 
 ---
 
-## We Made iOS Development 30x Faster
+## ⌨️ Keyboard Shortcuts
 
-Every iOS developer loses 2+ hours daily waiting for builds.
-
-We fixed that.
-
-**SwifMetro**: See your code changes instantly. On real devices. Without rebuilding.
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + K` | Clear logs |
+| `Cmd/Ctrl + E` | Export logs |
+| `Cmd/Ctrl + F` | Focus search |
+| `Cmd/Ctrl + C` | Copy all logs |
+| `Space` | Toggle auto-scroll |
 
 ---
 
