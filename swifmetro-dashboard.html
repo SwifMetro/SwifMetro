@@ -40,14 +40,30 @@
         }
 
         .logo {
-            width: 28px;
-            height: 28px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 6px;
+            width: 32px;
+            height: 32px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            font-size: 16px;
+            gap: 3px;
+        }
+
+        .logo-line {
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .logo-line:nth-child(1) {
+            width: 32px;
+        }
+
+        .logo-line:nth-child(2) {
+            width: 22px;
+        }
+
+        .logo-line:nth-child(3) {
+            width: 27px;
         }
 
         .titlebar h1 {
@@ -267,17 +283,209 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.2);
         }
+
+        .theme-toggle {
+            display: flex;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 4px;
+        }
+
+        .theme-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            -webkit-app-region: no-drag;
+        }
+
+        .theme-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-btn.active {
+            background: rgba(102, 126, 234, 0.3);
+        }
+
+        /* Light theme styles */
+        body.light-theme {
+            background: #e5e5e7 !important;
+            color: #1d1d1f !important;
+        }
+
+        body.light-theme .titlebar {
+            background: rgba(245, 245, 247, 0.95) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+        }
+
+        body.light-theme .titlebar h1 {
+            color: #1d1d1f !important;
+        }
+
+        body.light-theme .toolbar {
+            background: rgba(240, 240, 242, 0.95) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+        }
+
+        body.light-theme .search-input {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1d1d1f;
+        }
+
+        body.light-theme .search-input:focus {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-theme .pill {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1d1d1f;
+        }
+
+        body.light-theme .pill:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-theme .stats-bar {
+            background: rgba(255, 255, 255, 0.5);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        body.light-theme .stat-value {
+            color: #1d1d1f;
+        }
+
+        body.light-theme .logs-container {
+            background: #f5f5f7 !important;
+        }
+
+        body.light-theme .log-entry {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+        }
+
+        body.light-theme .log-entry:hover {
+            background: rgba(0, 0, 0, 0.02) !important;
+        }
+
+        body.light-theme .log-time {
+            color: rgba(0, 0, 0, 0.4) !important;
+        }
+
+        body.light-theme .log-message {
+            color: rgba(0, 0, 0, 0.8) !important;
+        }
+
+        body.light-theme .log-entry.error .log-message {
+            color: #d32f2f !important;
+        }
+
+        body.light-theme .log-entry.warning .log-message {
+            color: #f57c00 !important;
+        }
+
+        body.light-theme .log-entry.success .log-message {
+            color: #388e3c !important;
+        }
+
+        body.light-theme .log-entry.info .log-message {
+            color: #1976d2 !important;
+        }
+
+        body.light-theme .copy-btn {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .copy-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        body.light-theme .empty-state {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        body.light-theme .theme-toggle {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .theme-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .copy-btn {
+            opacity: 0;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .log-entry:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .copy-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copy-btn.copied {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: #10b981;
+        }
     </style>
 </head>
 <body>
     <div class="titlebar">
         <div class="titlebar-left">
-            <div class="logo">📱</div>
+            <div class="logo">
+                <div class="logo-line"></div>
+                <div class="logo-line"></div>
+                <div class="logo-line"></div>
+            </div>
             <h1>SwifMetro</h1>
         </div>
-        <div class="status-indicator" id="statusIndicator">
-            <span class="status-dot"></span>
-            <span id="statusText">Connected</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="theme-toggle">
+                <button class="theme-btn active" id="darkBtn">🌙</button>
+                <button class="theme-btn" id="lightBtn">☀️</button>
+            </div>
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot"></span>
+                <span id="statusText">Connected</span>
+            </div>
         </div>
     </div>
 
@@ -306,6 +514,7 @@
             <span>Filtered:</span>
             <span class="stat-value" id="filteredCount">0</span>
         </div>
+        <button class="pill" id="copyAllBtn" style="margin-left: auto; background: rgba(102, 126, 234, 0.08); border-color: rgba(102, 126, 234, 0.3); font-weight: 500; color: #8b9cff;">📋 Copy All Logs</button>
     </div>
 
     <div class="logs-container" id="logsContainer">
@@ -439,6 +648,7 @@
                         <span class="log-time">${log.timestamp}</span>
                         <span class="log-icon">${icon}</span>
                         <span class="log-message">${escapeHtml(cleanMessage)}</span>
+                        <button class="copy-btn" onclick="copyLog('${escapeForAttribute(cleanMessage)}', this)">📋</button>
                     </div>
                 `;
             }).join('');
@@ -460,6 +670,32 @@
             return div.innerHTML;
         }
 
+        function escapeForAttribute(text) {
+            return text
+                .replace(/'/g, '&apos;')
+                .replace(/"/g, '&quot;')
+                .replace(/\\/g, '\\\\');
+        }
+
+        function copyLog(message, btn) {
+            const decodedMessage = message
+                .replace(/&apos;/g, "'")
+                .replace(/&quot;/g, '"')
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>');
+            
+            navigator.clipboard.writeText(decodedMessage).then(() => {
+                btn.classList.add('copied');
+                btn.textContent = '✓';
+                
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = '📋';
+                }, 1000);
+            });
+        }
+
         function updateDeviceCount() {
             deviceCountEl.textContent = connectedDevices.size;
         }
@@ -468,10 +704,40 @@
             logCountEl.textContent = allLogs.length;
         }
 
-        // Filter buttons
-        document.querySelectorAll('.pill').forEach(btn => {
+        function copyAllLogs(event) {
+            const filteredLogs = allLogs.filter(log => {
+                const matchesFilter = currentFilter === 'all' || log.type === currentFilter;
+                const matchesSearch = searchQuery === '' || log.message.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesFilter && matchesSearch;
+            });
+
+            const allText = filteredLogs.map(log => {
+                let cleanMessage = log.message
+                    .replace(/^\[\d+:\d+:\d+\]\s*📱\s*/, '')
+                    .replace(/^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\]\s*/, '');
+                return `[${log.timestamp}] ${cleanMessage}`;
+            }).join('\n');
+
+            const btn = document.getElementById('copyAllBtn');
+            const originalText = btn.textContent;
+            
+            navigator.clipboard.writeText(allText).then(() => {
+                btn.textContent = '✓ Copied!';
+                btn.style.background = 'rgba(16, 185, 129, 0.3)';
+                btn.style.borderColor = '#10b981';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'rgba(102, 126, 234, 0.08)';
+                    btn.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+                }, 1500);
+            });
+        }
+
+        // Filter buttons (exclude copy button)
+        document.querySelectorAll('.pill[data-filter]').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.pill[data-filter]').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentFilter = btn.dataset.filter;
                 renderLogs();
@@ -483,6 +749,59 @@
             searchQuery = e.target.value;
             renderLogs();
         });
+
+        // Theme toggle
+        function setTheme(theme) {
+            console.log('Setting theme to:', theme);
+            const darkBtn = document.getElementById('darkBtn');
+            const lightBtn = document.getElementById('lightBtn');
+            
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+                if (lightBtn) lightBtn.classList.add('active');
+                if (darkBtn) darkBtn.classList.remove('active');
+                localStorage.setItem('swifmetro-theme', 'light');
+                console.log('Light theme applied, body has light-theme class:', document.body.classList.contains('light-theme'));
+            } else {
+                document.body.classList.remove('light-theme');
+                if (darkBtn) darkBtn.classList.add('active');
+                if (lightBtn) lightBtn.classList.remove('active');
+                localStorage.setItem('swifmetro-theme', 'dark');
+                console.log('Dark theme applied');
+            }
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('swifmetro-theme') || 'dark';
+        if (savedTheme === 'light') {
+            setTheme('light');
+        }
+
+        // Add click listeners to theme buttons
+        const darkBtn = document.getElementById('darkBtn');
+        const lightBtn = document.getElementById('lightBtn');
+        const copyBtn = document.getElementById('copyAllBtn');
+        
+        if (darkBtn) {
+            darkBtn.addEventListener('click', function() {
+                console.log('Dark button clicked');
+                setTheme('dark');
+            });
+        }
+
+        if (lightBtn) {
+            lightBtn.addEventListener('click', function() {
+                console.log('Light button clicked');
+                setTheme('light');
+            });
+        }
+
+        // Add click listener to copy all button
+        if (copyBtn) {
+            copyBtn.addEventListener('click', function(e) {
+                copyAllLogs(e);
+            });
+        }
     </script>
 </body>
 </html>
