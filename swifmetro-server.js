@@ -54,28 +54,39 @@ const wss = new WebSocket.Server({
     host: HOST 
 });
 
-// Track connected devices
-let connectedDevices = new Set();
+// Track connected clients (iPhone + Dashboard)
+let clients = new Set();
 
 wss.on('connection', function connection(ws, req) {
     const clientIP = req.socket.remoteAddress;
     const timestamp = new Date().toLocaleTimeString();
     
+    // Add client to set
+    clients.add(ws);
+    
     console.log('🔥'.repeat(10));
-    console.log(`🔥 iPHONE CONNECTED at ${timestamp}!`);
+    console.log(`🔥 CLIENT CONNECTED at ${timestamp}!`);
     console.log(`📱 From IP: ${clientIP}`);
+    console.log(`📊 Total clients: ${clients.size}`);
     console.log('🔥'.repeat(10));
     console.log('');
     
     // Send welcome message
     ws.send('🎉 Welcome to SwifMetro! You are now connected.');
     
-    // Handle incoming messages
+    // Handle incoming messages from iPhone
     ws.on('message', function incoming(message) {
         const timestamp = new Date().toLocaleTimeString();
         const msgString = message.toString();
         
-        // Color-code different message types
+        // Broadcast to ALL OTHER clients (not back to sender)
+        clients.forEach(client => {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+                client.send(`[${timestamp}] 📱 ${msgString}`);
+            }
+        });
+        
+        // Color-code different message types in terminal
         if (msgString.includes('❌') || msgString.includes('Error') || msgString.includes('error')) {
             console.log(`[${timestamp}] 📱 \x1b[31m${msgString}\x1b[0m`); // Red
         } else if (msgString.includes('✅') || msgString.includes('Success')) {
@@ -92,8 +103,10 @@ wss.on('connection', function connection(ws, req) {
     // Handle disconnection
     ws.on('close', function() {
         const timestamp = new Date().toLocaleTimeString();
+        clients.delete(ws);
         console.log('');
-        console.log(`❌ Device disconnected at ${timestamp}`);
+        console.log(`❌ Client disconnected at ${timestamp}`);
+        console.log(`📊 Total clients: ${clients.size}`);
         console.log('⏳ Waiting for reconnection...');
         console.log('');
     });

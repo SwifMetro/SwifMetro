@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwifMetro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .titlebar {
+            -webkit-app-region: drag;
+            height: 52px;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            padding: 0 20px 0 80px;
+            justify-content: space-between;
+        }
+
+        .titlebar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .titlebar h1 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .toolbar {
+            height: 48px;
+            background: rgba(30, 30, 30, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 12px;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0 12px;
+            color: #ffffff;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #667eea;
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pill {
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .pill:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .pill.active {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        .pill.error.active {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .pill.warning.active {
+            background: #f59e0b;
+            border-color: #f59e0b;
+        }
+
+        .pill.success.active {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .stats-bar {
+            height: 32px;
+            background: rgba(30, 30, 30, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 24px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .logs-container {
+            flex: 1;
+            overflow-y: auto;
+            background: #000000;
+        }
+
+        .log-entry {
+            padding: 10px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            display: flex;
+            gap: 12px;
+            transition: background 0.1s;
+        }
+
+        .log-entry:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .log-time {
+            color: rgba(255, 255, 255, 0.3);
+            min-width: 80px;
+            flex-shrink: 0;
+        }
+
+        .log-icon {
+            flex-shrink: 0;
+            width: 16px;
+            text-align: center;
+        }
+
+        .log-message {
+            flex: 1;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .log-entry.error .log-message {
+            color: #ef4444;
+        }
+
+        .log-entry.warning .log-message {
+            color: #f59e0b;
+        }
+
+        .log-entry.success .log-message {
+            color: #10b981;
+        }
+
+        .log-entry.info .log-message {
+            color: #3b82f6;
+        }
+
+        .empty-state {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="titlebar">
+        <div class="titlebar-left">
+            <div class="logo">📱</div>
+            <h1>SwifMetro</h1>
+        </div>
+        <div class="status-indicator" id="statusIndicator">
+            <span class="status-dot"></span>
+            <span id="statusText">Connected</span>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search logs...">
+        </div>
+        <div class="filter-pills">
+            <button class="pill active" data-filter="all">All</button>
+            <button class="pill error" data-filter="error">Errors</button>
+            <button class="pill warning" data-filter="warning">Warnings</button>
+            <button class="pill success" data-filter="success">Success</button>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat">
+            <span>Devices:</span>
+            <span class="stat-value" id="deviceCount">0</span>
+        </div>
+        <div class="stat">
+            <span>Total Logs:</span>
+            <span class="stat-value" id="logCount">0</span>
+        </div>
+        <div class="stat">
+            <span>Filtered:</span>
+            <span class="stat-value" id="filteredCount">0</span>
+        </div>
+    </div>
+
+    <div class="logs-container" id="logsContainer">
+        <div class="empty-state">
+            <div class="empty-icon">📱</div>
+            <p>Waiting for logs from your iOS device...</p>
+        </div>
+    </div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8081');
+        const logsContainer = document.getElementById('logsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        const deviceCountEl = document.getElementById('deviceCount');
+        const logCountEl = document.getElementById('logCount');
+        const filteredCountEl = document.getElementById('filteredCount');
+        
+        let allLogs = [];
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let connectedDevices = new Set();
+
+        ws.onopen = () => {
+            statusText.textContent = 'Connected';
+            statusIndicator.style.background = 'rgba(16, 185, 129, 0.1)';
+        };
+
+        ws.onclose = () => {
+            statusText.textContent = 'Disconnected';
+            statusIndicator.style.background = 'rgba(239, 68, 68, 0.1)';
+        };
+
+        ws.onmessage = (event) => {
+            const message = event.data;
+            
+            console.log('Received:', message); // Debug
+            
+            // Skip server messages
+            if (message.includes('Welcome to SwifMetro') || message.includes('Heartbeat')) {
+                return;
+            }
+            
+            // Count devices
+            if (message.includes('iPHONE CONNECTED') || message.includes('CLIENT CONNECTED')) {
+                connectedDevices.add(message);
+                updateDeviceCount();
+                return;
+            }
+
+            const logType = categorizeLog(message);
+            const timestamp = extractTimestamp(message);
+            
+            const logEntry = {
+                message: message,
+                type: logType,
+                timestamp: timestamp,
+                id: Date.now() + Math.random()
+            };
+
+            allLogs.unshift(logEntry);
+            
+            if (allLogs.length > 1000) {
+                allLogs = allLogs.slice(0, 1000);
+            }
+
+            updateLogCount();
+            renderLogs();
+        };
+
+        function categorizeLog(message) {
+            if (message.includes('❌') || message.includes('ERROR') || message.includes('error')) {
+                return 'error';
+            }
+            if (message.includes('⚠️') || message.includes('WARNING') || message.includes('warning')) {
+                return 'warning';
+            }
+            if (message.includes('✅') || message.includes('SUCCESS') || message.includes('success')) {
+                return 'success';
+            }
+            if (message.includes('ℹ️') || message.includes('INFO') || message.includes('info')) {
+                return 'info';
+            }
+            return 'default';
+        }
+
+        function extractTimestamp(message) {
+            const match = message.match(/\[([\d:]+)\]/);
+            return match ? match[1] : new Date().toLocaleTimeString();
+        }
+
+        function renderLogs() {
+            const filteredLogs = allLogs.filter(log => {
+                const matchesFilter = currentFilter === 'all' || log.type === currentFilter;
+                const matchesSearch = searchQuery === '' || log.message.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesFilter && matchesSearch;
+            });
+
+            filteredCountEl.textContent = filteredLogs.length;
+
+            if (filteredLogs.length === 0 && allLogs.length === 0) {
+                logsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📱</div>
+                        <p>Waiting for logs from your iOS device...</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (filteredLogs.length === 0) {
+                logsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <p>No logs match your filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            logsContainer.innerHTML = filteredLogs.map(log => {
+                const icon = getLogIcon(log.type);
+                const cleanMessage = log.message.replace(/\[\d+:\d+:\d+\]\s*📱\s*/, '');
+                
+                return `
+                    <div class="log-entry ${log.type}">
+                        <span class="log-time">${log.timestamp}</span>
+                        <span class="log-icon">${icon}</span>
+                        <span class="log-message">${escapeHtml(cleanMessage)}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getLogIcon(type) {
+            switch(type) {
+                case 'error': return '❌';
+                case 'warning': return '⚠️';
+                case 'success': return '✅';
+                case 'info': return 'ℹ️';
+                default: return '📱';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateDeviceCount() {
+            deviceCountEl.textContent = connectedDevices.size;
+        }
+
+        function updateLogCount() {
+            logCountEl.textContent = allLogs.length;
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.pill').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderLogs();
+            });
+        });
+
+        // Search
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderLogs();
+        });
+    </script>
+</body>
+</html>

@@ -2,9 +2,13 @@
   "name": "swiftmetro",
   "version": "1.0.0",
   "description": "Terminal logging for native iOS - The technology that shouldn't exist",
-  "main": "swifmetro-server.js",
+  "main": "electron-main.js",
+  "bin": {
+    "swifmetro": "./bin/swifmetro.js"
+  },
   "scripts": {
-    "start": "node swifmetro-server.js",
+    "start": "electron .",
+    "server": "node swifmetro-server.js",
     "advanced": "node swifmetro-advanced-server.js",
     "secure": "node swifmetro-secure-server.js",
     "hot-reload": "node swifmetro-hot-reload.js",
@@ -27,6 +31,7 @@
   "dependencies": {
     "bonjour": "^3.5.0",
     "dotenv": "^17.2.3",
+    "electron": "^32.0.0",
     "express": "^5.1.0",
     "ws": "^8.14.2"
   },
