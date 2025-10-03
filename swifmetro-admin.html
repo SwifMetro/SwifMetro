@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwifMetro Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .controls {
+            background: #1a1a1a;
+            padding: 20px 30px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            background: #2a2a2a;
+            border: 2px solid #444;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #444;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            background: #333;
+            border-color: #555;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .filter-btn.error.active {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .filter-btn.warning.active {
+            background: #f59e0b;
+            border-color: #f59e0b;
+        }
+
+        .filter-btn.success.active {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .filter-btn.info.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .stats {
+            background: #1a1a1a;
+            padding: 15px 30px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            gap: 30px;
+            font-size: 13px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label {
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .stat.connected .stat-value {
+            color: #10b981;
+        }
+
+        .stat.logs .stat-value {
+            color: #667eea;
+        }
+
+        .logs-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 30px;
+            background: #0a0a0a;
+        }
+
+        .log-entry {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: #1a1a1a;
+            border-left: 4px solid #444;
+            border-radius: 6px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            transition: all 0.2s;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .log-entry:hover {
+            background: #222;
+            transform: translateX(5px);
+        }
+
+        .log-entry.error {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .log-entry.warning {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .log-entry.success {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .log-entry.info {
+            border-left-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .log-timestamp {
+            color: #888;
+            margin-right: 10px;
+        }
+
+        .log-device {
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        .log-message {
+            color: #e0e0e0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn.danger {
+            background: #ef4444;
+        }
+
+        .action-btn.danger:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #10b981;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .connection-status.disconnected {
+            background: #ef4444;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status" id="connectionStatus">● Connected</div>
+
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <svg width="50" height="50" viewBox="0 0 200 200" style="filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.2));">
+                <defs>
+                    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#e0e0e0;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <circle cx="100" cy="100" r="90" fill="url(#logoGradient)" opacity="0.1"/>
+                <path d="M 60 120 Q 100 80, 140 120" stroke="white" stroke-width="12" fill="none" stroke-linecap="round"/>
+                <circle cx="70" cy="80" r="8" fill="white"/>
+                <circle cx="130" cy="80" r="8" fill="white"/>
+                <path d="M 50 140 L 150 140" stroke="white" stroke-width="8" stroke-linecap="round"/>
+            </svg>
+            <div>
+                <h1>SwifMetro Dashboard</h1>
+                <p>Real-time iOS log monitoring and filtering</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Search logs...">
+        </div>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All Logs</button>
+            <button class="filter-btn error" data-filter="error">❌ Errors</button>
+            <button class="filter-btn warning" data-filter="warning">⚠️ Warnings</button>
+            <button class="filter-btn success" data-filter="success">✅ Success</button>
+            <button class="filter-btn info" data-filter="info">ℹ️ Info</button>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn" onclick="exportLogs()">📥 Export</button>
+            <button class="action-btn danger" onclick="clearLogs()">🗑️ Clear</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat connected">
+            <span class="stat-label">Connected Devices:</span>
+            <span class="stat-value" id="deviceCount">0</span>
+        </div>
+        <div class="stat logs">
+            <span class="stat-label">Total Logs:</span>
+            <span class="stat-value" id="logCount">0</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Filtered:</span>
+            <span class="stat-value" id="filteredCount">0</span>
+        </div>
+    </div>
+
+    <div class="logs-container" id="logsContainer">
+        <div class="empty-state">
+            <h3>Waiting for logs...</h3>
+            <p>Start your iOS app to see logs appear here in real-time</p>
+        </div>
+    </div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8081');
+        const logsContainer = document.getElementById('logsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const deviceCountEl = document.getElementById('deviceCount');
+        const logCountEl = document.getElementById('logCount');
+        const filteredCountEl = document.getElementById('filteredCount');
+        
+        let allLogs = [];
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let connectedDevices = new Set();
+
+        ws.onopen = () => {
+            connectionStatus.textContent = '● Connected';
+            connectionStatus.classList.remove('disconnected');
+        };
+
+        ws.onclose = () => {
+            connectionStatus.textContent = '● Disconnected';
+            connectionStatus.classList.add('disconnected');
+        };
+
+        ws.onmessage = (event) => {
+            const message = event.data;
+            
+            // Detect device connection
+            if (message.includes('iPHONE CONNECTED')) {
+                connectedDevices.add(message);
+                updateDeviceCount();
+                return;
+            }
+
+            // Parse and categorize log
+            const logType = categorizeLog(message);
+            const timestamp = extractTimestamp(message);
+            
+            const logEntry = {
+                message: message,
+                type: logType,
+                timestamp: timestamp,
+                id: Date.now() + Math.random()
+            };
+
+            allLogs.unshift(logEntry);
+            
+            // Keep only last 1000 logs
+            if (allLogs.length > 1000) {
+                allLogs = allLogs.slice(0, 1000);
+            }
+
+            updateLogCount();
+            renderLogs();
+        };
+
+        function categorizeLog(message) {
+            if (message.includes('❌') || message.includes('ERROR') || message.includes('error')) {
+                return 'error';
+            }
+            if (message.includes('⚠️') || message.includes('WARNING') || message.includes('warning')) {
+                return 'warning';
+            }
+            if (message.includes('✅') || message.includes('SUCCESS') || message.includes('success')) {
+                return 'success';
+            }
+            if (message.includes('ℹ️') || message.includes('INFO') || message.includes('info')) {
+                return 'info';
+            }
+            return 'default';
+        }
+
+        function extractTimestamp(message) {
+            const match = message.match(/\[([\d:]+)\]/);
+            return match ? match[1] : new Date().toLocaleTimeString();
+        }
+
+        function renderLogs() {
+            const filteredLogs = allLogs.filter(log => {
+                const matchesFilter = currentFilter === 'all' || log.type === currentFilter;
+                const matchesSearch = searchQuery === '' || log.message.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesFilter && matchesSearch;
+            });
+
+            filteredCountEl.textContent = filteredLogs.length;
+
+            if (filteredLogs.length === 0) {
+                logsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No logs match your filters</h3>
+                        <p>Try adjusting your search or filter settings</p>
+                    </div>
+                `;
+                return;
+            }
+
+            logsContainer.innerHTML = filteredLogs.map(log => `
+                <div class="log-entry ${log.type}">
+                    <span class="log-timestamp">[${log.timestamp}]</span>
+                    <span class="log-device">📱</span>
+                    <span class="log-message">${escapeHtml(log.message)}</span>
+                </div>
+            `).join('');
+
+            // Auto-scroll to top for new logs
+            logsContainer.scrollTop = 0;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateDeviceCount() {
+            deviceCountEl.textContent = connectedDevices.size;
+        }
+
+        function updateLogCount() {
+            logCountEl.textContent = allLogs.length;
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderLogs();
+            });
+        });
+
+        // Search
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderLogs();
+        });
+
+        // Export logs
+        function exportLogs() {
+            const text = allLogs.map(log => `[${log.timestamp}] ${log.message}`).join('\n');
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `swifmetro-logs-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Clear logs
+        function clearLogs() {
+            if (confirm('Are you sure you want to clear all logs?')) {
+                allLogs = [];
+                updateLogCount();
+                renderLogs();
+            }
+        }
+    </script>
+</body>
+</html>
