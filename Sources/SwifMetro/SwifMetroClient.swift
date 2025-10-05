@@ -20,6 +20,7 @@ public class SwifMetroClient {
     
     // Configuration
     private var serverIP: String?
+    private var currentLicenseKey: String?
     private var isConnected = false
     private let port = "8081"
     
@@ -92,6 +93,7 @@ public class SwifMetroClient {
     public func start(serverIP: String? = nil, licenseKey: String? = nil) {
         #if DEBUG
         startTime = Date()
+        currentLicenseKey = licenseKey
         
         // Validate license key
         if let key = licenseKey {
@@ -236,22 +238,29 @@ public class SwifMetroClient {
         webSocketTask = session.webSocketTask(with: url)
         webSocketTask?.resume()
         
-        // Send device info
-        let deviceInfo = [
-            "device": UIDevice.current.name,
+        // Identify as device with the new protocol
+        let deviceId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
+        var identifyMessage: [String: Any] = [
+            "type": "identify",
+            "clientType": "device",
+            "deviceId": deviceId,
+            "deviceName": UIDevice.current.name,
             "model": UIDevice.current.model,
-            "os": "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)",
-            "app": Bundle.main.bundleIdentifier ?? "unknown",
-            "timestamp": ISO8601DateFormatter().string(from: Date())
+            "os": "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
         ]
         
-        if let data = try? JSONSerialization.data(withJSONObject: deviceInfo),
+        // Add license key if provided
+        if let key = currentLicenseKey {
+            identifyMessage["licenseKey"] = key
+        }
+        
+        if let data = try? JSONSerialization.data(withJSONObject: identifyMessage),
            let json = String(data: data, encoding: .utf8) {
             let message = URLSessionWebSocketTask.Message.string(json)
             webSocketTask?.send(message) { [weak self] error in
                 if error == nil {
                     self?.isConnected = true
-                    print("✅ SwifMetro: Connected successfully!")
+                    print("✅ SwifMetro: Connected successfully as \(UIDevice.current.name)!")
                     self?.flushMessageQueue()
                 } else {
                     print("❌ SwifMetro: Connection failed")
@@ -359,18 +368,23 @@ public class SwifMetroClient {
     public func log(_ message: String) {
         logCount += 1
         
-        let timestamp = ISO8601DateFormatter().string(from: Date())
-        let logMessage = "[\(timestamp)] \(message)"
+        // Send with new JSON protocol
+        let logData = [
+            "type": "log",
+            "message": message
+        ] as [String : Any]
         
-        if isConnected {
-            let wsMessage = URLSessionWebSocketTask.Message.string(logMessage)
+        if isConnected,
+           let jsonData = try? JSONSerialization.data(withJSONObject: logData),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+            let wsMessage = URLSessionWebSocketTask.Message.string(jsonString)
             webSocketTask?.send(wsMessage) { error in
                 if error != nil {
-                    self.queueMessage(logMessage)
+                    self.queueMessage(message)
                 }
             }
         } else {
-            queueMessage(logMessage)
+            queueMessage(message)
         }
     }
     
@@ -393,16 +407,24 @@ public class SwifMetroClient {
         }
     }
     
-    /// Log network request
-    func logNetwork(method: String, url: String, status: Int? = nil, duration: TimeInterval? = nil) {
-        var message = "🌐 \(method) \(url)"
-        if let status = status {
-            message += " → \(status)"
+    /// Log network request (Pro Feature)
+    func logNetwork(method: String, url: String, statusCode: Int? = nil, duration: TimeInterval? = nil) {
+        guard isConnected else { return }
+        
+        // Send with new network protocol
+        let networkData = [
+            "type": "network",
+            "method": method,
+            "url": url,
+            "statusCode": statusCode ?? 0,
+            "duration": Int((duration ?? 0) * 1000) // milliseconds
+        ] as [String : Any]
+        
+        if let jsonData = try? JSONSerialization.data(withJSONObject: networkData),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+            let wsMessage = URLSessionWebSocketTask.Message.string(jsonString)
+            webSocketTask?.send(wsMessage) { _ in }
         }
-        if let duration = duration {
-            message += " (\(String(format: "%.2f", duration))s)"
-        }
-        log(message)
     }
     
     /// Log user interaction

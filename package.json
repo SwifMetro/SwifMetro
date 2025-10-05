@@ -9,6 +9,8 @@
   "scripts": {
     "start": "electron .",
     "server": "node swifmetro-server.js",
+    "license": "node swifmetro-license-server.js",
+    "auth": "node swifmetro-auth-server.js",
     "advanced": "node swifmetro-advanced-server.js",
     "secure": "node swifmetro-secure-server.js",
     "hot-reload": "node swifmetro-hot-reload.js",
@@ -29,10 +31,12 @@
   "author": "72hConcept Team",
   "license": "MIT",
   "dependencies": {
+    "better-sqlite3": "^12.4.1",
     "bonjour": "^3.5.0",
     "dotenv": "^17.2.3",
     "electron": "^32.0.0",
     "express": "^5.1.0",
+    "resend": "^6.1.2",
     "ws": "^8.14.2"
   },
   "optionalDependencies": {

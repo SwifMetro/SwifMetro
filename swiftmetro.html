@@ -580,7 +580,7 @@
             </a>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
-                <li><a href="#how">How It Works</a></li>
+                <li><a href="why-swifmetro.html">Why SwifMetro?</a></li>
                 <li><a href="#pricing">Pricing</a></li>
                 <li><a href="https://github.com/swifmetro/swifmetro">GitHub</a></li>
             </ul>
@@ -591,7 +591,7 @@
     <!-- Hero Section -->
     <section class="hero">
         <h1>See iOS Logs in <span class="highlight">Terminal</span></h1>
-        <p class="subtitle">The first Metro-style debugging for native Swift. No cables. No Xcode console. Just instant logs.</p>
+        <p class="subtitle">The first Metro-style debugging for native Swift. No cables. No Xcode console. Just instant logs in <4ms.</p>
         
         <div class="hero-cta">
             <a href="checkout-page.html" class="btn-primary">Start Free Trial - $29.99/mo</a>
@@ -641,39 +641,277 @@
             
             <div class="features-grid">
                 <div class="feature-card">
+                    <div class="feature-icon">💥</div>
+                    <h3>Crash Detection</h3>
+                    <p>Automatically captures crashes (SIGABRT, SIGSEGV, etc.) and sends stack traces before your app dies.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📱📱📱</div>
+                    <h3>Multiple Devices</h3>
+                    <p>Monitor up to 10 iPhones/iPads simultaneously in one dashboard. Xcode can't do this.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Beautiful Dashboard</h3>
+                    <p>Modern Electron app with search, filters, export, light/dark theme. Way better than Xcode console.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Network Monitoring</h3>
+                    <p>See every API call: method, URL, status code, response time. Automatic request logging.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Performance Tracking</h3>
+                    <p>Real-time memory usage, FPS monitoring, and performance metrics. Find bottlenecks instantly.</p>
+                </div>
+                
+                <div class="feature-card">
                     <div class="feature-icon">⚡</div>
-                    <h3>Instant Logs</h3>
-                    <p>See your debug logs in Terminal instantly. No more digging through Xcode console output.</p>
+                    <h3>Real-Time Streaming</h3>
+                    <p>Logs appear in <4ms. WebSocket connection means near-instant delivery. Basically real-time.</p>
                 </div>
                 
                 <div class="feature-card">
-                    <div class="feature-icon">📱</div>
-                    <h3>Wireless Connection</h3>
-                    <p>Works over WiFi. No USB cable needed. Debug from anywhere on your network.</p>
+                    <div class="feature-icon">🔍</div>
+                    <h3>os_log/Logger Capture</h3>
+                    <p>See Apple's os_log and Logger messages wirelessly. Xcode can't show these on real devices!</p>
                 </div>
                 
                 <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>45 Lines of Code</h3>
-                    <p>Minimal footprint. Just drop in one Swift file and you're ready to go.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🔧</div>
-                    <h3>Zero Config</h3>
-                    <p>No complex setup. Just add your Mac's IP and start logging immediately.</p>
+                    <div class="feature-icon">⌨️</div>
+                    <h3>Keyboard Shortcuts</h3>
+                    <p>Cmd+K to clear, Cmd+E to export, Cmd+F to search. Professional developer experience.</p>
                 </div>
                 
                 <div class="feature-card">
                     <div class="feature-icon">💾</div>
-                    <h3>Production Safe</h3>
-                    <p>Only runs in DEBUG mode. Zero impact on production builds.</p>
+                    <h3>Export & Copy</h3>
+                    <p>One-click export to file or copy all logs. No Terminal commands needed like Xcode.</p>
                 </div>
                 
                 <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Real-Time</h3>
-                    <p>WebSocket connection means logs appear with <4ms latency. Basically instant.</p>
+                    <div class="feature-icon">🔌</div>
+                    <h3>Auto-Reconnect</h3>
+                    <p>Smart reconnection with exponential backoff. Never lose logs due to network hiccups.</p>
+                </div>
+            </div>
+            
+            <!-- Show More Features Button -->
+            <div style="text-align: center; margin-top: 40px;">
+                <button id="show-all-features-btn" style="background: var(--primary); color: white; padding: 14px 32px; border-radius: 100px; font-weight: 600; font-size: 16px; border: none; cursor: pointer; transition: transform 0.3s ease;">
+                    See All 30+ Features →
+                </button>
+            </div>
+            
+            <!-- Expandable Full Feature List -->
+            <div id="full-features-list" style="display: none; margin-top: 60px; padding: 40px; background: #f9f9f9; border-radius: 20px;">
+                <h3 style="font-size: 32px; margin-bottom: 30px; text-align: center;">Complete Feature List</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div style="padding: 20px; background: white; border-radius: 10px;">
+                        <h4 style="margin-bottom: 10px; color: #FF6B6B;">🔥 Core Features</h4>
+                        <ul style="list-style: none; padding: 0; color: #666; line-height: 2;">
+                            <li>✅ Wireless WiFi logging</li>
+                            <li>✅ Automatic print() capture</li>
+                            <li>✅ NSLog() capture</li>
+                            <li>✅ os_log() capture</li>
+                            <li>✅ Logger() capture</li>
+                            <li>✅ Framework logs (UIKit, etc.)</li>
+                            <li>✅ Zero configuration (Bonjour)</li>
+                            <li>✅ Real-time streaming (<10ms)</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="padding: 20px; background: white; border-radius: 10px;">
+                        <h4 style="margin-bottom: 10px; color: #4ECDC4;">💥 Advanced Features</h4>
+                        <ul style="list-style: none; padding: 0; color: #666; line-height: 2;">
+                            <li>✅ Crash detection (all signal types)</li>
+                            <li>✅ Stack trace capture</li>
+                            <li>✅ Network request monitoring</li>
+                            <li>✅ Memory usage tracking</li>
+                            <li>✅ FPS monitoring</li>
+                            <li>✅ Performance profiling</li>
+                            <li>✅ User interaction tracking</li>
+                            <li>✅ Screenshot capture</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="padding: 20px; background: white; border-radius: 10px;">
+                        <h4 style="margin-bottom: 10px; color: #4CAF50;">🎨 Dashboard Features</h4>
+                        <ul style="list-style: none; padding: 0; color: #666; line-height: 2;">
+                            <li>✅ Beautiful Electron app</li>
+                            <li>✅ Light & dark theme</li>
+                            <li>✅ Real-time search</li>
+                            <li>✅ Smart filters (errors, warnings)</li>
+                            <li>✅ Device labels</li>
+                            <li>✅ Multiple device view</li>
+                            <li>✅ Log statistics</li>
+                            <li>✅ Auto-scroll toggle</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="padding: 20px; background: white; border-radius: 10px;">
+                        <h4 style="margin-bottom: 10px; color: #9B59B6;">⌨️ Productivity</h4>
+                        <ul style="list-style: none; padding: 0; color: #666; line-height: 2;">
+                            <li>✅ Keyboard shortcuts (5+)</li>
+                            <li>✅ One-click export</li>
+                            <li>✅ Copy all logs</li>
+                            <li>✅ Copy individual logs</li>
+                            <li>✅ Session statistics</li>
+                            <li>✅ Message queueing (offline)</li>
+                            <li>✅ Auto-reconnect</li>
+                            <li>✅ Heartbeat monitoring</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="padding: 20px; background: white; border-radius: 10px;">
+                        <h4 style="margin-bottom: 10px; color: #E74C3C;">🔐 Security & Privacy</h4>
+                        <ul style="list-style: none; padding: 0; color: #666; line-height: 2;">
+                            <li>✅ Local network only</li>
+                            <li>✅ No cloud servers</li>
+                            <li>✅ DEBUG mode only</li>
+                            <li>✅ Auto-disabled in Release</li>
+                            <li>✅ WSS encryption option</li>
+                            <li>✅ License validation</li>
+                            <li>✅ 7-day trial system</li>
+                            <li>✅ Zero data collection</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="padding: 20px; background: white; border-radius: 10px;">
+                        <h4 style="margin-bottom: 10px; color: #F39C12;">🛠️ Developer Experience</h4>
+                        <ul style="list-style: none; padding: 0; color: #666; line-height: 2;">
+                            <li>✅ CLI tool (login/logout/status)</li>
+                            <li>✅ Browser authentication</li>
+                            <li>✅ Swift Package Manager</li>
+                            <li>✅ NPM package</li>
+                            <li>✅ SwiftUI integration</li>
+                            <li>✅ Structured logging API</li>
+                            <li>✅ Error context logging</li>
+                            <li>✅ Stripe payment integration</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px;">
+                    <button id="hide-features-btn" style="background: var(--gray); color: white; padding: 12px 28px; border-radius: 100px; font-weight: 600; font-size: 14px; border: none; cursor: pointer;">
+                        Hide Full List
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Dashboard Showcase -->
+    <section class="how-it-works" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 120px 20px;">
+        <div class="container">
+            <div class="section-header">
+                <h2 style="color: white; font-size: 56px;">🎨 Beautiful Dashboard. Not Just Terminal.</h2>
+                <p style="color: rgba(255,255,255,0.9); font-size: 22px;">Forget basic terminal output. SwifMetro has a professional Electron app that makes Xcode console look ancient.</p>
+            </div>
+            
+            <!-- Dashboard Mockup -->
+            <div style="max-width: 1200px; margin: 60px auto; background: rgba(0,0,0,0.95); border-radius: 20px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);">
+                <!-- Titlebar -->
+                <div style="background: rgba(20, 20, 20, 0.95); padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f57;"></div>
+                    <div style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></div>
+                    <div style="width: 12px; height: 12px; border-radius: 50%; background: #28ca42;"></div>
+                    <div style="flex: 1; text-align: center; color: white; font-weight: 600; font-size: 14px;">SwifMetro Dashboard</div>
+                </div>
+                
+                <!-- Toolbar -->
+                <div style="background: rgba(30, 30, 30, 0.95); padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="text" placeholder="Search logs..." style="width: 100%; padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white; font-size: 13px;">
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <span style="padding: 6px 14px; background: #667eea; border-radius: 16px; font-size: 12px; color: white; font-weight: 500;">All</span>
+                        <span style="padding: 6px 14px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 16px; font-size: 12px; color: #ff6b6b; font-weight: 500;">Errors</span>
+                        <span style="padding: 6px 14px; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 16px; font-size: 12px; color: #ffa94d; font-weight: 500;">Warnings</span>
+                    </div>
+                </div>
+                
+                <!-- Stats Bar -->
+                <div style="background: rgba(30, 30, 30, 0.5); padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; gap: 24px; font-size: 11px; color: rgba(255,255,255,0.5); flex-wrap: wrap;">
+                    <div>Devices: <span style="color: white; font-weight: 600;">3</span></div>
+                    <div>Total Logs: <span style="color: white; font-weight: 600;">1,247</span></div>
+                    <div>Filtered: <span style="color: white; font-weight: 600;">1,247</span></div>
+                    <div style="margin-left: auto; display: flex; gap: 8px;">
+                        <button style="padding: 4px 12px; background: rgba(102, 126, 234, 0.2); border: 1px solid rgba(102, 126, 234, 0.3); border-radius: 4px; color: #8b9cff; font-size: 11px; cursor: pointer;">💾 Export</button>
+                        <button style="padding: 4px 12px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 4px; color: #ff6b6b; font-size: 11px; cursor: pointer;">🗑️ Clear</button>
+                    </div>
+                </div>
+                
+                <!-- Log Entries -->
+                <div style="padding: 20px; font-family: 'SF Mono', Monaco, monospace; font-size: 13px; color: #0f0; min-height: 350px;">
+                    <div style="margin: 8px 0; display: flex; gap: 12px; opacity: 0.9;">
+                        <span style="color: rgba(255,255,255,0.25); min-width: 75px;">21:23:22</span>
+                        <span style="width: 18px;">📱</span>
+                        <span style="color: rgba(255,255,255,0.95);"><span style="background: rgba(102, 126, 234, 0.15); padding: 2px 8px; border-radius: 4px; font-size: 11px; color: #8b9cff; margin-right: 8px;">[iPhone 15 Pro]</span> App launched successfully</span>
+                    </div>
+                    <div style="margin: 8px 0; display: flex; gap: 12px; opacity: 0.9;">
+                        <span style="color: rgba(255,255,255,0.25); min-width: 75px;">21:23:23</span>
+                        <span style="width: 18px;">✅</span>
+                        <span style="color: #51cf66;"><span style="background: rgba(102, 126, 234, 0.15); padding: 2px 8px; border-radius: 4px; font-size: 11px; color: #8b9cff; margin-right: 8px;">[iPhone 15 Pro]</span> User authenticated</span>
+                    </div>
+                    <div style="margin: 8px 0; display: flex; gap: 12px; opacity: 0.9;">
+                        <span style="color: rgba(255,255,255,0.25); min-width: 75px;">21:23:24</span>
+                        <span style="width: 18px;">🌐</span>
+                        <span style="color: #4dabf7;"><span style="background: rgba(102, 126, 234, 0.15); padding: 2px 8px; border-radius: 4px; font-size: 11px; color: #8b9cff; margin-right: 8px;">[iPhone 15 Pro]</span> GET /api/users → 200 (145ms)</span>
+                    </div>
+                    <div style="margin: 8px 0; display: flex; gap: 12px; opacity: 0.9;">
+                        <span style="color: rgba(255,255,255,0.25); min-width: 75px;">21:23:25</span>
+                        <span style="width: 18px;">📱</span>
+                        <span style="color: rgba(255,255,255,0.95);"><span style="background: rgba(118, 75, 162, 0.15); padding: 2px 8px; border-radius: 4px; font-size: 11px; color: #b794f6; margin-right: 8px;">[iPad Air]</span> View appeared: HomeView</span>
+                    </div>
+                    <div style="margin: 8px 0; display: flex; gap: 12px; opacity: 0.9;">
+                        <span style="color: rgba(255,255,255,0.25); min-width: 75px;">21:23:26</span>
+                        <span style="width: 18px;">📊</span>
+                        <span style="color: rgba(255,255,255,0.95);"><span style="background: rgba(102, 126, 234, 0.15); padding: 2px 8px; border-radius: 4px; font-size: 11px; color: #8b9cff; margin-right: 8px;">[iPhone 15 Pro]</span> Memory: 142.5MB</span>
+                    </div>
+                    <div style="margin: 8px 0; display: flex; gap: 12px; opacity: 0.9;">
+                        <span style="color: rgba(255,255,255,0.25); min-width: 75px;">21:23:27</span>
+                        <span style="width: 18px;">⚠️</span>
+                        <span style="color: #ffa94d;"><span style="background: rgba(118, 75, 162, 0.15); padding: 2px 8px; border-radius: 4px; font-size: 11px; color: #b794f6; margin-right: 8px;">[iPad Air]</span> Cache miss for user profile</span>
+                    </div>
+                    <div style="margin: 8px 0; display: flex; gap: 12px; opacity: 0.9;">
+                        <span style="color: rgba(255,255,255,0.25); min-width: 75px;">21:23:28</span>
+                        <span style="width: 18px;">🌐</span>
+                        <span style="color: #4dabf7;"><span style="background: rgba(255, 107, 107, 0.15); padding: 2px 8px; border-radius: 4px; font-size: 11px; color: #ff8787; margin-right: 8px;">[iPhone 13]</span> POST /api/analytics → 201 (89ms)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Features Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 60px;">
+                <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 16px; backdrop-filter: blur(10px);">
+                    <div style="font-size: 48px; margin-bottom: 15px;">📱📱📱</div>
+                    <h3 style="color: white; font-size: 20px; margin-bottom: 10px;">Multiple Devices</h3>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px;">Monitor up to 10 iPhones and iPads in one view with color-coded device labels (unlimited on Enterprise)</p>
+                </div>
+                
+                <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 16px; backdrop-filter: blur(10px);">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🔍</div>
+                    <h3 style="color: white; font-size: 20px; margin-bottom: 10px;">Instant Search</h3>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px;">Find any log in milliseconds with real-time search and smart filters</p>
+                </div>
+                
+                <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 16px; backdrop-filter: blur(10px);">
+                    <div style="font-size: 48px; margin-bottom: 15px;">⌨️</div>
+                    <h3 style="color: white; font-size: 20px; margin-bottom: 10px;">Pro Shortcuts</h3>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px;">Cmd+K to clear, Cmd+E to export, Cmd+F to search - like a real IDE</p>
+                </div>
+                
+                <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 16px; backdrop-filter: blur(10px);">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🎨</div>
+                    <h3 style="color: white; font-size: 20px; margin-bottom: 10px;">Light & Dark</h3>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px;">Switch themes instantly. Easy on the eyes during long debugging sessions</p>
                 </div>
             </div>
         </div>
@@ -683,8 +921,8 @@
     <section class="how-it-works" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
         <div class="container">
             <div class="section-header">
-                <h2>🔒 Built With Security First</h2>
-                <p>Your logs never leave your WiFi network</p>
+                <h2 style="color: white;">🔒 Built With Security First</h2>
+                <p style="color: rgba(255,255,255,0.7);">Your logs never leave your WiFi network</p>
             </div>
             
             <div class="features-grid" style="max-width: 900px; margin: 0 auto;">
@@ -1022,15 +1260,16 @@ struct YourApp: App {<br>
     <!-- Footer -->
     <footer>
         <div class="footer-links">
-            <a href="https://github.com/csainsworth123/swifmetro">GitHub</a>
-            <a href="README.md">Documentation</a>
-            <a href="TERMS_OF_SERVICE.md">Terms of Service</a>
-            <a href="PRIVACY_POLICY.md">Privacy Policy</a>
+            <a href="https://github.com/swifmetro/swifmetro">GitHub</a>
+            <a href="https://swifmetro.dev/docs">Documentation</a>
+            <a href="https://swifmetro.dev/terms">Terms of Service</a>
+            <a href="https://swifmetro.dev/privacy">Privacy Policy</a>
             <a href="mailto:support@swifmetro.dev">Contact</a>
         </div>
         <p>SwifMetro - Invented September 30, 2025 at 21:23:22 GMT</p>
         <p style="margin-top: 10px; font-size: 14px;">© 2025 SwifMetro. All rights reserved.</p>
         <p style="margin-top: 5px; font-size: 12px; opacity: 0.7;">Not affiliated with Apple Inc. "Swift" and "iOS" are trademarks of Apple Inc.</p>
+        <p style="margin-top: 5px; font-size: 12px; opacity: 0.7;">🚫 No AI-generated code. Built by real developers.</p>
     </footer>
     
     <script>
@@ -1044,6 +1283,27 @@ struct YourApp: App {<br>
                 }
             });
         });
+        
+        // Show/Hide Full Features List
+        const showFeaturesBtn = document.getElementById('show-all-features-btn');
+        const hideFeaturesBtn = document.getElementById('hide-features-btn');
+        const fullFeaturesList = document.getElementById('full-features-list');
+        
+        if (showFeaturesBtn) {
+            showFeaturesBtn.addEventListener('click', function() {
+                fullFeaturesList.style.display = 'block';
+                showFeaturesBtn.style.display = 'none';
+                fullFeaturesList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+        
+        if (hideFeaturesBtn) {
+            hideFeaturesBtn.addEventListener('click', function() {
+                fullFeaturesList.style.display = 'none';
+                showFeaturesBtn.style.display = 'inline-block';
+                document.getElementById('features').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
         
         // Checkout form
         const checkoutForm = document.getElementById('checkout-form');

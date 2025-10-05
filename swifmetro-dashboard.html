@@ -236,6 +236,17 @@
             font-weight: 400;
         }
 
+        .device-label {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(102, 126, 234, 0.15);
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #8b9cff;
+            margin-right: 8px;
+        }
+
         .log-entry.error .log-message {
             color: #ff6b6b;
             font-weight: 500;
@@ -524,6 +535,9 @@
         <div class="search-container">
             <input type="text" class="search-input" id="searchInput" placeholder="Search logs...">
         </div>
+        <div class="filter-pills" id="deviceFilterPills">
+            <!-- Device filter pills will be added here dynamically -->
+        </div>
         <div class="filter-pills">
             <button class="pill active" data-filter="all">All</button>
             <button class="pill error" data-filter="error">Errors</button>
@@ -572,9 +586,9 @@
         let allLogs = [];
         let currentFilter = 'all';
         let searchQuery = '';
-        let connectedDevices = new Set();
+        let connectedDevices = new Map();
+        let selectedDevices = new Set();
         let autoScroll = true;
-        let deviceInfo = null;
         let ws = null;
         let reconnectAttempts = 0;
         let maxReconnectAttempts = 10;
@@ -589,6 +603,12 @@
                 statusIndicator.style.background = 'rgba(16, 185, 129, 0.1)';
                 reconnectAttempts = 0;
                 reconnectInterval = 2000;
+                
+                // Identify as dashboard
+                ws.send(JSON.stringify({
+                    type: 'identify',
+                    clientType: 'dashboard'
+                }));
             };
 
             ws.onclose = () => {
@@ -616,54 +636,111 @@
         ws.onmessage = (event) => {
             const message = event.data;
             
-            // Skip server messages
-            if (message.includes('Welcome to SwifMetro') || message.includes('💓 Heartbeat')) {
-                return;
-            }
-            
-            // Parse device info JSON
+            // Parse JSON messages from new server protocol
             try {
                 const parsed = JSON.parse(message);
-                if (parsed.device && parsed.model && parsed.os) {
-                    deviceInfo = parsed;
-                    statusText.textContent = `${parsed.device} (${parsed.os})`;
+                
+                // Handle different message types
+                if (parsed.type === 'welcome' || parsed.type === 'heartbeat') {
                     return;
                 }
-            } catch (e) {
-                // Not JSON, continue
-            }
-            
-            // Count devices
-            if (message.includes('CLIENT CONNECTED')) {
-                const matches = message.match(/Total clients: (\d+)/);
-                if (matches) {
-                    deviceCountEl.textContent = matches[1];
+                
+                if (parsed.type === 'device_list') {
+                    // Update device list
+                    connectedDevices.clear();
+                    parsed.devices.forEach(device => {
+                        connectedDevices.set(device.deviceId, device);
+                    });
+                    deviceCountEl.textContent = connectedDevices.size;
+                    updateDeviceFilters();
+                    return;
                 }
-                return;
-            }
+                
+                if (parsed.type === 'log') {
+                    // Handle log message
+                    const logType = categorizeLog(parsed.message);
+                    const logEntry = {
+                        message: parsed.message,
+                        deviceId: parsed.deviceId,
+                        deviceName: parsed.deviceName,
+                        type: logType,
+                        timestamp: parsed.timestamp,
+                        id: Date.now() + Math.random()
+                    };
 
-            const logType = categorizeLog(message);
-            const timestamp = extractTimestamp(message);
-            
-            const logEntry = {
-                message: message,
-                type: logType,
-                timestamp: timestamp,
-                id: Date.now() + Math.random()
-            };
+                    allLogs.unshift(logEntry);
+                    
+                    if (allLogs.length > 1000) {
+                        allLogs = allLogs.slice(0, 1000);
+                    }
 
-            allLogs.unshift(logEntry);
-            
-            if (allLogs.length > 1000) {
-                allLogs = allLogs.slice(0, 1000);
-            }
+                    updateLogCount();
+                    renderLogs();
+                    
+                    // Auto-scroll to bottom if enabled
+                    if (autoScroll) {
+                        logsContainer.scrollTop = logsContainer.scrollHeight;
+                    }
+                    return;
+                }
+                
+                if (parsed.type === 'network') {
+                    // Handle network request
+                    const logEntry = {
+                        message: `${parsed.method} ${parsed.url} - ${parsed.statusCode} (${parsed.duration}ms)`,
+                        deviceId: parsed.deviceId,
+                        deviceName: parsed.deviceName,
+                        type: parsed.statusCode >= 400 ? 'error' : parsed.statusCode >= 300 ? 'warning' : 'info',
+                        timestamp: parsed.timestamp,
+                        id: Date.now() + Math.random(),
+                        isNetwork: true
+                    };
 
-            updateLogCount();
-            renderLogs();
-            
-            // Auto-scroll to bottom if enabled
-            if (autoScroll) {
-                logsContainer.scrollTop = logsContainer.scrollHeight;
+                    allLogs.unshift(logEntry);
+                    
+                    if (allLogs.length > 1000) {
+                        allLogs = allLogs.slice(0, 1000);
+                    }
+
+                    updateLogCount();
+                    renderLogs();
+                    
+                    if (autoScroll) {
+                        logsContainer.scrollTop = logsContainer.scrollHeight;
+                    }
+                    return;
+                }
+                
+            } catch (e) {
+                // Fallback for non-JSON messages (backward compatibility)
+                if (message.includes('Welcome to SwifMetro') || message.includes('💓 Heartbeat')) {
+                    return;
+                }
+                
+                const logType = categorizeLog(message);
+                const timestamp = extractTimestamp(message);
+                
+                const logEntry = {
+                    message: message,
+                    deviceId: 'unknown',
+                    deviceName: 'Unknown Device',
+                    type: logType,
+                    timestamp: timestamp,
+                    id: Date.now() + Math.random()
+                };
+
+                allLogs.unshift(logEntry);
+                
+                if (allLogs.length > 1000) {
+                    allLogs = allLogs.slice(0, 1000);
+                }
+
+                updateLogCount();
+                renderLogs();
+                
+                if (autoScroll) {
+                    logsContainer.scrollTop = logsContainer.scrollHeight;
+                }
             }
         };
         }
@@ -696,7 +773,8 @@
             const filteredLogs = allLogs.filter(log => {
                 const matchesFilter = currentFilter === 'all' || log.type === currentFilter;
                 const matchesSearch = searchQuery === '' || log.message.toLowerCase().includes(searchQuery.toLowerCase());
-                return matchesFilter && matchesSearch;
+                const matchesDevice = selectedDevices.size === 0 || selectedDevices.has(log.deviceId);
+                return matchesFilter && matchesSearch && matchesDevice;
             });
 
             filteredCountEl.textContent = filteredLogs.length;
@@ -722,9 +800,11 @@
             }
 
             logsContainer.innerHTML = filteredLogs.map(log => {
-                const icon = getLogIcon(log.type);
+                const icon = log.isNetwork ? '🌐' : getLogIcon(log.type);
                 const badge = getLogBadge(log.type);
-                // Remove server-added timestamp and device emoji, keep only the actual log message
+                const deviceLabel = log.deviceName && log.deviceName !== 'Unknown Device' ? `<span class="device-label">[${log.deviceName}]</span> ` : '';
+                
+                // Clean message
                 let cleanMessage = log.message
                     .replace(/^\[\d+:\d+:\d+\]\s*📱\s*/, '') // Remove [HH:MM:SS] 📱
                     .replace(/^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\]\s*/, ''); // Remove ISO timestamp if present
@@ -733,7 +813,7 @@
                     <div class="log-entry ${log.type}">
                         <span class="log-time">${log.timestamp}</span>
                         <span class="log-icon">${icon}</span>
-                        <span class="log-message">${badge}${escapeHtml(cleanMessage)}</span>
+                        <span class="log-message">${deviceLabel}${badge}${escapeHtml(cleanMessage)}</span>
                         <button class="copy-btn" onclick="copyLog('${escapeForAttribute(cleanMessage)}', this)">📋</button>
                     </div>
                 `;
@@ -794,6 +874,31 @@
 
         function updateDeviceCount() {
             deviceCountEl.textContent = connectedDevices.size;
+        }
+
+        function updateDeviceFilters() {
+            const deviceFilterPills = document.getElementById('deviceFilterPills');
+            
+            if (connectedDevices.size === 0) {
+                deviceFilterPills.innerHTML = '';
+                return;
+            }
+            
+            deviceFilterPills.innerHTML = Array.from(connectedDevices.values()).map(device => {
+                const isSelected = selectedDevices.has(device.deviceId);
+                const activeClass = isSelected ? 'active' : '';
+                return `<button class="pill ${activeClass}" data-device-id="${device.deviceId}" onclick="toggleDeviceFilter('${device.deviceId}')">${device.deviceName}</button>`;
+            }).join('');
+        }
+
+        function toggleDeviceFilter(deviceId) {
+            if (selectedDevices.has(deviceId)) {
+                selectedDevices.delete(deviceId);
+            } else {
+                selectedDevices.add(deviceId);
+            }
+            updateDeviceFilters();
+            renderLogs();
         }
 
         function updateLogCount() {

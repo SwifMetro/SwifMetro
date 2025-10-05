@@ -6,10 +6,33 @@
 
 const WebSocket = require('ws');
 const os = require('os');
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
 
 // Configuration
 const PORT = 8081;
 const HOST = '0.0.0.0'; // Listen on all interfaces
+const LICENSE_SERVER = 'http://localhost:8082'; // License validation server
+const FREE_DEVICE_LIMIT = 1; // Free tier: 1 device only
+
+// Auto-load default license from ~/.swifmetro/license
+function getDefaultLicense() {
+    const licensePath = path.join(os.homedir(), '.swifmetro', 'license');
+    if (fs.existsSync(licensePath)) {
+        const license = fs.readFileSync(licensePath, 'utf8').trim();
+        console.log(`🔑 Found license in ~/.swifmetro/license: ${license}`);
+        return license;
+    }
+    if (process.env.SWIFMETRO_LICENSE_KEY) {
+        console.log(`🔑 Found license in env: ${process.env.SWIFMETRO_LICENSE_KEY}`);
+        return process.env.SWIFMETRO_LICENSE_KEY;
+    }
+    console.log('🆓 No license found - Free tier (1 device limit)');
+    return null;
+}
+
+const DEFAULT_LICENSE = getDefaultLicense();
 
 console.log('');
 console.log('🚀 SWIFMETRO SERVER');
@@ -54,59 +77,274 @@ const wss = new WebSocket.Server({
     host: HOST 
 });
 
-// Track connected clients (iPhone + Dashboard)
-let clients = new Set();
+// Track connected devices with metadata
+let devices = new Map();
+let dashboards = new Set();
+
+// Device class to track individual iOS devices
+class Device {
+    constructor(ws, deviceId, deviceName, licenseKey = null) {
+        this.ws = ws;
+        this.deviceId = deviceId;
+        this.deviceName = deviceName;
+        this.licenseKey = licenseKey;
+        this.licenseTier = 'free';
+        this.connectedAt = new Date();
+        this.lastActivity = new Date();
+        this.logCount = 0;
+    }
+}
+
+// License validation cache
+const licenseCache = new Map();
+
+// Validate license key with server
+async function validateLicense(key) {
+    if (!key) return { valid: false, tier: 'free' };
+    
+    // Check cache first
+    if (licenseCache.has(key)) {
+        const cached = licenseCache.get(key);
+        if (Date.now() - cached.timestamp < 3600000) { // 1 hour cache
+            return cached.data;
+        }
+    }
+    
+    try {
+        const response = await fetch(`${LICENSE_SERVER}/validate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key })
+        });
+        
+        const data = await response.json();
+        
+        // Cache result
+        licenseCache.set(key, {
+            timestamp: Date.now(),
+            data
+        });
+        
+        return data;
+    } catch (error) {
+        console.log(`⚠️ License validation failed: ${error.message}`);
+        return { valid: false, tier: 'free' };
+    }
+}
 
 wss.on('connection', function connection(ws, req) {
     const clientIP = req.socket.remoteAddress;
     const timestamp = new Date().toLocaleTimeString();
     
-    // Add client to set
-    clients.add(ws);
+    // Client will identify itself as device or dashboard
+    let clientType = null;
+    let deviceId = null;
     
     console.log('🔥'.repeat(10));
     console.log(`🔥 CLIENT CONNECTED at ${timestamp}!`);
     console.log(`📱 From IP: ${clientIP}`);
-    console.log(`📊 Total clients: ${clients.size}`);
     console.log('🔥'.repeat(10));
     console.log('');
     
     // Send welcome message
-    ws.send('🎉 Welcome to SwifMetro! You are now connected.');
+    ws.send(JSON.stringify({
+        type: 'welcome',
+        message: '🎉 Welcome to SwifMetro! Identify yourself (device or dashboard)'
+    }));
     
-    // Handle incoming messages from iPhone
+    // Handle incoming messages
     ws.on('message', function incoming(message) {
         const timestamp = new Date().toLocaleTimeString();
         const msgString = message.toString();
         
-        // Broadcast to ALL OTHER clients (not back to sender)
-        clients.forEach(client => {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-                client.send(`[${timestamp}] 📱 ${msgString}`);
-            }
-        });
+        // Try to parse as JSON (for structured messages)
+        let parsed;
+        try {
+            parsed = JSON.parse(msgString);
+        } catch (e) {
+            // Plain text message (backward compatible)
+            parsed = { type: 'log', message: msgString };
+        }
         
-        // Color-code different message types in terminal
-        if (msgString.includes('❌') || msgString.includes('Error') || msgString.includes('error')) {
-            console.log(`[${timestamp}] 📱 \x1b[31m${msgString}\x1b[0m`); // Red
-        } else if (msgString.includes('✅') || msgString.includes('Success')) {
-            console.log(`[${timestamp}] 📱 \x1b[32m${msgString}\x1b[0m`); // Green
-        } else if (msgString.includes('⚠️') || msgString.includes('Warning')) {
-            console.log(`[${timestamp}] 📱 \x1b[33m${msgString}\x1b[0m`); // Yellow
-        } else if (msgString.includes('ℹ️') || msgString.includes('Info')) {
-            console.log(`[${timestamp}] 📱 \x1b[36m${msgString}\x1b[0m`); // Cyan
-        } else {
-            console.log(`[${timestamp}] 📱 ${msgString}`);
+        // Handle different message types
+        if (parsed.type === 'identify') {
+            // Client identifying itself
+            if (parsed.clientType === 'device') {
+                deviceId = parsed.deviceId || `device_${Date.now()}`;
+                const deviceName = parsed.deviceName || 'Unknown iPhone';
+                const licenseKey = parsed.licenseKey || DEFAULT_LICENSE;
+                
+                // Validate license
+                validateLicense(licenseKey).then(licenseData => {
+                    const device = new Device(ws, deviceId, deviceName, licenseKey);
+                    device.licenseTier = licenseData.tier || 'free';
+                    
+                    // Check device limit for free tier
+                    if (device.licenseTier === 'free' && devices.size >= FREE_DEVICE_LIMIT) {
+                        console.log(`❌ Device limit reached for free tier: ${deviceName}`);
+                        ws.send(JSON.stringify({
+                            type: 'error',
+                            message: `Free tier limited to ${FREE_DEVICE_LIMIT} device. Upgrade to Pro for multiple devices: https://swifmetro.dev/pricing`
+                        }));
+                        ws.close();
+                        return;
+                    }
+                    
+                    devices.set(deviceId, device);
+                    clientType = 'device';
+                    
+                    const tierEmoji = device.licenseTier === 'pro' ? '💎' : device.licenseTier === 'enterprise' ? '👑' : '🆓';
+                    console.log(`📱 Device registered: ${deviceName} (${deviceId}) ${tierEmoji} ${device.licenseTier.toUpperCase()}`);
+                    console.log(`📊 Total devices: ${devices.size}`);
+                    console.log('');
+                    
+                    // Send device list to all dashboards
+                    broadcastDeviceList();
+                    
+                    // Send welcome message with tier info
+                    ws.send(JSON.stringify({
+                        type: 'welcome',
+                        tier: device.licenseTier,
+                        features: licenseData.features || [],
+                        message: `Connected as ${device.licenseTier.toUpperCase()} tier`
+                    }));
+                });
+                
+            } else if (parsed.clientType === 'dashboard') {
+                dashboards.add(ws);
+                clientType = 'dashboard';
+                
+                console.log(`💻 Dashboard connected`);
+                console.log(`📊 Total dashboards: ${dashboards.size}`);
+                console.log('');
+                
+                // Send current device list to new dashboard
+                ws.send(JSON.stringify({
+                    type: 'device_list',
+                    devices: Array.from(devices.values()).map(d => ({
+                        deviceId: d.deviceId,
+                        deviceName: d.deviceName,
+                        connectedAt: d.connectedAt,
+                        logCount: d.logCount
+                    }))
+                }));
+            }
+            return;
+        }
+        
+        // Handle log messages from devices
+        if (parsed.type === 'log' || !parsed.type) {
+            const logMessage = parsed.message || msgString;
+            
+            // Update device last activity
+            if (deviceId && devices.has(deviceId)) {
+                const device = devices.get(deviceId);
+                device.lastActivity = new Date();
+                device.logCount++;
+            }
+            
+            // Broadcast to all dashboards
+            const payload = JSON.stringify({
+                type: 'log',
+                deviceId: deviceId || 'unknown',
+                deviceName: devices.get(deviceId)?.deviceName || 'Unknown Device',
+                message: logMessage,
+                timestamp: timestamp
+            });
+            
+            dashboards.forEach(dashboard => {
+                if (dashboard.readyState === WebSocket.OPEN) {
+                    dashboard.send(payload);
+                }
+            });
+            
+            // Color-code in terminal
+            const deviceLabel = deviceId ? `[${devices.get(deviceId)?.deviceName || deviceId}]` : '[Unknown]';
+            if (logMessage.includes('❌') || logMessage.includes('Error') || logMessage.includes('error')) {
+                console.log(`[${timestamp}] ${deviceLabel} \x1b[31m${logMessage}\x1b[0m`);
+            } else if (logMessage.includes('✅') || logMessage.includes('Success')) {
+                console.log(`[${timestamp}] ${deviceLabel} \x1b[32m${logMessage}\x1b[0m`);
+            } else if (logMessage.includes('⚠️') || logMessage.includes('Warning')) {
+                console.log(`[${timestamp}] ${deviceLabel} \x1b[33m${logMessage}\x1b[0m`);
+            } else if (logMessage.includes('ℹ️') || logMessage.includes('Info')) {
+                console.log(`[${timestamp}] ${deviceLabel} \x1b[36m${logMessage}\x1b[0m`);
+            } else {
+                console.log(`[${timestamp}] ${deviceLabel} ${logMessage}`);
+            }
+        }
+        
+        // Handle network request logs
+        if (parsed.type === 'network') {
+            // Update device activity
+            if (deviceId && devices.has(deviceId)) {
+                devices.get(deviceId).lastActivity = new Date();
+            }
+            
+            // Broadcast to dashboards
+            const payload = JSON.stringify({
+                type: 'network',
+                deviceId: deviceId || 'unknown',
+                deviceName: devices.get(deviceId)?.deviceName || 'Unknown Device',
+                method: parsed.method,
+                url: parsed.url,
+                statusCode: parsed.statusCode,
+                duration: parsed.duration,
+                timestamp: timestamp
+            });
+            
+            dashboards.forEach(dashboard => {
+                if (dashboard.readyState === WebSocket.OPEN) {
+                    dashboard.send(payload);
+                }
+            });
+            
+            // Log to terminal
+            const deviceLabel = deviceId ? `[${devices.get(deviceId)?.deviceName || deviceId}]` : '[Unknown]';
+            console.log(`[${timestamp}] ${deviceLabel} 🌐 ${parsed.method} ${parsed.url} - ${parsed.statusCode} (${parsed.duration}ms)`);
         }
     });
+    
+    // Helper function to broadcast device list
+    function broadcastDeviceList() {
+        const payload = JSON.stringify({
+            type: 'device_list',
+            devices: Array.from(devices.values()).map(d => ({
+                deviceId: d.deviceId,
+                deviceName: d.deviceName,
+                connectedAt: d.connectedAt,
+                logCount: d.logCount
+            }))
+        });
+        
+        dashboards.forEach(dashboard => {
+            if (dashboard.readyState === WebSocket.OPEN) {
+                dashboard.send(payload);
+            }
+        });
+    }
     
     // Handle disconnection
     ws.on('close', function() {
         const timestamp = new Date().toLocaleTimeString();
-        clients.delete(ws);
-        console.log('');
-        console.log(`❌ Client disconnected at ${timestamp}`);
-        console.log(`📊 Total clients: ${clients.size}`);
+        
+        if (clientType === 'device' && deviceId) {
+            devices.delete(deviceId);
+            console.log('');
+            console.log(`❌ Device disconnected at ${timestamp}: ${deviceId}`);
+            console.log(`📊 Total devices: ${devices.size}`);
+            console.log('');
+            
+            // Notify dashboards
+            broadcastDeviceList();
+            
+        } else if (clientType === 'dashboard') {
+            dashboards.delete(ws);
+            console.log('');
+            console.log(`❌ Dashboard disconnected at ${timestamp}`);
+            console.log(`📊 Total dashboards: ${dashboards.size}`);
+            console.log('');
+        }
+        
         console.log('⏳ Waiting for reconnection...');
         console.log('');
     });
@@ -119,7 +357,7 @@ wss.on('connection', function connection(ws, req) {
     // Send periodic heartbeat
     const heartbeat = setInterval(() => {
         if (ws.readyState === WebSocket.OPEN) {
-            ws.send('💓 Heartbeat');
+            ws.send(JSON.stringify({ type: 'heartbeat', timestamp: Date.now() }));
         } else {
             clearInterval(heartbeat);
         }
