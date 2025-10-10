@@ -322,8 +322,7 @@ function createWindow() {
             sandbox: true,
             webSecurity: true,
             allowRunningInsecureContent: false,
-            experimentalFeatures: false,
-            preload: path.join(__dirname, 'preload.js')
+            experimentalFeatures: false
         },
         titleBarStyle: 'hiddenInset',
         backgroundColor: '#0a0a0a'
@@ -364,72 +363,6 @@ function startServer() {
 }
 
 app.whenReady().then(async () => {
-    const { ipcMain } = require('electron');
-    
-    // IPC handler for restarting server - INTELLIGENT VERSION
-    ipcMain.handle('restart-server', async () => {
-        console.log('🔄 Restarting server intelligently...');
-        
-        try {
-            // Step 1: Find all running apps that might be connected
-            console.log('🔍 Finding connected apps...');
-            let connectedApps = [];
-            
-            // Check for simulator apps
-            try {
-                const simApps = execSync('xcrun simctl listapps booted 2>/dev/null || true').toString();
-                if (simApps.includes('com.stickerplan.app')) {
-                    connectedApps.push({ type: 'simulator', bundleId: 'com.stickerplan.app' });
-                    console.log('📱 Found StickerPlan on simulator');
-                }
-            } catch (e) {
-                console.log('⚠️ No simulator apps found');
-            }
-            
-            // Check for physical device apps (they auto-reconnect when server restarts)
-            console.log('📱 Physical devices will auto-reconnect');
-            
-            // Step 2: Kill existing server
-            console.log('🛑 Stopping server...');
-            if (serverProcess) {
-                serverProcess.kill();
-                serverProcess = null;
-            }
-            
-            // Wait for process to die
-            await new Promise(resolve => setTimeout(resolve, 800));
-            
-            // Step 3: Start new server
-            console.log('🚀 Starting new server...');
-            startServer();
-            
-            // Wait for server to be ready
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // Step 4: Restart all connected apps so they reconnect
-            console.log('🔄 Restarting connected apps...');
-            for (const app of connectedApps) {
-                if (app.type === 'simulator') {
-                    try {
-                        // Terminate and relaunch simulator app
-                        execSync(`xcrun simctl terminate booted ${app.bundleId} 2>/dev/null || true`);
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                        execSync(`xcrun simctl launch booted ${app.bundleId} 2>/dev/null || true`);
-                        console.log(`✅ Restarted ${app.bundleId} on simulator`);
-                    } catch (e) {
-                        console.log(`⚠️ Could not restart ${app.bundleId}`);
-                    }
-                }
-            }
-            
-            console.log('✅ Server restarted successfully - All apps reconnecting!');
-            return { success: true, appsRestarted: connectedApps.length };
-        } catch (error) {
-            console.error('❌ Server restart failed:', error);
-            return { success: false, error: error.message };
-        }
-    });
-    
     // Check license first
     if (!checkLicense()) {
         const activated = await showLicensePrompt();

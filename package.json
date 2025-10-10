@@ -1,41 +1,19 @@
 {
   "name": "swiftmetro",
-  "version": "1.0.0",
+  "version": "1.0.9",
   "description": "Professional wireless logging dashboard for native iOS - Real-time debugging on steroids",
   "main": "electron-main.js",
   "bin": {
     "swifmetro": "./bin/swifmetro.js"
   },
-  "scripts": {
-    "start": "electron .",
-    "server": "node swifmetro-server.js",
-    "license": "node swifmetro-license-server.js",
-    "auth": "node swifmetro-auth-server.js",
-    "advanced": "node swifmetro-advanced-server.js",
-    "secure": "node swifmetro-secure-server.js",
-    "hot-reload": "node swifmetro-hot-reload.js",
-    "setup": "./setup.sh",
-    "test": "./test-swifmetro.sh"
-  },
-  "keywords": [
-    "ios",
-    "swift",
-    "logging",
-    "debugging",
-    "terminal",
-    "websocket",
-    "metro",
-    "native",
-    "xcode"
-  ],
   "author": "72hConcept Team",
   "license": "MIT",
   "dependencies": {
     "better-sqlite3": "^12.4.1",
     "bonjour": "^3.5.0",
     "dotenv": "^17.2.3",
-    "electron": "^32.0.0",
     "express": "^5.1.0",
+    "pg": "^8.16.3",
     "resend": "^6.1.2",
     "ws": "^8.14.2"
   },
@@ -53,5 +31,13 @@
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "server": "node swifmetro-server.js"
+  },
+  "devDependencies": {
+    "electron": "^38.2.2"
   }
 }

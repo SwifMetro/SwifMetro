@@ -560,7 +560,6 @@
             <span class="stat-value" id="filteredCount">0</span>
         </div>
         <div style="display: flex; gap: 8px; margin-left: auto;">
-            <button class="pill" id="restartServerBtn" style="background: rgba(251, 191, 36, 0.08); border-color: rgba(251, 191, 36, 0.3); font-weight: 500; color: #fbbf24;">🔄 Restart Server</button>
             <button class="pill" id="exportBtn" style="background: rgba(102, 126, 234, 0.08); border-color: rgba(102, 126, 234, 0.3); font-weight: 500; color: #8b9cff;">💾 Export</button>
             <button class="pill" id="clearBtn" style="background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.3); font-weight: 500; color: #ff6b6b;">🗑️ Clear</button>
             <button class="pill" id="copyAllBtn" style="background: rgba(102, 126, 234, 0.08); border-color: rgba(102, 126, 234, 0.3); font-weight: 500; color: #8b9cff;">📋 Copy All</button>
@@ -1040,125 +1039,6 @@
                     exportBtn.style.background = 'rgba(102, 126, 234, 0.08)';
                     exportBtn.style.borderColor = 'rgba(102, 126, 234, 0.3)';
                 }, 1500);
-            });
-        }
-
-        // Restart server - Using Electron IPC
-        const restartServerBtn = document.getElementById('restartServerBtn');
-        if (restartServerBtn) {
-            restartServerBtn.addEventListener('click', async function() {
-                const originalText = restartServerBtn.textContent;
-                restartServerBtn.textContent = '🔄 Restarting...';
-                restartServerBtn.disabled = true;
-                restartServerBtn.style.opacity = '0.6';
-                
-                // Close existing WebSocket
-                if (ws) {
-                    try {
-                        ws.close();
-                    } catch(e) {
-                        console.log('WebSocket already closed');
-                    }
-                    ws = null;
-                }
-                
-                // Use Electron IPC to restart server
-                if (window.electronAPI && window.electronAPI.restartServer) {
-                    try {
-                        restartServerBtn.textContent = '🔄 Stopping server...';
-                        const result = await window.electronAPI.restartServer();
-                        
-                        if (result.success) {
-                            restartServerBtn.textContent = '🔄 Reconnecting...';
-                            
-                            // Try reconnecting with retries
-                            let retryCount = 0;
-                            const maxRetries = 8;
-                            
-                            function tryReconnect() {
-                                retryCount++;
-                                restartServerBtn.textContent = `🔄 Connecting (${retryCount}/${maxRetries})...`;
-                                
-                                try {
-                                    reconnectAttempts = 0;
-                                    connectWebSocket();
-                                    
-                                    setTimeout(() => {
-                                        if (ws && ws.readyState === WebSocket.OPEN) {
-                                            // SUCCESS!
-                                            restartServerBtn.textContent = '✅ Connected!';
-                                            restartServerBtn.style.background = 'rgba(16, 185, 129, 0.3)';
-                                            restartServerBtn.style.borderColor = '#10b981';
-                                            restartServerBtn.style.color = '#51cf66';
-                                            
-                                            allLogs = [];
-                                            updateLogCount();
-                                            renderLogs();
-                                            
-                                            setTimeout(() => {
-                                                restartServerBtn.textContent = originalText;
-                                                restartServerBtn.style.background = 'rgba(251, 191, 36, 0.08)';
-                                                restartServerBtn.style.borderColor = 'rgba(251, 191, 36, 0.3)';
-                                                restartServerBtn.style.color = '#fbbf24';
-                                                restartServerBtn.disabled = false;
-                                                restartServerBtn.style.opacity = '1';
-                                            }, 2000);
-                                        } else if (retryCount < maxRetries) {
-                                            setTimeout(tryReconnect, 1000);
-                                        } else {
-                                            restartServerBtn.textContent = '❌ Failed';
-                                            restartServerBtn.style.background = 'rgba(239, 68, 68, 0.3)';
-                                            restartServerBtn.style.borderColor = '#ef4444';
-                                            restartServerBtn.style.color = '#ff6b6b';
-                                            
-                                            setTimeout(() => {
-                                                restartServerBtn.textContent = originalText;
-                                                restartServerBtn.style.background = 'rgba(251, 191, 36, 0.08)';
-                                                restartServerBtn.style.borderColor = 'rgba(251, 191, 36, 0.3)';
-                                                restartServerBtn.style.color = '#fbbf24';
-                                                restartServerBtn.disabled = false;
-                                                restartServerBtn.style.opacity = '1';
-                                            }, 2000);
-                                        }
-                                    }, 1000);
-                                } catch (e) {
-                                    console.error('Reconnect error:', e);
-                                    if (retryCount < maxRetries) {
-                                        setTimeout(tryReconnect, 1000);
-                                    }
-                                }
-                            }
-                            
-                            tryReconnect();
-                        } else {
-                            throw new Error(result.error || 'Restart failed');
-                        }
-                    } catch (error) {
-                        console.error('Restart error:', error);
-                        restartServerBtn.textContent = '❌ Error';
-                        restartServerBtn.style.background = 'rgba(239, 68, 68, 0.3)';
-                        restartServerBtn.style.borderColor = '#ef4444';
-                        restartServerBtn.style.color = '#ff6b6b';
-                        
-                        setTimeout(() => {
-                            restartServerBtn.textContent = originalText;
-                            restartServerBtn.style.background = 'rgba(251, 191, 36, 0.08)';
-                            restartServerBtn.style.borderColor = 'rgba(251, 191, 36, 0.3)';
-                            restartServerBtn.style.color = '#fbbf24';
-                            restartServerBtn.disabled = false;
-                            restartServerBtn.style.opacity = '1';
-                        }, 2000);
-                    }
-                } else {
-                    // Fallback: just reconnect websocket
-                    restartServerBtn.textContent = '🔄 Reconnecting...';
-                    setTimeout(() => {
-                        connectWebSocket();
-                        restartServerBtn.textContent = originalText;
-                        restartServerBtn.disabled = false;
-                        restartServerBtn.style.opacity = '1';
-                    }, 2000);
-                }
             });
         }
 

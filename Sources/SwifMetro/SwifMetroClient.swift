@@ -194,36 +194,38 @@ public class SwifMetroClient {
     /// Try common local IPs as fallback
     private func tryCommonIPs() {
         let commonIPs = [
-            "192.168.1.1", "192.168.1.100", "192.168.1.2",
-            "192.168.0.1", "192.168.0.100", "192.168.0.2",
+            "192.168.0.100", // Try Mac's common IP first!
+            "192.168.1.100", 
+            "192.168.0.1", "192.168.0.2",
+            "192.168.1.1", "192.168.1.2",
             "10.0.0.1", "10.0.0.100",
             "172.20.10.1" // iPhone hotspot default
         ]
         
-        for ip in commonIPs {
-            if tryConnection(to: ip) {
-                break
-            }
-        }
+        tryConnectionSequentially(ips: commonIPs, index: 0)
     }
     
-    /// Try connecting to specific IP
-    private func tryConnection(to ip: String) -> Bool {
+    /// Try IPs one by one with proper async handling
+    private func tryConnectionSequentially(ips: [String], index: Int) {
+        guard index < ips.count else { return }
+        
+        let ip = ips[index]
         let url = URL(string: "ws://\(ip):\(port)")!
         var request = URLRequest(url: url)
-        request.timeoutInterval = 1.0
+        request.timeoutInterval = 2.0
         
-        // Quick connection test
         let testTask = session.webSocketTask(with: request)
         testTask.resume()
         
-        testTask.sendPing { error in
+        testTask.sendPing { [weak self] error in
             if error == nil {
-                self.connectToServer(ip)
+                print("✅ SwifMetro: Found server at \(ip)!")
+                self?.connectToServer(ip)
+            } else {
+                // Try next IP
+                self?.tryConnectionSequentially(ips: ips, index: index + 1)
             }
         }
-        
-        return false
     }
     
     /// Connect to discovered server

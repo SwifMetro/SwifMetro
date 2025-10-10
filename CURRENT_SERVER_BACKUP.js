@@ -18,7 +18,7 @@ const { Pool } = require('pg');
 const PORT = 8081;
 const HOST = '0.0.0.0'; // Listen on all interfaces
 const LICENSE_SERVER = 'http://localhost:8082'; // License validation server
-const FREE_DEVICE_LIMIT = 999; // TESTING: Allow unlimited devices for now
+const FREE_DEVICE_LIMIT = 1; // Free tier: 1 device only
 
 // PostgreSQL connection
 const pool = new Pool({
@@ -284,16 +284,12 @@ wss.on('connection', function connection(ws, req) {
         const timestamp = new Date().toLocaleTimeString();
         const msgString = message.toString();
         
-        // DEBUG: Log all incoming messages
-        console.log(`📨 [${timestamp}] Received from ${clientIP}:`, msgString.substring(0, 200));
-        
         // Try to parse as JSON (for structured messages)
         let parsed;
         try {
             parsed = JSON.parse(msgString);
         } catch (e) {
             // Plain text message (backward compatible)
-            console.log(`⚠️ Failed to parse JSON, treating as plain text log`);
             parsed = { type: 'log', message: msgString };
         }
         
@@ -457,10 +453,6 @@ wss.on('connection', function connection(ws, req) {
     // Handle disconnection
     ws.on('close', function() {
         const timestamp = new Date().toLocaleTimeString();
-        
-        console.log(`🔌 Connection closed from ${clientIP} at ${timestamp}`);
-        console.log(`   Client type: ${clientType || 'UNKNOWN (never identified!)'}`);
-        console.log(`   Device ID: ${deviceId || 'N/A'}`);
         
         if (clientType === 'device' && deviceId) {
             devices.delete(deviceId);
