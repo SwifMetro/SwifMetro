@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- 
+SwifMetro Required Permissions Template
+Copy these entries into your app's Info.plist
+-->
+<plist version="1.0">
+<dict>
+	<!-- REQUIRED FOR iOS 14+ LOCAL NETWORK ACCESS -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>SwifMetro needs local network access to stream logs from your device to your Mac for debugging.</string>
+	
+	<!-- REQUIRED FOR BONJOUR AUTO-DISCOVERY -->
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_swifmetro._tcp</string>
+	</array>
+	
+	<!-- REQUIRED FOR LOCAL WEBSOCKET CONNECTIONS -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+</dict>
+</plist>
