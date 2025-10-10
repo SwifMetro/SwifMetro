@@ -15,7 +15,7 @@ class SwifMetroClient {
     // Bonjour Service Discovery
     private var browser: NWBrowser?
     private var connection: NWConnection?
-    private let serviceTy
+    private let serviceType = "_swifmetro._tcp"
     
     // Configuration
     private var serverIP: String?
