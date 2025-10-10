@@ -240,7 +240,17 @@ public class SwifMetroClient {
         webSocketTask = session.webSocketTask(with: url)
         webSocketTask?.resume()
         
-        // Identify as device with the new protocol
+        receiveMessage()
+        setupHeartbeat()
+        
+        // Wait for connection to open, then identify
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.sendIdentifyMessage()
+        }
+    }
+    
+    /// Send identify message to server
+    private func sendIdentifyMessage() {
         let deviceId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
         var identifyMessage: [String: Any] = [
             "type": "identify",
@@ -265,13 +275,14 @@ public class SwifMetroClient {
                     print("✅ SwifMetro: Connected successfully as \(UIDevice.current.name)!")
                     self?.flushMessageQueue()
                 } else {
-                    print("❌ SwifMetro: Connection failed")
+                    print("❌ SwifMetro: Identify failed: \(error?.localizedDescription ?? "unknown")")
+                    // Retry once
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        self?.sendIdentifyMessage()
+                    }
                 }
             }
         }
-        
-        receiveMessage()
-        setupHeartbeat()
     }
     
     /// Receive messages from server
