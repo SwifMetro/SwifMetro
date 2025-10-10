@@ -589,8 +589,22 @@
         let searchQuery = '';
         let connectedDevices = new Map();
         let selectedDevices = new Set();
+        let deviceColors = new Map();
         let autoScroll = true;
         let ws = null;
+        
+        // Color palette for different devices
+        const colorPalette = [
+            '#3B82F6', // Blue
+            '#10B981', // Green  
+            '#F59E0B', // Orange
+            '#EF4444', // Red
+            '#8B5CF6', // Purple
+            '#EC4899', // Pink
+            '#14B8A6', // Teal
+            '#F97316', // Dark Orange
+        ];
+        let colorIndex = 0;
         let reconnectAttempts = 0;
         let maxReconnectAttempts = 10;
         let reconnectInterval = 2000;
@@ -651,6 +665,11 @@
                     connectedDevices.clear();
                     parsed.devices.forEach(device => {
                         connectedDevices.set(device.deviceId, device);
+                        // Assign color if not already assigned
+                        if (!deviceColors.has(device.deviceId)) {
+                            deviceColors.set(device.deviceId, colorPalette[colorIndex % colorPalette.length]);
+                            colorIndex++;
+                        }
                     });
                     deviceCountEl.textContent = connectedDevices.size;
                     updateDeviceFilters();
@@ -803,7 +822,10 @@
             logsContainer.innerHTML = filteredLogs.map(log => {
                 const icon = log.isNetwork ? '🌐' : getLogIcon(log.type);
                 const badge = getLogBadge(log.type);
-                const deviceLabel = log.deviceName && log.deviceName !== 'Unknown Device' ? `<span class="device-label">[${log.deviceName}]</span> ` : '';
+                const deviceColor = deviceColors.get(log.deviceId) || '#667eea';
+                const deviceLabel = log.deviceName && log.deviceName !== 'Unknown Device' 
+                    ? `<span class="device-label" style="color: ${deviceColor}; font-weight: 600;">[${log.deviceName}]</span> ` 
+                    : '';
                 
                 // Clean message
                 let cleanMessage = log.message
@@ -811,7 +833,7 @@
                     .replace(/^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\]\s*/, ''); // Remove ISO timestamp if present
                 
                 return `
-                    <div class="log-entry ${log.type}">
+                    <div class="log-entry ${log.type}" style="border-left: 3px solid ${deviceColor};">
                         <span class="log-time">${log.timestamp}</span>
                         <span class="log-icon">${icon}</span>
                         <span class="log-message">${deviceLabel}${badge}${escapeHtml(cleanMessage)}</span>
@@ -888,7 +910,9 @@
             deviceFilterPills.innerHTML = Array.from(connectedDevices.values()).map(device => {
                 const isSelected = selectedDevices.has(device.deviceId);
                 const activeClass = isSelected ? 'active' : '';
-                return `<button class="pill ${activeClass}" data-device-id="${device.deviceId}" onclick="toggleDeviceFilter('${device.deviceId}')">${device.deviceName}</button>`;
+                const deviceColor = deviceColors.get(device.deviceId) || '#667eea';
+                const borderStyle = isSelected ? `border: 2px solid ${deviceColor}; background: ${deviceColor}22;` : `border: 1px solid ${deviceColor}44;`;
+                return `<button class="pill ${activeClass}" style="${borderStyle} color: ${isSelected ? '#fff' : deviceColor};" data-device-id="${device.deviceId}" onclick="toggleDeviceFilter('${device.deviceId}')">${device.deviceName}</button>`;
             }).join('');
         }
 

@@ -13,6 +13,7 @@ require('dotenv').config({ path: path.join(__dirname, 'CONFIDENTIAL', '.env') })
 const { execSync } = require('child_process');
 const crypto = require('crypto');
 const { Pool } = require('pg');
+const bonjour = require('bonjour')();
 
 // Configuration
 const PORT = 8081;
@@ -511,6 +512,9 @@ wss.on('error', function(error) {
 // Graceful shutdown
 process.on('SIGINT', function() {
     console.log('\n👋 Shutting down SwifMetro server...');
+    bonjour.unpublishAll(() => {
+        console.log('📡 Stopped broadcasting Bonjour service');
+    });
     wss.close(() => {
         process.exit(0);
     });
@@ -519,3 +523,17 @@ process.on('SIGINT', function() {
 console.log('✅ Server is running!');
 console.log('📝 Press Ctrl+C to stop');
 console.log('='.repeat(50));
+
+// Broadcast Bonjour service for auto-discovery
+const service = bonjour.publish({
+    name: 'SwifMetro',
+    type: 'swifmetro',
+    port: PORT,
+    txt: {
+        version: '1.0',
+        platform: 'mac'
+    }
+});
+
+console.log('📡 Broadcasting Bonjour service: _swifmetro._tcp');
+console.log('📱 Physical devices can now auto-discover this server!');

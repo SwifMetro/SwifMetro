@@ -6,8 +6,8 @@ import os.log
 /// SwifMetro Client - Advanced Version with Auto-Discovery
 /// Created: September 30, 2025
 /// The technology that revolutionized iOS debugging
-public class SwifMetroClient {
-    public static let shared = SwifMetroClient()
+@objc public class SwifMetroClient: NSObject {
+    @objc public static let shared = SwifMetroClient()
     
     // WebSocket
     private var webSocketTask: URLSessionWebSocketTask?
@@ -45,8 +45,14 @@ public class SwifMetroClient {
     // Network logging
     private var isNetworkLoggingEnabled = false
     
-    private init() {
+    private override init() {
+        super.init()
         // Private initializer for singleton
+    }
+    
+    // MARK: - Public method for Objective-C interceptor
+    @objc public func captureLog(_ message: String) {
+        self.log(message)
     }
     
     // MARK: - License Validation
@@ -95,6 +101,12 @@ public class SwifMetroClient {
         startTime = Date()
         currentLicenseKey = licenseKey
         
+        // NOTE: Using the ORIGINAL working implementation
+        // The startAutomaticCapture() method below already handles everything!
+        
+        // Also start NSLog capture for iOS
+        StderrCapture.start()
+        
         // Validate license key
         if let key = licenseKey {
             if !isValidLicenseKey(key) {
@@ -116,6 +128,9 @@ public class SwifMetroClient {
         
         // START AUTO-CAPTURE OF print() and NSLog()
         startAutomaticCapture()
+        
+        // Hook into NSLog to capture it
+        setupNSLogInterception()
         
         // SETUP CRASH HANDLER
         setupCrashHandler()
@@ -517,6 +532,41 @@ public class SwifMetroClient {
     }
     
     // MARK: - AUTOMATIC CAPTURE (The Magic!) 🔥
+    
+    /// Setup NSLog interception by redirecting ASL
+    private func setupNSLogInterception() {
+        #if DEBUG
+        // On iOS, NSLog goes through ASL (Apple System Log), not stderr
+        // We need to redirect ASL to capture NSLog
+        
+        // Create a pipe for ASL
+        var aslPipe: [Int32] = [0, 0]
+        pipe(&aslPipe)
+        
+        // Redirect ASL file descriptor
+        dup2(aslPipe[1], 2) // 2 is stderr, but ASL uses it differently
+        
+        // Read from the pipe
+        DispatchQueue.global().async {
+            let bufferSize = 4096
+            var buffer = [UInt8](repeating: 0, count: bufferSize)
+            
+            while true {
+                let bytesRead = read(aslPipe[0], &buffer, bufferSize)
+                if bytesRead > 0 {
+                    if let output = String(bytes: buffer[..<bytesRead], encoding: .utf8) {
+                        let lines = output.split(separator: "\n", omittingEmptySubSequences: true)
+                        for line in lines {
+                            self.log("📝 [NSLog] \(line)")
+                        }
+                    }
+                }
+            }
+        }
+        
+        log("🎯 NSLog interception attempted via ASL redirect!")
+        #endif
+    }
     
     /// Start automatic capture of print() and NSLog()
     private func startAutomaticCapture() {

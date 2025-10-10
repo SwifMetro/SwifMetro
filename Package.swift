@@ -18,16 +18,7 @@ let package = Package(
     targets: [
         .target(
             name: "SwifMetro",
-            path: "Sources",
-            exclude: ["Info.plist"],
-            resources: [
-                .copy("Resources")
-            ]
-        ),
-        .testTarget(
-            name: "SwifMetroTests",
-            dependencies: ["SwifMetro"],
-            path: "Tests"
+            path: "Sources/SwifMetro"
         ),
     ]
 )

@@ -69,3 +69,4 @@ SwifMetroClient-Obfuscated.swift
 swifmetro-server.min.js
 *-protected.*
 *-encrypted.*
+.build/
