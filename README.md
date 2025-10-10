@@ -64,7 +64,22 @@ swifmetro terminal
 - File → Add Package Dependencies
 - URL: `https://github.com/SwifMetro/SwifMetro.git`
 
-**2. In AppDelegate.swift:**
+**2. CRITICAL: Add to Info.plist** (Required for iOS 14+)
+```xml
+<key>NSLocalNetworkUsageDescription</key>
+<string>SwifMetro needs local network access to stream logs to your Mac.</string>
+<key>NSBonjourServices</key>
+<array>
+    <string>_swifmetro._tcp</string>
+</array>
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsLocalNetworking</key>
+    <true/>
+</dict>
+```
+
+**3. In AppDelegate.swift:**
 ```swift
 import SwifMetro
 
