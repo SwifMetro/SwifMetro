@@ -1,0 +1,44 @@
+{
+  "name": "swifmetro",
+  "version": "1.0.9",
+  "description": "Professional wireless logging dashboard for native iOS - Real-time debugging without cables",
+  "main": "swifmetro-server.js",
+  "bin": {
+    "swifmetro": "./bin/swifmetro.js"
+  },
+  "keywords": [
+    "ios",
+    "swift",
+    "logging",
+    "debugging",
+    "terminal",
+    "websocket",
+    "real-time",
+    "dashboard",
+    "xcode",
+    "console",
+    "wireless"
+  ],
+  "author": "SwifMetro Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SwifMetro/SwifMetro.git"
+  },
+  "homepage": "https://swifmetro.dev",
+  "bugs": {
+    "url": "https://github.com/SwifMetro/SwifMetro/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "bonjour": "^3.5.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "ws": "^8.14.2"
+  },
+  "scripts": {
+    "start": "node swifmetro-server.js"
+  }
+}

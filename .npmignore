@@ -1,0 +1,22 @@
+# Development
+.git/
+.github/
+.vscode/
+.idea/
+
+# Documentation (keep only essential)
+*.md
+!README.md
+!GETTING_STARTED.md
+
+# Test files
+test/
+*.test.js
+*.spec.js
+
+# Build tools
+.travis.yml
+.gitlab-ci.yml
+
+# macOS
+.DS_Store
