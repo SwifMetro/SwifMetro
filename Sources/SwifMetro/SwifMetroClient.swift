@@ -5,17 +5,20 @@ import Network
 /// SwifMetro Client - Advanced Version with Auto-Discovery
 /// Created: September 30, 2025
 /// The technology that revolutionized iOS debugging
-class SwifMetroClient {
-    static let shared = SwifMetroClient()
-    
+public class SwifMetroClient {
+    public static let shared = SwifMetroClient()
+
     // WebSocket
     private var webSocketTask: URLSessionWebSocketTask?
     private let session = URLSession(configuration: .default)
-    
+
     // Bonjour Service Discovery
     private var browser: NWBrowser?
     private var connection: NWConnection?
-    private let serviceTy
+    private let serviceType = "_swifmetro._tcp"
+
+    // Private initializer
+    private init() {}
     
     // Configuration
     private var serverIP: String?
@@ -31,7 +34,7 @@ class SwifMetroClient {
     private var logCount = 0
     
     /// Start SwifMetro with auto-discovery
-    func start() {
+    public func start() {
         #if DEBUG
         print("🚀 SwifMetro: Starting auto-discovery...")
         discoverServer()
@@ -261,9 +264,9 @@ class SwifMetroClient {
     }
     
     // MARK: - Public Logging API
-    
+
     /// Log a message
-    func log(_ message: String) {
+    public func log(_ message: String) {
         logCount += 1
         
         let timestamp = ISO8601DateFormatter().string(from: Date())
@@ -290,9 +293,9 @@ class SwifMetroClient {
     }
     
     // MARK: - Advanced Logging
-    
+
     /// Log with structured data
-    func logData<T: Encodable>(_ event: String, data: T) {
+    public func logData<T: Encodable>(_ event: String, data: T) {
         let wrapper = LogWrapper(event: event, data: data, timestamp: Date())
         if let json = try? JSONEncoder().encode(wrapper),
            let string = String(data: json, encoding: .utf8) {
@@ -301,7 +304,7 @@ class SwifMetroClient {
     }
     
     /// Log network request
-    func logNetwork(method: String, url: String, status: Int? = nil, duration: TimeInterval? = nil) {
+    public func logNetwork(method: String, url: String, status: Int? = nil, duration: TimeInterval? = nil) {
         var message = "🌐 \(method) \(url)"
         if let status = status {
             message += " → \(status)"
@@ -313,7 +316,7 @@ class SwifMetroClient {
     }
     
     /// Log user interaction
-    func logInteraction(_ action: String, element: String, metadata: [String: Any]? = nil) {
+    public func logInteraction(_ action: String, element: String, metadata: [String: Any]? = nil) {
         var message = "👆 \(action): \(element)"
         if let metadata = metadata {
             message += " \(metadata)"
@@ -322,7 +325,7 @@ class SwifMetroClient {
     }
     
     /// Log performance metric
-    func logPerformance(_ metric: String, value: Double, unit: String = "ms") {
+    public func logPerformance(_ metric: String, value: Double, unit: String = "ms") {
         log("📊 \(metric): \(String(format: "%.2f", value))\(unit)")
     }
     
@@ -345,7 +348,7 @@ class SwifMetroClient {
     }
     
     /// Log current memory usage
-    func logMemoryUsage() {
+    public func logMemoryUsage() {
         var info = mach_task_basic_info()
         var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size) / 4
         
@@ -377,7 +380,7 @@ class SwifMetroClient {
     }
     
     /// Get session statistics
-    func getStatistics() -> SessionStats {
+    public func getStatistics() -> SessionStats {
         let uptime = Date().timeIntervalSince(startTime ?? Date())
         return SessionStats(
             logCount: logCount,
@@ -391,13 +394,13 @@ class SwifMetroClient {
 
 // MARK: - Helper Types
 
-struct LogWrapper<T: Encodable>: Encodable {
+public struct LogWrapper<T: Encodable>: Encodable {
     let event: String
     let data: T
     let timestamp: Date
 }
 
-struct SessionStats {
+public struct SessionStats {
     let logCount: Int
     let uptimeSeconds: TimeInterval
     let isConnected: Bool
@@ -407,7 +410,7 @@ struct SessionStats {
 
 // MARK: - Convenience Extensions
 
-extension SwifMetroClient {
+public extension SwifMetroClient {
     func logInfo(_ message: String) { log("ℹ️ \(message)") }
     func logSuccess(_ message: String) { log("✅ \(message)") }
     func logWarning(_ message: String) { log("⚠️ \(message)") }
@@ -420,10 +423,14 @@ extension SwifMetroClient {
 #if canImport(SwiftUI)
 import SwiftUI
 
-struct SwifMetroView: ViewModifier {
+public struct SwifMetroView: ViewModifier {
     let viewName: String
-    
-    func body(content: Content) -> some View {
+
+    public init(viewName: String) {
+        self.viewName = viewName
+    }
+
+    public func body(content: Content) -> some View {
         content
             .onAppear {
                 SwifMetroClient.shared.log("📱 View appeared: \(viewName)")
@@ -434,7 +441,7 @@ struct SwifMetroView: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func swifMetroTracking(_ name: String) -> some View {
         modifier(SwifMetroView(viewName: name))
     }
