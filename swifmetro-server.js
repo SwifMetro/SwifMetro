@@ -1,539 +1,428 @@
 /**
- * SwifMetro Server
- * Created: September 30, 2025
- * The first Metro-style terminal logging for native iOS
+ * SwifMetro Advanced Server
+ * With Bonjour discovery, hot reload support, and cloud sync
  */
 
 const WebSocket = require('ws');
 const os = require('os');
-const https = require('https');
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, 'CONFIDENTIAL', '.env') });
-const { execSync } = require('child_process');
 const crypto = require('crypto');
-const { Pool } = require('pg');
-const bonjour = require('bonjour')();
+
+// Try to load Bonjour (optional but recommended)
+let bonjour;
+try {
+    bonjour = require('bonjour')();
+} catch (e) {
+    console.log('⚠️  Bonjour not installed. Run: npm install bonjour');
+}
 
 // Configuration
-const PORT = 8081;
-const HOST = '0.0.0.0'; // Listen on all interfaces
-const LICENSE_SERVER = 'http://localhost:8082'; // License validation server
-const FREE_DEVICE_LIMIT = 999; // TESTING: Allow unlimited devices for now
+const CONFIG = {
+    port: 8081,
+    host: '0.0.0.0',
+    serviceName: 'SwifMetro',
+    serviceType: 'swifmetro',
+    enableCloud: false, // Set to true for cloud features
+    enableHotReload: false, // Experimental
+    maxLogHistory: 10000,
+    authToken: process.env.SWIFMETRO_TOKEN || null
+};
 
-// PostgreSQL connection
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
+// Server state
+const state = {
+    devices: new Map(),
+    logs: [],
+    startTime: new Date(),
+    stats: {
+        messagesReceived: 0,
+        deviceConnections: 0,
+        errors: 0
     }
-});
+};
 
-// Initialize database tables
-async function initDatabase() {
-    const client = await pool.connect();
-    try {
-        await client.query(`
-            CREATE TABLE IF NOT EXISTS trials (
-                hardware_id VARCHAR(16) PRIMARY KEY,
-                start_date BIGINT NOT NULL,
-                expired BOOLEAN DEFAULT false,
-                created_at TIMESTAMP DEFAULT NOW()
-            )
-        `);
-        
-        await client.query(`
-            CREATE TABLE IF NOT EXISTS licenses (
-                license_key VARCHAR(19) PRIMARY KEY,
-                email VARCHAR(255),
-                tier VARCHAR(20) DEFAULT 'pro',
-                active BOOLEAN DEFAULT true,
-                created_at TIMESTAMP DEFAULT NOW()
-            )
-        `);
-        
-        console.log('✅ Database tables initialized');
-    } catch (err) {
-        console.error('❌ Database init error:', err);
-    } finally {
-        client.release();
-    }
+// ANSI colors for terminal
+const colors = {
+    reset: '\x1b[0m',
+    bright: '\x1b[1m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    magenta: '\x1b[35m',
+    cyan: '\x1b[36m'
+};
+
+// Display startup banner
+function displayBanner() {
+    console.log('');
+    console.log(colors.bright + colors.cyan + '╔══════════════════════════════════════════════╗' + colors.reset);
+    console.log(colors.bright + colors.cyan + '║' + colors.reset + '            🚀 SWIFMETRO SERVER              ' + colors.cyan + '║' + colors.reset);
+    console.log(colors.bright + colors.cyan + '║' + colors.reset + '    Terminal Logging for Native iOS          ' + colors.cyan + '║' + colors.reset);
+    console.log(colors.bright + colors.cyan + '║' + colors.reset + '    Created: September 30, 2025              ' + colors.cyan + '║' + colors.reset);
+    console.log(colors.bright + colors.cyan + '╚══════════════════════════════════════════════╝' + colors.reset);
+    console.log('');
 }
 
-initDatabase();
-
-// Get hardware ID (same as Electron app)
-function getHardwareId() {
-    try {
-        const uuid = execSync('system_profiler SPHardwareDataType | grep "Hardware UUID"').toString();
-        const hardwareId = uuid.split(':')[1].trim();
-        return crypto.createHash('sha256').update(hardwareId).digest('hex').substring(0, 16);
-    } catch (err) {
-        try {
-            const serial = execSync('system_profiler SPHardwareDataType | grep "Serial Number"').toString();
-            const serialNumber = serial.split(':')[1].trim();
-            return crypto.createHash('sha256').update(serialNumber).digest('hex').substring(0, 16);
-        } catch (err2) {
-            const interfaces = os.networkInterfaces();
-            const mac = Object.values(interfaces).flat().find(i => !i.internal && i.mac !== '00:00:00:00:00:00')?.mac || 'unknown';
-            return crypto.createHash('sha256').update(mac).digest('hex').substring(0, 16);
-        }
-    }
-}
-
-// Check if trial is expired (using PostgreSQL)
-async function checkTrialExpiration(licenseKey) {
-    if (licenseKey !== 'SWIF-DEMO-DEMO-DEMO') {
-        return { expired: false }; // Real license, no expiration
-    }
-    
-    const hardwareId = getHardwareId();
-    const client = await pool.connect();
-    
-    try {
-        // Check if trial exists in database
-        const result = await client.query(
-            'SELECT start_date, expired FROM trials WHERE hardware_id = $1',
-            [hardwareId]
-        );
-        
-        if (result.rows.length === 0) {
-            // No trial started yet - create it
-            await client.query(
-                'INSERT INTO trials (hardware_id, start_date) VALUES ($1, $2)',
-                [hardwareId, Date.now()]
-            );
-            console.log(`✅ Trial started for hardware: ${hardwareId}`);
-            return { expired: false, daysRemaining: 7 };
-        }
-        
-        const trial = result.rows[0];
-        const now = Date.now();
-        const daysElapsed = (now - trial.start_date) / (1000 * 60 * 60 * 24);
-        
-        if (daysElapsed > 7) {
-            // Mark as expired in database
-            await client.query(
-                'UPDATE trials SET expired = true WHERE hardware_id = $1',
-                [hardwareId]
-            );
-            return { expired: true, daysRemaining: 0 };
-        }
-        
-        return { expired: false, daysRemaining: Math.floor(7 - daysElapsed) };
-    } catch (err) {
-        console.error('Error checking trial:', err);
-        return { expired: false };
-    } finally {
-        client.release();
-    }
-}
-
-// Auto-load default license from ~/.swifmetro/license
-async function getDefaultLicense() {
-    const licensePath = path.join(os.homedir(), '.swifmetro', 'license');
-    if (fs.existsSync(licensePath)) {
-        const license = fs.readFileSync(licensePath, 'utf8').trim();
-        
-        // Check trial expiration
-        const trialStatus = await checkTrialExpiration(license);
-        if (trialStatus.expired) {
-            console.log(`❌ Trial expired! Please upgrade to Pro: https://swifmetro.dev/pricing`);
-            return null;
-        }
-        
-        if (license === 'SWIF-DEMO-DEMO-DEMO') {
-            console.log(`🔑 Found trial license: ${trialStatus.daysRemaining} days remaining`);
-        } else {
-            console.log(`🔑 Found license in ~/.swifmetro/license: ${license}`);
-        }
-        return license;
-    }
-    if (process.env.SWIFMETRO_LICENSE_KEY) {
-        console.log(`🔑 Found license in env: ${process.env.SWIFMETRO_LICENSE_KEY}`);
-        return process.env.SWIFMETRO_LICENSE_KEY;
-    }
-    console.log('🆓 No license found - Trial expired or not started');
-    return null;
-}
-
-let DEFAULT_LICENSE = null;
-getDefaultLicense().then(license => {
-    DEFAULT_LICENSE = license;
-});
-
-console.log('');
-console.log('🚀 SWIFMETRO SERVER');
-console.log('='.repeat(50));
-console.log(`📡 Starting on port ${PORT}...`);
-console.log('');
-
-// Get all network interfaces
-function getNetworkIPs() {
+// Get network interfaces
+function getNetworkInfo() {
     const interfaces = os.networkInterfaces();
     const ips = [];
     
     for (const name of Object.keys(interfaces)) {
         for (const iface of interfaces[name]) {
-            // Skip internal and non-IPv4 addresses
             if (iface.family === 'IPv4' && !iface.internal) {
-                ips.push({name: name, ip: iface.address});
+                ips.push({
+                    name: name,
+                    ip: iface.address,
+                    netmask: iface.netmask
+                });
             }
         }
     }
+    
     return ips;
 }
 
-// Display available IPs
-console.log('📱 Your iPhone should connect to one of these IPs:');
-console.log('-'.repeat(50));
-const ips = getNetworkIPs();
-ips.forEach(({name, ip}) => {
-    console.log(`   ${ip} (${name})`);
-});
-console.log('-'.repeat(50));
-console.log('');
-console.log('💡 Add your Mac\'s IP to SimpleMetroClient.swift');
-console.log('   Example: private let HOST_IP = "' + (ips[0]?.ip || '192.168.0.100') + '"');
-console.log('');
-console.log('⏳ Waiting for iPhone connections...');
-console.log('');
+// Display server info
+function displayServerInfo() {
+    console.log(colors.green + '✅ Server Configuration:' + colors.reset);
+    console.log(`   Port: ${colors.bright}${CONFIG.port}${colors.reset}`);
+    console.log(`   Cloud Sync: ${CONFIG.enableCloud ? colors.green + 'Enabled' : colors.yellow + 'Disabled'}${colors.reset}`);
+    console.log(`   Hot Reload: ${CONFIG.enableHotReload ? colors.green + 'Enabled' : colors.yellow + 'Disabled'}${colors.reset}`);
+    console.log(`   Auth: ${CONFIG.authToken ? colors.green + 'Required' : colors.yellow + 'Open'}${colors.reset}`);
+    console.log('');
+    
+    console.log(colors.blue + '📱 Connect your iPhone to one of these IPs:' + colors.reset);
+    console.log('─'.repeat(50));
+    
+    const ips = getNetworkInfo();
+    ips.forEach(({name, ip}) => {
+        console.log(`   ${colors.bright}${ip}${colors.reset} (${name})`);
+    });
+    
+    console.log('─'.repeat(50));
+    console.log('');
+}
 
 // Create WebSocket server
 const wss = new WebSocket.Server({ 
-    port: PORT,
-    host: HOST 
+    port: CONFIG.port,
+    host: CONFIG.host,
+    verifyClient: (info, cb) => {
+        // Optional authentication
+        if (CONFIG.authToken) {
+            const token = info.req.headers['authorization'];
+            if (token !== `Bearer ${CONFIG.authToken}`) {
+                cb(false, 401, 'Unauthorized');
+                return;
+            }
+        }
+        cb(true);
+    }
 });
 
-// Track connected devices with metadata
-let devices = new Map();
-let dashboards = new Set();
-
-// Device class to track individual iOS devices
-class Device {
-    constructor(ws, deviceId, deviceName, licenseKey = null) {
-        this.ws = ws;
-        this.deviceId = deviceId;
-        this.deviceName = deviceName;
-        this.licenseKey = licenseKey;
-        this.licenseTier = 'free';
-        this.connectedAt = new Date();
-        this.lastActivity = new Date();
-        this.logCount = 0;
-    }
-}
-
-// License validation cache
-const licenseCache = new Map();
-
-// Validate license key with server
-async function validateLicense(key) {
-    if (!key) return { valid: false, tier: 'free' };
-    
-    // Check cache first
-    if (licenseCache.has(key)) {
-        const cached = licenseCache.get(key);
-        if (Date.now() - cached.timestamp < 3600000) { // 1 hour cache
-            return cached.data;
+// Broadcast via Bonjour
+if (bonjour) {
+    const service = bonjour.publish({ 
+        name: CONFIG.serviceName,
+        type: CONFIG.serviceType,
+        port: CONFIG.port,
+        txt: {
+            version: '1.0.0',
+            platform: 'iOS',
+            capabilities: 'logging,hotreload,commands'
         }
-    }
+    });
     
-    try {
-        const response = await fetch(`${LICENSE_SERVER}/validate`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ key })
-        });
-        
-        const data = await response.json();
-        
-        // Cache result
-        licenseCache.set(key, {
-            timestamp: Date.now(),
-            data
-        });
-        
-        return data;
-    } catch (error) {
-        console.log(`⚠️ License validation failed: ${error.message}`);
-        return { valid: false, tier: 'free' };
-    }
+    console.log(colors.green + '✅ Broadcasting via Bonjour as:' + colors.reset);
+    console.log(`   ${colors.bright}_${CONFIG.serviceType}._tcp${colors.reset}`);
+    console.log('');
 }
 
+// Handle new connections
 wss.on('connection', function connection(ws, req) {
     const clientIP = req.socket.remoteAddress;
+    const deviceId = crypto.randomBytes(8).toString('hex');
     const timestamp = new Date().toLocaleTimeString();
     
-    // Client will identify itself as device or dashboard
-    let clientType = null;
-    let deviceId = null;
+    // Store device info
+    const device = {
+        id: deviceId,
+        ip: clientIP,
+        ws: ws,
+        connectedAt: new Date(),
+        info: {},
+        logCount: 0
+    };
     
-    console.log('🔥'.repeat(10));
-    console.log(`🔥 CLIENT CONNECTED at ${timestamp}!`);
-    console.log(`📱 From IP: ${clientIP}`);
-    console.log('🔥'.repeat(10));
+    state.devices.set(deviceId, device);
+    state.stats.deviceConnections++;
+    
+    // Fancy connection notification
+    console.log('');
+    console.log(colors.bright + colors.green + '🔥'.repeat(15) + colors.reset);
+    console.log(colors.bright + colors.green + `🔥 iPHONE CONNECTED at ${timestamp}!` + colors.reset);
+    console.log(`${colors.cyan}📱 Device ID:${colors.reset} ${deviceId}`);
+    console.log(`${colors.cyan}🌐 From IP:${colors.reset} ${clientIP}`);
+    console.log(colors.bright + colors.green + '🔥'.repeat(15) + colors.reset);
     console.log('');
     
     // Send welcome message
     ws.send(JSON.stringify({
         type: 'welcome',
-        message: '🎉 Welcome to SwifMetro! Identify yourself (device or dashboard)'
+        message: '🎉 Connected to SwifMetro!',
+        deviceId: deviceId,
+        serverTime: new Date().toISOString(),
+        capabilities: {
+            logging: true,
+            hotReload: CONFIG.enableHotReload,
+            commands: true,
+            screenshots: true
+        }
     }));
     
     // Handle incoming messages
     ws.on('message', function incoming(message) {
-        const timestamp = new Date().toLocaleTimeString();
-        const msgString = message.toString();
-        
-        // DEBUG: Log all incoming messages
-        console.log(`📨 [${timestamp}] Received from ${clientIP}:`, msgString.substring(0, 200));
-        
-        // Try to parse as JSON (for structured messages)
-        let parsed;
         try {
-            parsed = JSON.parse(msgString);
-        } catch (e) {
-            // Plain text message (backward compatible)
-            console.log(`⚠️ Failed to parse JSON, treating as plain text log`);
-            parsed = { type: 'log', message: msgString };
-        }
-        
-        // Handle different message types
-        if (parsed.type === 'identify') {
-            // Client identifying itself
-            if (parsed.clientType === 'device') {
-                deviceId = parsed.deviceId || `device_${Date.now()}`;
-                const deviceName = parsed.deviceName || 'Unknown iPhone';
-                const licenseKey = parsed.licenseKey || DEFAULT_LICENSE;
-                
-                // Validate license
-                validateLicense(licenseKey).then(licenseData => {
-                    const device = new Device(ws, deviceId, deviceName, licenseKey);
-                    device.licenseTier = licenseData.tier || 'free';
-                    
-                    // Check device limit for free tier
-                    if (device.licenseTier === 'free' && devices.size >= FREE_DEVICE_LIMIT) {
-                        console.log(`❌ Device limit reached for free tier: ${deviceName}`);
-                        ws.send(JSON.stringify({
-                            type: 'error',
-                            message: `Free tier limited to ${FREE_DEVICE_LIMIT} device. Upgrade to Pro for multiple devices: https://swifmetro.dev/pricing`
-                        }));
-                        ws.close();
-                        return;
-                    }
-                    
-                    devices.set(deviceId, device);
-                    clientType = 'device';
-                    
-                    const tierEmoji = device.licenseTier === 'pro' ? '💎' : device.licenseTier === 'enterprise' ? '👑' : '🆓';
-                    console.log(`📱 Device registered: ${deviceName} (${deviceId}) ${tierEmoji} ${device.licenseTier.toUpperCase()}`);
-                    console.log(`📊 Total devices: ${devices.size}`);
-                    console.log('');
-                    
-                    // Send device list to all dashboards
-                    broadcastDeviceList();
-                    
-                    // Send welcome message with tier info
-                    ws.send(JSON.stringify({
-                        type: 'welcome',
-                        tier: device.licenseTier,
-                        features: licenseData.features || [],
-                        message: `Connected as ${device.licenseTier.toUpperCase()} tier`
-                    }));
-                });
-                
-            } else if (parsed.clientType === 'dashboard') {
-                dashboards.add(ws);
-                clientType = 'dashboard';
-                
-                console.log(`💻 Dashboard connected`);
-                console.log(`📊 Total dashboards: ${dashboards.size}`);
-                console.log('');
-                
-                // Send current device list to new dashboard
-                ws.send(JSON.stringify({
-                    type: 'device_list',
-                    devices: Array.from(devices.values()).map(d => ({
-                        deviceId: d.deviceId,
-                        deviceName: d.deviceName,
-                        connectedAt: d.connectedAt,
-                        logCount: d.logCount
-                    }))
-                }));
-            }
-            return;
-        }
-        
-        // Handle log messages from devices
-        if (parsed.type === 'log' || !parsed.type) {
-            const logMessage = parsed.message || msgString;
+            state.stats.messagesReceived++;
+            device.logCount++;
             
-            // Update device last activity
-            if (deviceId && devices.has(deviceId)) {
-                const device = devices.get(deviceId);
-                device.lastActivity = new Date();
-                device.logCount++;
+            const timestamp = new Date().toLocaleTimeString();
+            let data;
+            
+            // Try to parse as JSON first
+            try {
+                data = JSON.parse(message.toString());
+                handleStructuredMessage(device, data, timestamp);
+            } catch {
+                // Plain text message
+                handlePlainMessage(device, message.toString(), timestamp);
             }
             
-            // Broadcast to all dashboards
-            const payload = JSON.stringify({
-                type: 'log',
-                deviceId: deviceId || 'unknown',
-                deviceName: devices.get(deviceId)?.deviceName || 'Unknown Device',
-                message: logMessage,
-                timestamp: timestamp
-            });
-            
-            dashboards.forEach(dashboard => {
-                if (dashboard.readyState === WebSocket.OPEN) {
-                    dashboard.send(payload);
-                }
-            });
-            
-            // Color-code in terminal
-            const deviceLabel = deviceId ? `[${devices.get(deviceId)?.deviceName || deviceId}]` : '[Unknown]';
-            if (logMessage.includes('❌') || logMessage.includes('Error') || logMessage.includes('error')) {
-                console.log(`[${timestamp}] ${deviceLabel} \x1b[31m${logMessage}\x1b[0m`);
-            } else if (logMessage.includes('✅') || logMessage.includes('Success')) {
-                console.log(`[${timestamp}] ${deviceLabel} \x1b[32m${logMessage}\x1b[0m`);
-            } else if (logMessage.includes('⚠️') || logMessage.includes('Warning')) {
-                console.log(`[${timestamp}] ${deviceLabel} \x1b[33m${logMessage}\x1b[0m`);
-            } else if (logMessage.includes('ℹ️') || logMessage.includes('Info')) {
-                console.log(`[${timestamp}] ${deviceLabel} \x1b[36m${logMessage}\x1b[0m`);
-            } else {
-                console.log(`[${timestamp}] ${deviceLabel} ${logMessage}`);
-            }
-        }
-        
-        // Handle network request logs
-        if (parsed.type === 'network') {
-            // Update device activity
-            if (deviceId && devices.has(deviceId)) {
-                devices.get(deviceId).lastActivity = new Date();
+            // Store in history
+            if (state.logs.length >= CONFIG.maxLogHistory) {
+                state.logs.shift();
             }
             
-            // Broadcast to dashboards
-            const payload = JSON.stringify({
-                type: 'network',
-                deviceId: deviceId || 'unknown',
-                deviceName: devices.get(deviceId)?.deviceName || 'Unknown Device',
-                method: parsed.method,
-                url: parsed.url,
-                statusCode: parsed.statusCode,
-                duration: parsed.duration,
-                timestamp: timestamp
+            state.logs.push({
+                deviceId: deviceId,
+                timestamp: new Date(),
+                message: message.toString()
             });
             
-            dashboards.forEach(dashboard => {
-                if (dashboard.readyState === WebSocket.OPEN) {
-                    dashboard.send(payload);
-                }
-            });
+            // Broadcast to other connected clients (for team sharing)
+            broadcastToOthers(deviceId, message.toString());
             
-            // Log to terminal
-            const deviceLabel = deviceId ? `[${devices.get(deviceId)?.deviceName || deviceId}]` : '[Unknown]';
-            console.log(`[${timestamp}] ${deviceLabel} 🌐 ${parsed.method} ${parsed.url} - ${parsed.statusCode} (${parsed.duration}ms)`);
+        } catch (error) {
+            console.log(colors.red + `❌ Error processing message: ${error.message}` + colors.reset);
+            state.stats.errors++;
         }
     });
     
-    // Helper function to broadcast device list
-    function broadcastDeviceList() {
-        const payload = JSON.stringify({
-            type: 'device_list',
-            devices: Array.from(devices.values()).map(d => ({
-                deviceId: d.deviceId,
-                deviceName: d.deviceName,
-                connectedAt: d.connectedAt,
-                logCount: d.logCount
-            }))
-        });
-        
-        dashboards.forEach(dashboard => {
-            if (dashboard.readyState === WebSocket.OPEN) {
-                dashboard.send(payload);
-            }
-        });
-    }
-    
     // Handle disconnection
     ws.on('close', function() {
-        const timestamp = new Date().toLocaleTimeString();
+        const device = state.devices.get(deviceId);
+        const sessionTime = ((new Date() - device.connectedAt) / 1000).toFixed(1);
         
-        console.log(`🔌 Connection closed from ${clientIP} at ${timestamp}`);
-        console.log(`   Client type: ${clientType || 'UNKNOWN (never identified!)'}`);
-        console.log(`   Device ID: ${deviceId || 'N/A'}`);
-        
-        if (clientType === 'device' && deviceId) {
-            devices.delete(deviceId);
-            console.log('');
-            console.log(`❌ Device disconnected at ${timestamp}: ${deviceId}`);
-            console.log(`📊 Total devices: ${devices.size}`);
-            console.log('');
-            
-            // Notify dashboards
-            broadcastDeviceList();
-            
-        } else if (clientType === 'dashboard') {
-            dashboards.delete(ws);
-            console.log('');
-            console.log(`❌ Dashboard disconnected at ${timestamp}`);
-            console.log(`📊 Total dashboards: ${dashboards.size}`);
-            console.log('');
-        }
-        
-        console.log('⏳ Waiting for reconnection...');
         console.log('');
+        console.log(colors.yellow + `⚠️  Device ${deviceId} disconnected` + colors.reset);
+        console.log(`   Session duration: ${sessionTime}s`);
+        console.log(`   Logs received: ${device.logCount}`);
+        console.log('');
+        
+        state.devices.delete(deviceId);
     });
     
     // Handle errors
     ws.on('error', function(error) {
-        console.log('❌ WebSocket error:', error.message);
+        console.log(colors.red + `❌ WebSocket error: ${error.message}` + colors.reset);
+        state.stats.errors++;
     });
     
-    // Send periodic heartbeat
+    // Setup heartbeat
     const heartbeat = setInterval(() => {
         if (ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ type: 'heartbeat', timestamp: Date.now() }));
+            ws.ping();
         } else {
             clearInterval(heartbeat);
         }
-    }, 30000); // Every 30 seconds
+    }, 30000);
 });
 
-// Handle server errors
+// Handle structured messages
+function handleStructuredMessage(device, data, timestamp) {
+    // Store device info if provided
+    if (data.device || data.model || data.os) {
+        device.info = {
+            name: data.device,
+            model: data.model,
+            os: data.os,
+            app: data.app
+        };
+        
+        console.log(`${colors.cyan}📱 Device Info:${colors.reset}`);
+        console.log(`   Name: ${device.info.name}`);
+        console.log(`   Model: ${device.info.model}`);
+        console.log(`   OS: ${device.info.os}`);
+        console.log(`   App: ${device.info.app}`);
+        console.log('');
+        return;
+    }
+    
+    // Handle different message types
+    if (data.event) {
+        // Structured log
+        const icon = getIconForEvent(data.event);
+        console.log(`[${timestamp}] ${icon} ${colors.bright}${data.event}${colors.reset}`);
+        if (data.data) {
+            console.log(`   ${JSON.stringify(data.data, null, 2)}`);
+        }
+    } else {
+        // Generic structured data
+        console.log(`[${timestamp}] 📊 ${JSON.stringify(data, null, 2)}`);
+    }
+}
+
+// Handle plain text messages
+function handlePlainMessage(device, message, timestamp) {
+    // Color code based on content
+    let color = colors.reset;
+    let icon = '📱';
+    
+    if (message.includes('❌') || message.includes('Error') || message.includes('error')) {
+        color = colors.red;
+        icon = '❌';
+    } else if (message.includes('✅') || message.includes('Success') || message.includes('success')) {
+        color = colors.green;
+        icon = '✅';
+    } else if (message.includes('⚠️') || message.includes('Warning') || message.includes('warning')) {
+        color = colors.yellow;
+        icon = '⚠️';
+    } else if (message.includes('ℹ️') || message.includes('Info')) {
+        color = colors.cyan;
+        icon = 'ℹ️';
+    } else if (message.includes('🔍') || message.includes('Debug')) {
+        color = colors.magenta;
+        icon = '🔍';
+    }
+    
+    console.log(`[${timestamp}] ${icon} ${color}${message}${colors.reset}`);
+}
+
+// Get icon for event type
+function getIconForEvent(event) {
+    const icons = {
+        'tap': '👆',
+        'swipe': '👉',
+        'network': '🌐',
+        'navigation': '📍',
+        'error': '❌',
+        'success': '✅',
+        'warning': '⚠️',
+        'performance': '📊',
+        'memory': '💾',
+        'screenshot': '📸'
+    };
+    
+    for (const [key, icon] of Object.entries(icons)) {
+        if (event.toLowerCase().includes(key)) {
+            return icon;
+        }
+    }
+    
+    return '📝';
+}
+
+// Broadcast to other connected devices
+function broadcastToOthers(senderId, message) {
+    if (!CONFIG.enableCloud) return;
+    
+    for (const [deviceId, device] of state.devices) {
+        if (deviceId !== senderId && device.ws.readyState === WebSocket.OPEN) {
+            device.ws.send(JSON.stringify({
+                type: 'broadcast',
+                from: senderId,
+                message: message
+            }));
+        }
+    }
+}
+
+// Handle server commands
+wss.on('listening', function() {
+    displayBanner();
+    displayServerInfo();
+    
+    console.log(colors.green + '✅ Server is running!' + colors.reset);
+    console.log(`📝 Press ${colors.bright}Ctrl+C${colors.reset} to stop`);
+    console.log('');
+    console.log(colors.yellow + '⏳ Waiting for iPhone connections...' + colors.reset);
+    console.log('═'.repeat(50));
+});
+
+// Error handling
 wss.on('error', function(error) {
-    console.log('❌ Server error:', error.message);
+    console.log(colors.red + `❌ Server error: ${error.message}` + colors.reset);
+    
     if (error.code === 'EADDRINUSE') {
-        console.log('💡 Port 8081 is already in use. Kill the other process:');
-        console.log('   lsof -ti:8081 | xargs kill -9');
+        console.log(colors.yellow + '💡 Port 8081 is already in use.' + colors.reset);
+        console.log('   Kill the other process:');
+        console.log(colors.bright + '   lsof -ti:8081 | xargs kill -9' + colors.reset);
     }
 });
 
 // Graceful shutdown
 process.on('SIGINT', function() {
-    console.log('\n👋 Shutting down SwifMetro server...');
-    bonjour.unpublishAll(() => {
-        console.log('📡 Stopped broadcasting Bonjour service');
-    });
+    console.log('');
+    console.log(colors.yellow + '👋 Shutting down SwifMetro server...' + colors.reset);
+    
+    // Display session stats
+    const uptime = ((new Date() - state.startTime) / 1000).toFixed(1);
+    console.log('');
+    console.log(colors.cyan + '📊 Session Statistics:' + colors.reset);
+    console.log(`   Uptime: ${uptime}s`);
+    console.log(`   Messages received: ${state.stats.messagesReceived}`);
+    console.log(`   Total connections: ${state.stats.deviceConnections}`);
+    console.log(`   Errors: ${state.stats.errors}`);
+    console.log('');
+    
+    // Close connections
+    for (const [deviceId, device] of state.devices) {
+        device.ws.close();
+    }
+    
     wss.close(() => {
+        if (bonjour) {
+            bonjour.unpublishAll();
+        }
         process.exit(0);
     });
 });
 
-console.log('✅ Server is running!');
-console.log('📝 Press Ctrl+C to stop');
-console.log('='.repeat(50));
-
-// Broadcast Bonjour service for auto-discovery
-const service = bonjour.publish({
-    name: 'SwifMetro',
-    type: 'swifmetro',
-    port: PORT,
-    txt: {
-        version: '1.0',
-        platform: 'mac'
-    }
-});
-
-console.log('📡 Broadcasting Bonjour service: _swifmetro._tcp');
-console.log('📱 Physical devices can now auto-discover this server!');
+// API endpoints (optional web dashboard)
+if (CONFIG.enableCloud) {
+    const http = require('http');
+    const apiServer = http.createServer((req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        
+        if (req.url === '/api/stats') {
+            res.end(JSON.stringify({
+                devices: state.devices.size,
+                logs: state.logs.length,
+                stats: state.stats
+            }));
+        } else if (req.url === '/api/logs') {
+            res.end(JSON.stringify(state.logs.slice(-100)));
+        } else {
+            res.statusCode = 404;
+            res.end('{"error": "Not found"}');
+        }
+    });
+    
+    apiServer.listen(8082, () => {
+        console.log(colors.cyan + `📊 API Dashboard available at:${colors.reset}`);
+        console.log(`   ${colors.bright}http://localhost:8082/api/stats${colors.reset}`);
+        console.log('');
+    });
+}

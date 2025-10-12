@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "bonjour": "^3.5.0",
-    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "ws": "^8.14.2"
   },
