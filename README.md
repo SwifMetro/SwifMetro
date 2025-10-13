@@ -51,19 +51,45 @@ SwifMetro is a wireless logging solution that streams `print()` and `NSLog()` ou
 
 ## Quick Start
 
-### 1. Install SwifMetro CLI
+**Choose Your Setup:**
 
+### Option A: Beautiful GUI Dashboard (Recommended)
+
+**Download the Mac App:**
+1. Visit [swiftmetro.com](https://swiftmetro.com) (coming soon!)
+2. Download SwifMetro DMG for Mac
+3. Install and launch the app
+4. Beautiful Electron dashboard opens automatically
+
+**Or use the CLI to launch GUI:**
 ```bash
 npm install -g swifmetro
+swifmetro dashboard  # Opens GUI application
 ```
 
-### 2. Start the Dashboard
+You'll see a beautiful dashboard with:
+- Real-time log streaming
+- Dark/light theme
+- Search and filtering
+- Network request viewer
+- Export and clipboard features
 
+---
+
+### Option B: Terminal Mode (CLI Only - Free)
+
+**For terminal lovers or CI/CD:**
 ```bash
-swifmetro dashboard
+# Install
+npm install -g swifmetro
+
+# Run in terminal (no GUI)
+swifmetro terminal
+# or just
+swifmetro
 ```
 
-You'll see:
+You'll see logs directly in your terminal:
 ```
 🚀 SWIFMETRO SERVER
 📡 Starting on port 8081...
@@ -74,7 +100,17 @@ You'll see:
 ⏳ Waiting for iPhone connections...
 ```
 
-### 3. Add to Your iOS Project
+---
+
+### Option C: Both!
+
+Use the Mac app for daily development, terminal for automation/scripts. They're the same server, just different interfaces.
+
+---
+
+### Next: Add to Your iOS Project
+
+**Both options above start the server on your Mac.** Now add SwifMetro to your iOS app:
 
 **Add Swift Package in Xcode:**
 - File → Add Package Dependencies
@@ -309,19 +345,57 @@ Before asking for help, verify:
 
 ## Installation Modes
 
-### Dashboard Mode (Recommended)
-```bash
-swifmetro dashboard
-```
-Opens the Electron GUI application with full features.
+SwifMetro has two ways to view logs from your iOS app:
 
-### Terminal Mode
+### 🎨 Dashboard Mode (Beautiful GUI - Recommended)
+
+**What you get:**
+- Beautiful Electron desktop app with modern UI
+- Real-time log streaming with color coding
+- Search, filter, and export features
+- Dark/light theme support
+- Network request inspector
+- Keyboard shortcuts
+
+**How to use:**
 ```bash
-swifmetro
-# or
-swifmetro terminal
+swifmetro dashboard  # Opens GUI app
 ```
-Logs appear directly in your terminal - useful for CI/CD or scripting.
+
+**Who it's for:**
+- Daily iOS development
+- Visual debugging
+- Teams who want a polished tool
+- Anyone who prefers GUI over terminal
+
+---
+
+### 💻 Terminal Mode (CLI Only - Free Alternative)
+
+**What you get:**
+- Plain text logs in your terminal
+- Lightweight and fast
+- Perfect for remote servers
+- No GUI dependencies
+
+**How to use:**
+```bash
+swifmetro          # Default: terminal mode
+swifmetro terminal # Explicit terminal mode
+```
+
+**Who it's for:**
+- Terminal enthusiasts
+- CI/CD pipelines
+- Automation scripts
+- Remote debugging over SSH
+- Minimalists who prefer text
+
+---
+
+### 🚀 Use Both!
+
+The Mac app and terminal mode are just different views of the same server. Use the GUI for development, terminal for automation. Your choice!
 
 ---
 
