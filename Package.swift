@@ -1,24 +1,21 @@
-// swift-tools-version:5.9
+// swift-tools-version:5.5
 import PackageDescription
 
 let package = Package(
     name: "SwifMetro",
     platforms: [
-        .iOS(.v13),
-        .macOS(.v10_15)
+        .iOS(.v14)
     ],
     products: [
         .library(
             name: "SwifMetro",
-            targets: ["SwifMetro"]
-        )
+            targets: ["SwifMetro"])
     ],
-    dependencies: [],
     targets: [
-        .target(
+        .binaryTarget(
             name: "SwifMetro",
-            dependencies: [],
-            path: "Sources/SwifMetro"
+            url: "https://github.com/SwifMetro/SwifMetro/releases/download/v1.0.0/SwifMetro.xcframework.zip",
+            checksum: "d78755966b511d87cf6ceffbfeb3dfc9b626823fe875c0300c060b8f9db47c47"
         )
     ]
 )
