@@ -27,3 +27,36 @@ build/
 
 # Test files
 test-*.js
+
+# ========================================
+# SECURITY: Desktop app files (NEVER commit to public repo!)
+# ========================================
+# These files should ONLY be in the DMG (encrypted in app.asar)
+# The public repo should ONLY contain the iOS Swift package
+
+# Desktop app core files
+electron-main.js
+swifmetro-server.js
+preload.js
+
+# Dashboard files (HTML/CSS/JS)
+dashboard-*.js
+dashboard-*.css
+swifmetro-dashboard.html
+*.html
+
+# Node.js/NPM files (not needed for Swift package)
+package.json
+package-lock.json
+.npmignore
+bin/
+
+# Prevent ANY JavaScript files (this is a Swift package only)
+*.js
+
+# Internal documentation (not for customers)
+LAUNCH_INSTRUCTIONS.md
+NPM_PUBLISHING_GUIDE.md
+TESTING_CHECKLIST.md
+USER_JOURNEY.md
+MASTER_*.md
