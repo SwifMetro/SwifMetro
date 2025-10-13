@@ -2,7 +2,7 @@
   "name": "swifmetro",
   "version": "1.0.9",
   "description": "Professional wireless logging dashboard for native iOS - Real-time debugging without cables",
-  "main": "swifmetro-server.js",
+  "main": "electron-main.js",
   "bin": {
     "swifmetro": "./bin/swifmetro.js"
   },
@@ -17,7 +17,8 @@
     "dashboard",
     "xcode",
     "console",
-    "wireless"
+    "wireless",
+    "electron"
   ],
   "author": "SwifMetro Team",
   "license": "MIT",
@@ -37,7 +38,11 @@
     "express": "^5.1.0",
     "ws": "^8.14.2"
   },
+  "devDependencies": {
+    "electron": "^38.2.2"
+  },
   "scripts": {
-    "start": "node swifmetro-server.js"
+    "start": "electron .",
+    "server": "node swifmetro-server.js"
   }
 }

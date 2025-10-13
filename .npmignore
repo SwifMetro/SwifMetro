@@ -21,6 +21,12 @@ test/
 # macOS
 .DS_Store
 
+# Secrets
+CONFIDENTIAL/
+.env*
+*.pem
+*.key
+
 # Swift Package Manager (only for Xcode, not npm)
 Package.swift
 Sources/

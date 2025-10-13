@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:8081">
+    <title>SwifMetro</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="dashboard-styles.css">
+</head>
+<body>
+    <!-- Titlebar -->
+    <div class="titlebar">
+        <div class="titlebar-left">
+            <div class="logo">
+                <div class="logo-line"></div>
+                <div class="logo-line"></div>
+                <div class="logo-line"></div>
+            </div>
+            <h1>SwifMetro</h1>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="theme-toggle">
+                <button class="theme-btn active" id="darkBtn">🌙</button>
+                <button class="theme-btn" id="lightBtn">☀️</button>
+            </div>
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot"></span>
+                <span id="statusText">Connected</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search logs...">
+            <label class="regex-toggle" title="Enable regex search (e.g. /error.*network/i)">
+                <input type="checkbox" id="regexToggle">
+                <span class="regex-indicator">.*</span>
+            </label>
+        </div>
+        <div class="filter-pills" id="deviceFilterPills">
+            <!-- Device filter pills will be added here dynamically -->
+        </div>
+        <div class="filter-pills">
+            <button class="pill active" data-filter="all">All</button>
+            <button class="pill error" data-filter="error">Errors</button>
+            <button class="pill warning" data-filter="warning">Warnings</button>
+            <button class="pill success" data-filter="success">Success</button>
+            <button class="pill info" data-filter="info">Info</button>
+        </div>
+
+        <!-- Advanced Filters Dropdown -->
+        <div class="advanced-dropdown">
+            <button class="advanced-trigger" id="advancedTrigger">
+                <span>⚙️ Advanced</span>
+                <span class="badge" id="activeBadge" style="display: none;">0</span>
+                <span class="arrow">▼</span>
+            </button>
+            <div class="advanced-menu" id="advancedMenu">
+                <div class="menu-section">
+                    <div class="menu-header">Time Range</div>
+                    <div class="time-range-options">
+                        <button class="time-pill active" data-time="all">All Time</button>
+                        <button class="time-pill" data-time="5">Last 5 min</button>
+                        <button class="time-pill" data-time="15">Last 15 min</button>
+                        <button class="time-pill" data-time="30">Last 30 min</button>
+                        <button class="time-pill" data-time="60">Last 1 hour</button>
+                    </div>
+                </div>
+                <div class="menu-divider"></div>
+                <div class="menu-section">
+                    <div class="menu-header">Performance Metrics</div>
+                    <label class="menu-item">
+                        <input type="checkbox" id="toggleFPS" data-toggle="fps">
+                        <span class="checkbox-custom"></span>
+                        <span class="item-icon">📊</span>
+                        <span class="item-label">FPS Monitor</span>
+                        <span class="item-hint">Frame rate logs</span>
+                    </label>
+                    <label class="menu-item">
+                        <input type="checkbox" id="toggleMemory" data-toggle="memory">
+                        <span class="checkbox-custom"></span>
+                        <span class="item-icon">💾</span>
+                        <span class="item-label">Memory Stats</span>
+                        <span class="item-hint">Heap & allocation logs</span>
+                    </label>
+                </div>
+                <div class="menu-divider"></div>
+                <div class="menu-section">
+                    <div class="menu-header">Debug Options</div>
+                    <label class="menu-item">
+                        <input type="checkbox" id="toggleUserDefaults" data-toggle="userdefaults">
+                        <span class="checkbox-custom"></span>
+                        <span class="item-icon">⚙️</span>
+                        <span class="item-label">UserDefaults</span>
+                        <span class="item-hint">Settings changes</span>
+                    </label>
+                    <label class="menu-item">
+                        <input type="checkbox" id="toggleDebug" data-toggle="debug">
+                        <span class="checkbox-custom"></span>
+                        <span class="item-icon">🐛</span>
+                        <span class="item-label">Debug Logs</span>
+                        <span class="item-hint">Verbose output</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat">
+            <span>Devices:</span>
+            <span class="stat-value" id="deviceCount">0</span>
+        </div>
+        <div class="stat">
+            <span>Total Logs:</span>
+            <span class="stat-value" id="logCount">0</span>
+        </div>
+        <div class="stat">
+            <span>Filtered:</span>
+            <span class="stat-value" id="filteredCount">0</span>
+        </div>
+        <div style="display: flex; gap: 8px; margin-left: auto;">
+            <button class="pill" id="pauseBtn" style="background: rgba(139, 92, 246, 0.08); border-color: rgba(139, 92, 246, 0.3); font-weight: 500; color: #a78bfa;">▶️ Live</button>
+            <button class="pill" id="jumpToLiveBtn" style="display: none; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.5); font-weight: 600; color: #51cf66; animation: pulse 2s infinite;">🚀 Jump to Live</button>
+            <button class="pill" id="restartServerBtn" style="background: rgba(251, 191, 36, 0.08); border-color: rgba(251, 191, 36, 0.3); font-weight: 500; color: #fbbf24;">🔄 Restart Server</button>
+            <button class="pill" id="exportBtn" style="background: rgba(102, 126, 234, 0.08); border-color: rgba(102, 126, 234, 0.3); font-weight: 500; color: #8b9cff;">💾 Export</button>
+            <button class="pill" id="clearBtn" style="background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.3); font-weight: 500; color: #ff6b6b;">🗑️ Clear</button>
+            <button class="pill" id="copyAllBtn" style="background: rgba(102, 126, 234, 0.08); border-color: rgba(102, 126, 234, 0.3); font-weight: 500; color: #8b9cff;">📋 Copy All</button>
+            <button class="pill" id="autoScrollBtn" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.3); font-weight: 500; color: #51cf66;">⬇️ Auto-scroll</button>
+        </div>
+    </div>
+
+    <!-- Logs Container -->
+    <div class="logs-container" id="logsContainer">
+        <div class="empty-state">
+            <div class="empty-icon">📱</div>
+            <p>Waiting for logs from your iOS device...</p>
+        </div>
+    </div>
+
+    <!-- Scroll Control Button (Dual Purpose: Scroll to Top OR Toggle Auto-scroll) -->
+    <button class="scroll-control-btn" id="scrollControlBtn" title="Scroll to top">
+        <span class="scroll-icon">↑</span>
+        <span class="scroll-label">Top</span>
+    </button>
+
+    <!-- External JavaScript Modules -->
+    <script src="dashboard-utils.js"></script>
+    <script src="dashboard-main.js"></script>
+    <script src="dashboard-ui.js"></script>
+</body>
+</html>
