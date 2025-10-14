@@ -2,9 +2,9 @@
 
 **Wireless logging dashboard for iOS development** - Stream logs from your iPhone, iPad, or Simulator to your Mac in real-time. No cables required.
 
-[![Version](https://img.shields.io/badge/version-1.0.3-blue.svg)](https://github.com/SwifMetro/SwifMetro)
+[![Version](https://img.shields.io/badge/version-1.0.10-blue.svg)](https://github.com/SwifMetro/SwifMetro/releases/tag/v1.0.10)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-iOS%2013%2B-lightgrey.svg)](https://github.com/SwifMetro/SwifMetro)
+[![Platform](https://img.shields.io/badge/platform-iOS%2014%2B-lightgrey.svg)](https://github.com/SwifMetro/SwifMetro)
 
 ---
 
@@ -51,70 +51,40 @@ SwifMetro is a wireless logging solution that streams `print()` and `NSLog()` ou
 
 ## Quick Start
 
-**Choose Your Setup:**
+### Step 1: Download SwifMetro for Mac
 
-### Option A: Beautiful GUI Dashboard (Recommended)
+**Download the Dashboard App:**
+1. Go to [GitHub Releases](https://github.com/SwifMetro/SwifMetro/releases/latest)
+2. Download `SwifMetro-Installer.dmg`
+3. Open the DMG and drag SwifMetro to Applications
+4. **Launch SwifMetro** from Applications folder
 
-**Download the Mac App:**
-1. Visit [swiftmetro.com](https://swiftmetro.com) (coming soon!)
-2. Download SwifMetro DMG for Mac
-3. Install and launch the app
-4. Beautiful Electron dashboard opens automatically
-
-**Or use the CLI to launch GUI:**
-```bash
-npm install -g swifmetro
-swifmetro dashboard  # Opens GUI application
-```
-
-You'll see a beautiful dashboard with:
-- Real-time log streaming
-- Dark/light theme
-- Search and filtering
-- Network request viewer
-- Export and clipboard features
-
----
-
-### Option B: Terminal Mode (CLI Only - Free)
-
-**For terminal lovers or CI/CD:**
-```bash
-# Install
-npm install -g swifmetro
-
-# Run in terminal (no GUI)
-swifmetro terminal
-# or just
-swifmetro
-```
-
-You'll see logs directly in your terminal:
+**The server starts automatically!** You'll see:
 ```
 🚀 SWIFMETRO SERVER
 📡 Starting on port 8081...
 
 📱 Your iPhone should connect to one of these IPs:
+--------------------------------------------------
    192.168.0.100 (en0)
-
-⏳ Waiting for iPhone connections...
+--------------------------------------------------
 ```
 
----
-
-### Option C: Both!
-
-Use the Mac app for daily development, terminal for automation/scripts. They're the same server, just different interfaces.
+**Copy your Mac's IP address** - you'll need it for Step 3!
 
 ---
 
-### Next: Add to Your iOS Project
+### Step 2: Add SwifMetro to Your iOS Project
 
-**Both options above start the server on your Mac.** Now add SwifMetro to your iOS app:
+**In Xcode:**
+1. File → Add Package Dependencies
+2. URL: `https://github.com/SwifMetro/SwifMetro.git`
+3. Choose "Up to Next Major Version" → **1.0.10**
+4. Add to your app target
 
-**Add Swift Package in Xcode:**
-- File → Add Package Dependencies
-- URL: `https://github.com/SwifMetro/SwifMetro.git`
+---
+
+### Step 3: Configure Your iOS App
 
 **Add to Info.plist** (Required for iOS 14+):
 ```xml
@@ -131,25 +101,9 @@ Use the Mac app for daily development, terminal for automation/scripts. They're 
 </dict>
 ```
 
-**Initialize in AppDelegate.swift:**
-```swift
-import SwifMetro
+**Initialize SwifMetro:**
 
-class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication,
-                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
-        #if DEBUG
-        SwifMetroClient.shared.start(serverIP: "192.168.0.100") // Your Mac's IP
-        print("🚀 App launched!") // This appears in the dashboard!
-        #endif
-
-        return true
-    }
-}
-```
-
-**Or for SwiftUI Apps:**
+For **SwiftUI** apps, add to your App struct:
 ```swift
 import SwiftUI
 import SwifMetro
@@ -158,7 +112,9 @@ import SwifMetro
 struct YourApp: App {
     init() {
         #if DEBUG
-        SwifMetroClient.shared.start(serverIP: "192.168.0.100")
+        // Use the IP from Step 1!
+        SwifMetroClient.shared.start(serverIP: "192.168.0.100")  // ← Your Mac's IP here
+        print("🚀 App launched!")  // This will appear in the dashboard!
         #endif
     }
 
@@ -170,9 +126,30 @@ struct YourApp: App {
 }
 ```
 
-### 4. Run Your App
+For **UIKit** apps, add to AppDelegate:
+```swift
+import UIKit
+import SwifMetro
 
-Launch your app and watch logs appear in the SwifMetro dashboard!
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        #if DEBUG
+        SwifMetroClient.shared.start(serverIP: "192.168.0.100")  // ← Your Mac's IP here
+        print("🚀 App launched!")
+        #endif
+        return true
+    }
+}
+```
+
+---
+
+### Step 4: Run Your App & See Logs!
+
+1. **Make sure SwifMetro Mac app is running** (from Step 1)
+2. **Build and run your iOS app** (⌘R in Xcode)
+3. **Watch logs appear instantly in the dashboard!** 🎉
 
 ```swift
 print("Hello from iPhone!") // Appears in dashboard
