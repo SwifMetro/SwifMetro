@@ -95,7 +95,7 @@ cat > "build/ios-arm64/SwifMetro.framework/Info.plist" << EOF
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.5</string>
+    <string>1.0.6</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>MinimumOSVersion</key>
@@ -109,28 +109,28 @@ cat > "build/ios-arm64/SwifMetro.framework/Info.plist" << EOF
 EOF
 
 # Create iOS simulator framework structure
-mkdir -p "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule"
-cp build/libSwifMetro-simulator.dylib "build/ios-simulator/SwifMetro.framework/SwifMetro"
-cp build/SwifMetro-sim-arm64.swiftmodule "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/arm64-apple-ios-simulator.swiftmodule"
-cp build/SwifMetro-sim-arm64.swiftinterface "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/arm64-apple-ios-simulator.swiftinterface"
-cp build/SwifMetro-sim-arm64.swiftdoc "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/arm64-apple-ios-simulator.swiftdoc" 2>/dev/null || true
-cp build/SwifMetro-sim-arm64.abi.json "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/arm64-apple-ios-simulator.abi.json" 2>/dev/null || true
-cp build/SwifMetro-sim-arm64.swiftsourceinfo "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/arm64-apple-ios-simulator.swiftsourceinfo" 2>/dev/null || true
-cp build/SwifMetro-sim-x86_64.swiftmodule "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/x86_64-apple-ios-simulator.swiftmodule"
-cp build/SwifMetro-sim-x86_64.swiftinterface "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/x86_64-apple-ios-simulator.swiftinterface"
-cp build/SwifMetro-sim-x86_64.swiftdoc "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/x86_64-apple-ios-simulator.swiftdoc" 2>/dev/null || true
-cp build/SwifMetro-sim-x86_64.abi.json "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/x86_64-apple-ios-simulator.abi.json" 2>/dev/null || true
-cp build/SwifMetro-sim-x86_64.swiftsourceinfo "build/ios-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/x86_64-apple-ios-simulator.swiftsourceinfo" 2>/dev/null || true
+mkdir -p "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule"
+cp build/libSwifMetro-simulator.dylib "build/ios-arm64_x86_64-simulator/SwifMetro.framework/SwifMetro"
+cp build/SwifMetro-sim-arm64.swiftmodule "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/arm64-apple-ios-simulator.swiftmodule"
+cp build/SwifMetro-sim-arm64.swiftinterface "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/arm64-apple-ios-simulator.swiftinterface"
+cp build/SwifMetro-sim-arm64.swiftdoc "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/arm64-apple-ios-simulator.swiftdoc" 2>/dev/null || true
+cp build/SwifMetro-sim-arm64.abi.json "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/arm64-apple-ios-simulator.abi.json" 2>/dev/null || true
+cp build/SwifMetro-sim-arm64.swiftsourceinfo "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/arm64-apple-ios-simulator.swiftsourceinfo" 2>/dev/null || true
+cp build/SwifMetro-sim-x86_64.swiftmodule "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/x86_64-apple-ios-simulator.swiftmodule"
+cp build/SwifMetro-sim-x86_64.swiftinterface "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/x86_64-apple-ios-simulator.swiftinterface"
+cp build/SwifMetro-sim-x86_64.swiftdoc "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/x86_64-apple-ios-simulator.swiftdoc" 2>/dev/null || true
+cp build/SwifMetro-sim-x86_64.abi.json "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/x86_64-apple-ios-simulator.abi.json" 2>/dev/null || true
+cp build/SwifMetro-sim-x86_64.swiftsourceinfo "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/SwifMetro.swiftmodule/x86_64-apple-ios-simulator.swiftsourceinfo" 2>/dev/null || true
 
 # Create module map for iOS simulator framework
-cat > "build/ios-simulator/SwifMetro.framework/Modules/module.modulemap" << EOF
+cat > "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Modules/module.modulemap" << EOF
 framework module SwifMetro {
     export *
 }
 EOF
 
 # Create Info.plist for iOS simulator framework
-cat > "build/ios-simulator/SwifMetro.framework/Info.plist" << EOF
+cat > "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Info.plist" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -148,7 +148,7 @@ cat > "build/ios-simulator/SwifMetro.framework/Info.plist" << EOF
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.5</string>
+    <string>1.0.6</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>MinimumOSVersion</key>
@@ -164,10 +164,23 @@ EOF
 echo "Creating XCFramework with framework bundles..."
 xcodebuild -create-xcframework \
   -framework "build/ios-arm64/SwifMetro.framework" \
-  -framework "build/ios-simulator/SwifMetro.framework" \
+  -framework "build/ios-arm64_x86_64-simulator/SwifMetro.framework" \
   -output SwifMetro.xcframework
 
 echo "XCFramework created successfully with proper framework structure!"
 echo ""
 echo "Verifying structure..."
-ls -R SwifMetro.xcframework | head -30
+find SwifMetro.xcframework -type f | head -50
+echo ""
+echo "Verifying binaries are in place..."
+file SwifMetro.xcframework/ios-arm64/SwifMetro.framework/SwifMetro
+file SwifMetro.xcframework/ios-arm64_x86_64-simulator/SwifMetro.framework/SwifMetro
+
+echo ""
+echo "Creating zip archive..."
+zip -r SwifMetro.xcframework.zip SwifMetro.xcframework
+
+echo ""
+echo "SUCCESS! XCFramework v1.0.6 built with proper framework structure."
+echo ""
+echo "Calculate checksum with: shasum -a 256 SwifMetro.xcframework.zip"
