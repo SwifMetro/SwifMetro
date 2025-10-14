@@ -2,7 +2,7 @@
 
 **Wireless logging dashboard for iOS development** - Stream logs from your iPhone, iPad, or Simulator to your Mac in real-time. No cables required.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/SwifMetro/SwifMetro)
+[![Version](https://img.shields.io/badge/version-1.0.3-blue.svg)](https://github.com/SwifMetro/SwifMetro)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-iOS%2013%2B-lightgrey.svg)](https://github.com/SwifMetro/SwifMetro)
 
