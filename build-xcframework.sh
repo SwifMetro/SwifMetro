@@ -17,6 +17,7 @@ SWIFT_FILES=$(find /Users/conlanainsworth/Desktop/SwiftMetroTEST/Sources/SwifMet
 echo "Building for iOS devices (arm64)..."
 swiftc $SWIFT_FILES \
   -module-name SwifMetro \
+  -D DEBUG \
   -emit-library \
   -emit-module \
   -emit-module-interface \
@@ -30,6 +31,7 @@ swiftc $SWIFT_FILES \
 echo "Building for iOS Simulator (arm64 + x86_64)..."
 swiftc $SWIFT_FILES \
   -module-name SwifMetro \
+  -D DEBUG \
   -emit-library \
   -emit-module \
   -emit-module-interface \
@@ -42,6 +44,7 @@ swiftc $SWIFT_FILES \
 
 swiftc $SWIFT_FILES \
   -module-name SwifMetro \
+  -D DEBUG \
   -emit-library \
   -emit-module \
   -emit-module-interface \
@@ -97,7 +100,7 @@ cat > "build/ios-arm64/SwifMetro.framework/Info.plist" << EOF
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.9</string>
+    <string>1.0.10</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>MinimumOSVersion</key>
@@ -152,7 +155,7 @@ cat > "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Info.plist" << EOF
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.9</string>
+    <string>1.0.10</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>MinimumOSVersion</key>
@@ -185,6 +188,6 @@ echo "Creating zip archive..."
 zip -r SwifMetro.xcframework.zip SwifMetro.xcframework
 
 echo ""
-echo "SUCCESS! XCFramework v1.0.9 built with proper framework structure."
+echo "SUCCESS! XCFramework v1.0.10 built with proper framework structure."
 echo ""
 echo "Calculate checksum with: shasum -a 256 SwifMetro.xcframework.zip"
