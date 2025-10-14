@@ -19,3 +19,6 @@ Sources.backup/
 *.tmp
 *.log
 node_modules/
+
+# Internal build scripts (do not publish)
+build-xcframework.sh
