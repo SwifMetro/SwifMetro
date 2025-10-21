@@ -70,3 +70,42 @@ swifmetro-server.min.js
 *-protected.*
 *-encrypted.*
 .build/
+
+# ========================================
+# PUBLIC REPO EXCLUSIONS
+# These files should NOT be in public repo
+# ========================================
+
+# HTML files - all belong in private repo only
+*.html
+
+# Server JS files - all server code is private
+*electron*.js
+*server*.js
+payment-server.js
+preload.js
+
+# Extra markdown documentation - keep only README.md public
+DOCUMENTATION.md
+GETTING_STARTED.md
+PRIVACY_POLICY.md
+SWIFTMETRO_EXACTLY_HOW_IT_WORKS.md
+TECHNICAL_DEEP_DIVE.md
+TERMS_OF_SERVICE.md
+
+# Swift client files in root - belong elsewhere
+SwifMetroClient.swift
+SwifMetroSecureClient.swift
+ExampleIntegration.swift
+
+# Install/setup scripts
+install-swifmetro.sh
+install.sh
+setup.sh
+test-swiftmetro.sh
+
+# License metadata
+licenses.json
+
+# Server directory
+server/
