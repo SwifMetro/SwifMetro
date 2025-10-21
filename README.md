@@ -309,19 +309,90 @@ Before asking for help, verify:
 
 ## Installation Modes
 
-### Dashboard Mode (Recommended)
-```bash
-swifmetro dashboard
-```
-Opens the Electron GUI application with full features.
+SwifMetro has two ways to view logs from your iOS app:
 
-### Terminal Mode
+### 🎨 Dashboard Mode (Beautiful GUI - Recommended)
+
+**What you get:**
+- Beautiful Electron desktop app with modern UI
+- Real-time log streaming with color coding
+- Search, filter, and export features
+- Dark/light theme support
+- Network request inspector
+- Keyboard shortcuts
+- **Automatic terminal logging** (NEW!)
+
+**How to use:**
 ```bash
-swifmetro
-# or
-swifmetro terminal
+swifmetro dashboard  # Opens GUI app
 ```
-Logs appear directly in your terminal - useful for CI/CD or scripting.
+
+**Automatic Terminal Logging:**
+
+SwifMetro now automatically writes all logs to a file when the Mac app runs:
+
+**Log File Location:**
+```
+/private/tmp/swifmetro-local-dev.log
+```
+
+**No setup required!** This file is created and updated automatically whenever SwifMetro runs.
+
+**View Logs in Terminal (Optional):**
+
+To see logs streaming in your terminal in real-time:
+```bash
+tail -f /private/tmp/swifmetro-local-dev.log
+```
+
+**Key Features:**
+- Automatic - works without any configuration
+- Persists even if you close the dashboard
+- Cleared automatically when you restart SwifMetro
+- Works in both dev mode and production DMG
+- Dashboard "Clear" button only clears the UI, not the log file
+
+**Use Cases:**
+- Debugging connection issues
+- Monitoring logs while dashboard is minimized
+- Sharing logs for support or bug reports
+- Terminal-based workflow alongside the GUI
+
+**Who it's for:**
+- Daily iOS development
+- Visual debugging
+- Teams who want a polished tool
+- Anyone who prefers GUI over terminal
+- Developers who want both GUI and terminal logging
+
+---
+
+### 💻 Terminal Mode (CLI Only - Free Alternative)
+
+**What you get:**
+- Plain text logs in your terminal
+- Lightweight and fast
+- Perfect for remote servers
+- No GUI dependencies
+
+**How to use:**
+```bash
+swifmetro          # Default: terminal mode
+swifmetro terminal # Explicit terminal mode
+```
+
+**Who it's for:**
+- Terminal enthusiasts
+- CI/CD pipelines
+- Automation scripts
+- Remote debugging over SSH
+- Minimalists who prefer text
+
+---
+
+### 🚀 Use Both!
+
+The Mac app and terminal mode are just different views of the same server. Use the GUI for development, terminal for automation. Your choice!
 
 ---
 

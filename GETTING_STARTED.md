@@ -117,6 +117,60 @@ catch {
 
 ---
 
+## 💻 Automatic Terminal Logging (NEW!)
+
+**SwifMetro now automatically logs to a file!**
+
+When you run the SwifMetro Mac app, logs are AUTOMATICALLY written to:
+```
+/private/tmp/swifmetro-local-dev.log
+```
+
+**Key Features:**
+- **Automatic** - No configuration needed!
+- **Always on** - Works whenever SwifMetro is running
+- **Persists** - Logs remain even if you close the dashboard
+- **Auto-cleared** - File is cleared when you restart SwifMetro
+- **Works everywhere** - Dev mode AND production DMG
+
+### Viewing Logs in Terminal (Optional)
+
+To see logs streaming in real-time in your terminal:
+
+```bash
+tail -f /private/tmp/swifmetro-local-dev.log
+```
+
+This shows logs as they happen - perfect for Metro-style terminal logging!
+
+**What You'll See:**
+```bash
+🔥🔥🔥 iPHONE CONNECTED! 🔥🔥🔥
+📱 Device: iPhone 15 Pro
+📱 OS: iOS 17.4
+🌐 IP: 192.168.1.145
+
+[12:34:56] 📱 [iPhone 15 Pro] Hello from iPhone!
+[12:34:57] 📊 [FPS] 60 FPS
+[12:34:58] 💾 [Memory Stats] 45.2 MB used
+```
+
+### Use Cases
+
+**Debugging:**
+- Monitor connection issues
+- Check logs without opening dashboard
+- Share logs for bug reports (just copy the file!)
+
+**Workflow:**
+- Terminal alongside GUI
+- Quick log scanning in terminal
+- Deep analysis in dashboard
+
+**Note:** The dashboard "Clear" button only clears the UI display, not the log file. The log file is only cleared when you restart the SwifMetro app.
+
+---
+
 ## Basic Examples
 
 ### Track User Navigation
