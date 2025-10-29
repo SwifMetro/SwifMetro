@@ -18,7 +18,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "SwifMetro",
-            url: "https://github.com/SwifMetro/SwifMetro-Public-NPM/releases/download/v1.0.12/SwifMetro.xcframework.zip",
+            url: "https://github.com/SwifMetro/SwifMetro/releases/download/v1.0.12/SwifMetro.xcframework.zip",
             checksum: "72b9daf32fb2ec13c5b739ba21221b6860ba318528f5be8fb1abce804786039a"
         )
     ]
