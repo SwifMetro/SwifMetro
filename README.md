@@ -104,7 +104,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         #if DEBUG
-        SwifMetroClient.shared.start(serverIP: "192.168.0.100") // Your Mac's IP
+        #if targetEnvironment(simulator)
+        SwifMetroClient.shared.start(serverIP: "localhost")
+        #else
+        SwifMetroClient.shared.start(serverIP: nil) // Auto-discovery for physical device
+        #endif
         print("🚀 App launched!") // This appears in the dashboard!
         #endif
 
@@ -113,7 +117,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 }
 ```
 
-**Or for SwiftUI Apps:**
+**Or for SwiftUI Apps (RECOMMENDED - Auto-detect Simulator vs Physical Device):**
 ```swift
 import SwiftUI
 import SwifMetro
@@ -122,7 +126,16 @@ import SwifMetro
 struct YourApp: App {
     init() {
         #if DEBUG
-        SwifMetroClient.shared.start(serverIP: "192.168.0.100")
+        #if targetEnvironment(simulator)
+        // Simulator: use localhost for fast connection
+        SwifMetroClient.shared.start(serverIP: "localhost")
+        #else
+        // Physical device: use Bonjour auto-discovery (recommended)
+        SwifMetroClient.shared.start(serverIP: nil)
+
+        // Alternative: Manual IP if Bonjour is blocked on your network
+        // SwifMetroClient.shared.start(serverIP: "192.168.0.100")
+        #endif
         #endif
     }
 
@@ -133,6 +146,15 @@ struct YourApp: App {
     }
 }
 ```
+
+**💡 Pro Tip: Simulator vs Physical Device**
+
+For best results, use the conditional compilation pattern above:
+
+- **Simulator**: `"localhost"` works great (fast connection)
+- **Physical Device**: Use `nil` for auto-discovery, or your Mac's IP if Bonjour is blocked
+
+**Why this matters:** Physical devices can't connect to `"localhost"` - they need network discovery or a real network IP. If you hardcode `localhost`, the dashboard will show "0 devices" when testing on real iPhones.
 
 ### 4. Run Your App
 
