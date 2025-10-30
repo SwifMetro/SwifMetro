@@ -100,7 +100,7 @@ cat > "build/ios-arm64/SwifMetro.framework/Info.plist" << EOF
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.18</string>
+    <string>1.0.12</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>MinimumOSVersion</key>
@@ -155,7 +155,7 @@ cat > "build/ios-arm64_x86_64-simulator/SwifMetro.framework/Info.plist" << EOF
     <key>CFBundlePackageType</key>
     <string>FMWK</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.18</string>
+    <string>1.0.12</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>MinimumOSVersion</key>
@@ -188,6 +188,6 @@ echo "Creating zip archive..."
 zip -r SwifMetro.xcframework.zip SwifMetro.xcframework
 
 echo ""
-echo "SUCCESS! XCFramework v1.0.18 built with proper framework structure."
+echo "SUCCESS! XCFramework v1.0.12 built with proper framework structure."
 echo ""
 echo "Calculate checksum with: shasum -a 256 SwifMetro.xcframework.zip"
