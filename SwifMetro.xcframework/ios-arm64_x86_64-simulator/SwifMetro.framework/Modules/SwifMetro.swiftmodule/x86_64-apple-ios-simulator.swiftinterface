@@ -1,0 +1,261 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.2 effective-5.10 (swiftlang-6.2.0.19.9 clang-1700.3.19.1)
+// swift-module-flags: -target x86_64-apple-ios14.0-simulator -enable-objc-interop -enable-library-evolution -module-name SwifMetro
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2
+import Darwin
+import Foundation
+import Network
+import OSLog
+import ObjectiveC
+import QuartzCore
+import Swift
+import SwiftUI
+import UIKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+import os.log
+import os
+@_hasMissingDesignatedInitializers public class ConsoleLogCapture {
+  public static func startCapturing()
+  public static func stopCapturing()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class LegacyConsoleCapture {
+  public static func startCapturing()
+  public static func stopCapturing()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class SystemConsoleCapture {
+  public static func start()
+  public static func stop()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class BugCatcher {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func catchEverything(config: SwifMetro.SwifMetroConfig? = nil)
+  #endif
+  @objc deinit
+}
+public func debugLog(_ message: Swift.String, file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line)
+public func bugLog(_ bug: Swift.String, file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line)
+public func todoLog(_ todo: Swift.String, file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line)
+public func fixmeLog(_ fixme: Swift.String, file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line)
+public func SwifMetro_NSLog(_ format: Swift.String, _ args: any Swift.CVarArg...)
+public struct SwifMetroLogger {
+  public static func log(_ type: os.OSLogType = .default, _ message: Swift.String)
+}
+extension os.OSLog {
+  public static func swifmetro(_ message: Swift.String, type: os.OSLogType = .default)
+}
+@_inheritsConvenienceInitializers @objc public class LogHooks : ObjectiveC.NSObject {
+  @objc public static func installHooks()
+  @objc override dynamic public init()
+  @objc deinit
+}
+public func NSLogIntercepted(_ format: Swift.String, _ args: any Swift.CVarArg...)
+public func os_log_intercepted(_ type: os.OSLogType = .default, _ message: Swift.String)
+@objc @_inheritsConvenienceInitializers public class AdvancedMonitoring : ObjectiveC.NSObject {
+  public static func interceptLoggerAPI()
+  public static func startMemoryMonitoring(interval: Foundation.TimeInterval = 5.0)
+  public static func stopMemoryMonitoring()
+  public static func startFPSMonitoring(preferredFramesPerSecond: Swift.Int = 15)
+  public static func stopFPSMonitoring()
+  public static func startUserDefaultsMonitoring()
+  public static func stopUserDefaultsMonitoring()
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func startAllMonitoring(config: SwifMetro.SwifMetroConfig? = nil)
+  #endif
+  public static func stopAllMonitoring()
+  @objc override dynamic public init()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class DebugTester {
+  public static func testAllDebuggingScenarios()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class StreamControl {
+  public struct PinnedLog {
+  }
+  public static func pauseStream()
+  public static func resumeStream()
+  public static func isStreamPaused() -> Swift.Bool
+  public static func captureLog(_ message: Swift.String)
+  public static func bookmarkLog(_ message: Swift.String)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func pinLog(_ message: Swift.String, note: Swift.String? = nil)
+  #endif
+  public static func getPinnedLogs() -> [SwifMetro.StreamControl.PinnedLog]
+  public static func getBookmarkedLogs() -> Swift.Set<Swift.String>
+  public static func clearBookmarks()
+  public static func clearPins()
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func addSessionMarker(_ label: Swift.String? = nil)
+  #endif
+  public static func checkpoint(_ name: Swift.String)
+  @objc deinit
+}
+extension SwifMetro.SwifMetroClient {
+  public func pauseStream()
+  public func resumeStream()
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func pinLog(_ message: Swift.String, note: Swift.String? = nil)
+  #endif
+  public func checkpoint(_ name: Swift.String)
+}
+@_hasMissingDesignatedInitializers public class Console {
+  public static let shared: SwifMetro.Console
+  public func log(_ items: Any...)
+  public func info(_ items: Any...)
+  public func debug(_ items: Any...)
+  public func warn(_ items: Any...)
+  public func error(_ items: Any...)
+  public func time(_ label: Swift.String = "default")
+  public func timeEnd(_ label: Swift.String = "default")
+  public func timeLog(_ label: Swift.String = "default", _ data: Any...)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func group(_ label: Swift.String? = nil)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func groupCollapsed(_ label: Swift.String? = nil)
+  #endif
+  public func groupEnd()
+  public func count(_ label: Swift.String = "default")
+  public func countReset(_ label: Swift.String = "default")
+  public func assert(_ condition: Swift.Bool, _ message: Swift.String = "Assertion failed", file: Swift.String = #file, line: Swift.Int = #line)
+  public func trace(_ label: Swift.String = "Trace")
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func table<T>(_ data: [T], columns: [Swift.String]? = nil)
+  #endif
+  public func dir<T>(_ object: T, options: [Swift.String : Any] = [:])
+  public func clear()
+  @objc deinit
+}
+public let console: SwifMetro.Console
+public func console_log(_ items: Any...)
+public func console_error(_ items: Any...)
+public func console_warn(_ items: Any...)
+public func NSLog_SwifMetro(_ format: Swift.String, _ args: any Swift.CVarArg...)
+@_hasMissingDesignatedInitializers public class StderrCapture {
+  public static func start()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class NetworkCapture {
+  public static func swizzleURLSession()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers public class URLSessionCapture : ObjectiveC.NSObject {
+  public static func captureMetrics()
+  @objc override dynamic public init()
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc public class SwifMetroClient : ObjectiveC.NSObject {
+  @objc public static let shared: SwifMetro.SwifMetroClient
+  @objc public func captureLog(_ message: Swift.String)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func start(serverIP: Swift.String? = nil, licenseKey: Swift.String? = nil, config: SwifMetro.SwifMetroConfig? = nil)
+  #endif
+  public func log(_ message: Swift.String)
+  public func stopAutomaticCapture()
+  @objc deinit
+}
+extension SwifMetro.SwifMetroClient {
+  public func logError(_ error: any Swift.Error, context: Swift.String = "")
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func logTry<T>(_ context: Swift.String = "", _ block: () throws -> T) -> T?
+  #endif
+}
+extension SwifMetro.SwifMetroClient {
+  public func osLog(_ message: Swift.String, type: os.OSLogType = .default)
+}
+extension SwifMetro.SwifMetroClient {
+  public func enableNetworkLogging()
+  public func disableNetworkLogging()
+}
+public func swifMetroLog(_ message: Swift.String)
+public func swifMetroError(_ error: any Swift.Error, context: Swift.String = "")
+@_hasMissingDesignatedInitializers @available(iOS 15.0, *)
+public class ReactNativeLogCapture {
+  public static func startCapturing(interval: Foundation.TimeInterval = 2.0)
+  public static func stopCapturing()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers @available(iOS, deprecated: 15.0, message: "Use ReactNativeLogCapture for iOS 15+")
+public class ReactNativeLogCaptureFallback {
+  public static func warnUnsupported()
+  @objc deinit
+}
+public enum RuntimeEnvironment {
+  case reactNative
+  case pureSwift
+  case unknown
+  public static func == (a: SwifMetro.RuntimeEnvironment, b: SwifMetro.RuntimeEnvironment) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum SwifMetroProfile {
+  case off
+  case minimal
+  case balanced
+  case full
+  case aggressive
+  public static func == (a: SwifMetro.SwifMetroProfile, b: SwifMetro.SwifMetroProfile) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct SwifMetroConfig {
+  public var profile: SwifMetro.SwifMetroProfile
+  public var enableFPSMonitoring: Swift.Bool
+  public var enableMemoryMonitoring: Swift.Bool
+  public var enableLogCapture: Swift.Bool
+  public var enableBugCatcher: Swift.Bool
+  public var fpsMonitoringInterval: Foundation.TimeInterval
+  public var memoryMonitoringInterval: Foundation.TimeInterval
+  public var logCaptureInterval: Foundation.TimeInterval
+  public var maxLogsPerSecond: Swift.Int
+  public var useBackgroundThread: Swift.Bool
+  public static var reactNativeOptimized: SwifMetro.SwifMetroConfig {
+    get
+  }
+  public static var pureSwiftOptimized: SwifMetro.SwifMetroConfig {
+    get
+  }
+  public static var aggressive: SwifMetro.SwifMetroConfig {
+    get
+  }
+  public static var off: SwifMetro.SwifMetroConfig {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class EnvironmentDetector {
+  public static func detectEnvironment() -> SwifMetro.RuntimeEnvironment
+  public static func getOptimizedConfig() -> SwifMetro.SwifMetroConfig
+  public static func getEnvironmentDescription() -> Swift.String
+  public static func logEnvironmentDetails()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class RuntimeLogCapture {
+  public static func captureRuntimeIssues()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class ConsoleRedirect {
+  public static func redirectConsoleToSwifMetro()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class SystemEventCapture {
+  public static func captureSystemEvents()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class SwifMetroInterceptor {
+  public static func initialize()
+  public static func captureNSLog(_ format: Swift.String, _ args: any Swift.CVarArg...)
+  @objc deinit
+}
+extension SwifMetro.RuntimeEnvironment : Swift.Equatable {}
+extension SwifMetro.RuntimeEnvironment : Swift.Hashable {}
+extension SwifMetro.SwifMetroProfile : Swift.Equatable {}
+extension SwifMetro.SwifMetroProfile : Swift.Hashable {}
