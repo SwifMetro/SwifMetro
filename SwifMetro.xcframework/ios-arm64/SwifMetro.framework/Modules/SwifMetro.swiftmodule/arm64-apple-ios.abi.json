@@ -5577,6 +5577,16 @@
       },
       {
         "kind": "Import",
+        "name": "MachO",
+        "printedName": "MachO",
+        "declKind": "Import",
+        "moduleName": "SwifMetro",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
         "name": "Foundation",
         "printedName": "Foundation",
         "declKind": "Import",
@@ -6712,28 +6722,28 @@
     {
       "filePath": "\/Users\/conlanainsworth\/Desktop\/SwiftMetroTEST\/Sources\/SwifMetro\/SwifMetroClient.swift",
       "kind": "StringLiteral",
-      "offset": 27228,
+      "offset": 27210,
       "length": 4,
       "value": "\"ms\""
     },
     {
       "filePath": "\/Users\/conlanainsworth\/Desktop\/SwiftMetroTEST\/Sources\/SwifMetro\/SwifMetroClient.swift",
       "kind": "StringLiteral",
-      "offset": 36376,
+      "offset": 36358,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/conlanainsworth\/Desktop\/SwiftMetroTEST\/Sources\/SwifMetro\/SwifMetroClient.swift",
       "kind": "StringLiteral",
-      "offset": 36894,
+      "offset": 36876,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/conlanainsworth\/Desktop\/SwiftMetroTEST\/Sources\/SwifMetro\/SwifMetroClient.swift",
       "kind": "StringLiteral",
-      "offset": 40236,
+      "offset": 40218,
       "length": 2,
       "value": "\"\""
     },
