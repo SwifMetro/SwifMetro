@@ -18,8 +18,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "SwifMetro",
-            url: "https://github.com/SwifMetro/SwifMetro/releases/download/v1.0.27/SwifMetro.xcframework.zip",
-            checksum: "330c66346b0139cbd46b4ae9c0eb81d4a6489e6f2189f0b9f883ddb19196dad6"
+            url: "https://github.com/SwifMetro/SwifMetro/releases/download/v1.0.28/SwifMetro.xcframework.zip",
+            checksum: "191572c0a4bca458b8bc8d8597010e7cc6c75b3044d156a930f997570d40d31f"
         )
     ]
 )
